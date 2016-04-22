@@ -6,5 +6,34 @@
 	</head>
 	<body>
 		Hello World
+		
+		<script type="text/javascript">
+			(function() {
+				var ndWebsiteId = "w-659488";
+				var baseUrl = "https://api-us-east-1.nd-staging.nudatasecurity.com/2.2/w/" + ndWebsiteId + "/sync/js/";
+
+				/*
+				ndWebsiteId = "w-739998";
+				baseUrl = "http://nudetect-dev.local/nudetect/2.2/w/" + ndWebsiteId + "/sync/js/";
+				*/
+
+				(function(w,d,s,u,q,js,fjs,nds){ 
+					nds=w.ndsapi||(w.ndsapi={});
+					nds.config={
+						q:[],
+						ready:function(cb){
+							this.q.push(cb)
+						}
+					};
+					js=d.createElement(s);
+					fjs=d.getElementsByTagName(s)[0];
+					js.src=u;
+					fjs.parentNode.insertBefore(js,fjs);
+					js.onload=function(){
+						nds.load(u);
+					} 
+				}(window,document,"script",baseUrl));
+			} ());
+		</script>
 	</body>
 </html>	
