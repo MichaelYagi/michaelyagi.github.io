@@ -35,8 +35,9 @@
 					fjs.parentNode.insertBefore(js,fjs);
 					js.onload=function(){
 						nds.load(u);
-						console.log("Document cookies");
-						console.log(document.cookie);
+						function test(json) {
+							console.log(json);
+						}
 					} 
 				}(window,document,"script",baseUrl));
 			} ());
