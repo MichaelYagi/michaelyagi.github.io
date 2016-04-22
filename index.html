@@ -9,13 +9,17 @@
 		
 		<script type="text/javascript">
 			(function() {
-				var ndWebsiteId = "w-659488";
-				var baseUrl = "https://api-us-east-1.nd-staging.nudatasecurity.com/2.2/w/" + ndWebsiteId + "/sync/js/";
-
-				/*
-				ndWebsiteId = "w-739998";
-				baseUrl = "http://nudetect-dev.local/nudetect/2.2/w/" + ndWebsiteId + "/sync/js/";
-				*/
+			
+				var ndWebsiteId = "";
+				var baseUrl = "";
+			
+				if (window.location.protocol != "https:") {
+					ndWebsiteId = "w-739998";
+					baseUrl = "http://nudetect-dev.local/nudetect/2.2/w/" + ndWebsiteId + "/sync/js/";
+				} else {
+					ndWebsiteId = "w-659488";
+					baseUrl = "https://api-us-east-1.nd-staging.nudatasecurity.com/2.2/w/" + ndWebsiteId + "/sync/js/";
+				}
 
 				(function(w,d,s,u,q,js,fjs,nds){ 
 					nds=w.ndsapi||(w.ndsapi={});
@@ -31,6 +35,8 @@
 					fjs.parentNode.insertBefore(js,fjs);
 					js.onload=function(){
 						nds.load(u);
+						console.log("Document cookies");
+						console.log(document.cookie);
 					} 
 				}(window,document,"script",baseUrl));
 			} ());
