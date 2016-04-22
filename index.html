@@ -35,12 +35,12 @@
 					fjs.parentNode.insertBefore(js,fjs);
 					js.onload=function(){
 						nds.load(u);
-						function test(json) {
-							console.log(json);
-							
-						}
 					} 
 				}(window,document,"script",baseUrl));
+				
+				function test(json) {
+					console.log(json);					
+				}
 			} ());
 		</script>
 	</body>
