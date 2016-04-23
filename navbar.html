@@ -40,7 +40,7 @@
 		for (var i = 0; i < liElements.length; ++i) {
 			var item = liElements[i];
 			if (item.id) {
-				pageArray.push(item.id);
+				pageArray.push(item.id.split("_")[0]);
 			}
 		}
 console.log(pageArray);		
