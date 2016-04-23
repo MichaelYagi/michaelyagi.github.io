@@ -39,12 +39,7 @@
 		
 		for(var i=0; i < pageArray.length; i++) {
 			currentNav = document.getElementById(pageArray[i]+"Nav");
-			
-			if (pageArray[i] === "test") {
-				currentNav.className = "dropdown";
-			} else {			
-				currentNav.className = "inactive";
-			}	
+			currentNav.className = "inactive";
 			
 			if (pageName === pageArray[i]) {
 				activeNav = document.getElementById(pageName+"Nav");
@@ -52,8 +47,15 @@
 			}
 			
 			if (pageArray[i] === "test") {
-				activeNav = document.getElementById(pageArray[i]+"Nav");
-				activeNav.className = "dropdown active";
+				switch(pageName) {
+					case "logintest":
+						activeNav = document.getElementById(pageArray[i]+"Nav");
+						activeNav.className = "dropdown active";
+						break;
+					default:
+						activeNav = document.getElementById(pageArray[i]+"Nav");
+						activeNav.className = "dropdown";
+				}
 			}
 		}
 	})();
