@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<script src="js/jquery-2.2.3.min.js"></script>
+		<script src="js/bootstrap-3.3.6.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.6.min.css">
+		<script> 
+		$(function(){
+		  $("#navbarContent").load("navbar.html"); 
+		});
+		</script> 
+	</head>
+	<body>
+	
+		<div id="navbarContent"></div>
+	
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-6">			
+					<h1>Testing</h1>
+					<form>
+						<div class="form-group">
+							<label for="Username">Email address</label>
+							<input type="text" class="form-control" id="username" placeholder="Username">
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="password" class="form-control" id="password" placeholder="Password">
+						</div>
+				
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			(function() {
+			
+				var ndWebsiteId = "";
+				var baseUrl = "";
+			
+				if (window.location.protocol != "https:") {
+					ndWebsiteId = "w-739998";
+					baseUrl = "http://nudetect-dev.local/nudetect/2.2/w/" + ndWebsiteId + "/sync/js/";
+				} else {
+					ndWebsiteId = "w-659488";
+					baseUrl = "https://api-us-east-1.nd-staging.nudatasecurity.com/2.2/w/" + ndWebsiteId + "/sync/js/";
+				}
+
+				(function(w,d,s,u,q,js,fjs,nds){ 
+					nds=w.ndsapi||(w.ndsapi={});
+					nds.config={
+						q:[],
+						ready:function(cb){
+							this.q.push(cb)
+						}
+					};
+					js=d.createElement(s);
+					fjs=d.getElementsByTagName(s)[0];
+					js.src=u;
+					fjs.parentNode.insertBefore(js,fjs);
+					js.onload=function(){
+						nds.load(u);
+					} 
+				}(window,document,"script",baseUrl));
+				
+			} ());
+		</script>
+	</body>
+</html>	
