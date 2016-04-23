@@ -14,10 +14,29 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li><a href="index.html">Projects</a></li>
-				<li><a href="demos.html">Demos</a></li>
-				<li><a href="testing.html">Testing</a></li>
+				<li id="indexNav" class="inactive"><a href="index.html">Projects</a></li>
+				<li id="demosNav" class="inactive"><a href="demos.html">Demos</a></li>
+				<li id="testingNav" class="inactive"><a href="testing.html">Testing</a></li>
 			</ul>
 		</div><!-- /.navbar-collapse -->
 	</div><!-- /.container-fluid -->
 </nav>
+
+<script type="text/javascript">
+	var currentPage = window.location.href; 
+	var htmlPage = currentPage.substr(currentPage.lastIndexOf('/') + 1);
+	var pageName = htmlPage.split(".");
+	var pageArray = ["index","demos","testing"];
+	var currentNav = "";
+	var activeNav = "";
+	
+	for(var i=0; i < pageArray.length; i++) {
+		currentNav = document.getElementById(pageArray[i]+"Nav");
+		currentNav.className = "inactive";
+		
+		if (pageName[0] === pageName) {
+			activeNav = document.getElementById(pageName[0]+"Nav");
+			activeNav.className = "active";
+		}
+	}
+</script>
