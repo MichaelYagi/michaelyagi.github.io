@@ -16,10 +16,10 @@
 			<ul class="nav navbar-nav">
 				<li id="indexNav" class="inactive"><a href="index.html">Projects</a></li>
 				<li id="demosNav" class="inactive"><a href="demos.html">Demos</a></li>
-				<li class="dropdown">
+				<li id="testNav" class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Testing <span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li id="logintestNav" class="inactive"><a href="logintest.html">Login</a></li>
+						<li><a href="logintest.html">Login</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -33,17 +33,27 @@
 		var htmlPage = currentPage.substr(currentPage.lastIndexOf('/') + 1);
 		var pageName = htmlPage.split(".");
 		pageName = pageName[0];
-		var pageArray = ["index","demos","loginTest"];
+		var pageArray = ["index","demos","test"];
 		var currentNav = "";
 		var activeNav = "";
 		
 		for(var i=0; i < pageArray.length; i++) {
 			currentNav = document.getElementById(pageArray[i]+"Nav");
-			currentNav.className = "inactive";
+			
+			if (pageArray[i] === "test") {
+				currentNav.className = "dropdown";
+			} else {			
+				currentNav.className = "inactive";
+			}	
 			
 			if (pageName === pageArray[i]) {
 				activeNav = document.getElementById(pageName+"Nav");
 				activeNav.className = "active";
+			}
+			
+			if (pageArray[i] === "test") {
+				activeNav = document.getElementById(pageArray[i]+"Nav");
+				activeNav.className = "dropdown active";
 			}
 		}
 	})();
