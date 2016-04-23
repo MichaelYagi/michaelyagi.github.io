@@ -33,8 +33,8 @@
 		var htmlPage = currentPage.substr(currentPage.lastIndexOf('/') + 1);
 		var pageName = htmlPage.split(".");
 		pageName = pageName[0];
-		var pageArray = [];
 		
+		var pageArray = [];
 		var navLinksElement = document.getElementById("nav_links");
 		var liElements = navLinksElement.getElementsByTagName("li");
 		for (var i = 0; i < liElements.length; ++i) {
@@ -43,7 +43,7 @@
 				pageArray.push(item.id.split("_")[0]);
 			}
 		}
-console.log(pageArray);		
+		
 		var currentNav = "";
 		var activeNav = "";
 		
