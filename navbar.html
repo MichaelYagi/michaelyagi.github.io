@@ -32,7 +32,7 @@
 		var currentPage = window.location.href; 
 		var htmlPage = currentPage.substr(currentPage.lastIndexOf('/') + 1);
 		var pageName = htmlPage.split(".");
-		pageName = pageName[0];
+		pageName = pageName[0].length > 0 ? pageName[0] : "index";
 		
 		var pageArray = [];
 		var navLinksElement = document.getElementById("nav_links");
