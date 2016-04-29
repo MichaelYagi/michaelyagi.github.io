@@ -1,0 +1,89 @@
+<html>
+	<head>
+		<script src="js/jquery-2.2.3.min.js"></script>
+		<script src="js/bootstrap-3.3.6.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.6.min.css">
+		<script> 
+		$(function(){
+		  $("#navbarContent").load("navbar.html"); 
+		});
+		</script> 
+	</head>
+	<body>
+	
+		<div id="navbarContent"></div>
+	
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-6">			
+					<h1>Test Login Form</h1>
+					<form>
+						<div class="form-group">
+							<label for="Username">Username</label>
+							<input type="text" class="form-control" id="username" placeholder="Username">
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="password" class="form-control" id="password" placeholder="Password">
+						</div>
+				
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			var session_id	= "<?php echo session_id(); ?>"; 
+			var remote_ip	= "192.168.52.1";
+			var user_agent	= "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36";
+			var xforward_for= "192.168.52.1";
+			var request_url	= 'http://nudetect-dev.dev/nudetect/apitest/login';
+			var random_ip	= "96.11.240.219";
+			var account_id	= "1316801352";
+			var password	= "1995722092";
+			var request_id	= "rc-2329248010";
+			var username	= document.getElementById("username");
+			
+			if (window.location.protocol != "https:") {
+				ndWebsiteId = "w-869202";
+				baseUrl = "http://nudetect-dev.local/nudetect/2.2/w/" + ndWebsiteId + "/sync/js/";
+			} else {
+				ndWebsiteId = "w-659488";
+				baseUrl = "https://api-us-east-1.nd-staging.nudatasecurity.com/2.2/w/" + ndWebsiteId + "/sync/js/";
+			}
+
+			// The user session ID is used to link javscript sync calls with server-side pushes
+			// Some customers use an ajax call to fetch it, others set it on page generation.
+			var userSessionId = "i6pfpbvakjp8ukbuh5he680p97";
+			var sync_url = base_url + "/2.2/w/"+ ndWebsiteId + "/sync/js/";
+			var placement = "LoginFD";
+			var placementPage = 1;
+
+			(function(w, d, s, u, p, pp, q, js, fjs, nds) {
+				nds = w.ndsapi || (w.ndsapi = {});
+				nds.config = {
+					q: [],
+					ready: function(cb) {
+						this.q.push(cb)
+					}
+				};
+				js = d.createElement(s);
+				fjs = d.getElementsByTagName(s)[1];
+				js.src = u;
+				fjs.parentNode.insertBefore(js, fjs);
+				js.onload = function() {
+					nds.load(u);
+					nds.setPlacement(p);
+					nds.setPlacementPage(pp);
+				}
+			}(window, document, "script", sync_url, placement, placementPage));
+
+			var nds = window.ndsapi;
+			nds.config.ready(function() {
+
+			});
+
+		</script>
+	</body>
+</html>	
