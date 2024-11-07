@@ -1,28 +1,13 @@
 {
     "images": [
         {
+            "title": "tunnel",
+            "image": "https://michaelyagi.github.io/images/tidbyt/tunnel.gif",
+            "source": "https://gifer.com/en/7Ilm"
+        },
+        {
             "title": "tri_circle",
             "image": "https://michaelyagi.github.io/images/tidbyt/tri_circle.gif",
-            "source": "https://linktr.ee/mrdiv"
-        },
-        {
-            "title": "tri_grid",
-            "image": "https://michaelyagi.github.io/images/tidbyt/tri_grid.gif",
-            "source": "https://linktr.ee/mrdiv"
-        },
-        {
-            "title": "tri_waves_v2",
-            "image": "https://michaelyagi.github.io/images/tidbyt/tri_waves_v2.gif",
-            "source": "https://linktr.ee/mrdiv"
-        },
-        {
-            "title": "vortex_v2",
-            "image": "https://michaelyagi.github.io/images/tidbyt/vortex_v2.gif",
-            "source": "https://linktr.ee/mrdiv"
-        },
-        {
-            "title": "helixer",
-            "image": "https://michaelyagi.github.io/images/tidbyt/helixer.gif",
             "source": "https://linktr.ee/mrdiv"
         },
         {
@@ -31,14 +16,49 @@
             "source": "https://giphy.com/gifs/loop-flow-electric-KZFrf9JusXzmpnPsT6"
         },
         {
+            "title": "tri_grid",
+            "image": "https://michaelyagi.github.io/images/tidbyt/tri_grid.gif",
+            "source": "https://linktr.ee/mrdiv"
+        },
+        {
             "title": "akira",
             "image": "https://michaelyagi.github.io/images/tidbyt/akira_tidbyt.gif",
             "source": "Akira"
         },
         {
+            "title": "tri_waves_v2",
+            "image": "https://michaelyagi.github.io/images/tidbyt/tri_waves_v2.gif",
+            "source": "https://linktr.ee/mrdiv"
+        },
+        {
             "title": "line_patteran",
             "image": "https://michaelyagi.github.io/images/tidbyt/line_pattern.gif",
             "source": "https://giphy.com/gifs/network-technologies-connectivity-ITRemFlr5tS39AzQUL"
+        },
+        {
+            "title": "vortex_v2",
+            "image": "https://michaelyagi.github.io/images/tidbyt/vortex_v2.gif",
+            "source": "https://linktr.ee/mrdiv"
+        },
+        {
+            "title": "triangles",
+            "image": "https://michaelyagi.github.io/images/tidbyt/triangles.gif",
+            "source": "https://gifer.com/en/OwRt"
+        },
+        {
+            "title": "helixer",
+            "image": "https://michaelyagi.github.io/images/tidbyt/helixer.gif",
+            "source": "https://linktr.ee/mrdiv"
+        },
+        {
+            "title": "waves2",
+            "image": "https://michaelyagi.github.io/images/tidbyt/waves2.gif",
+            "source": "https://gifer.com/en/J8L2"
+        },
+        {
+            "title": "star_field",
+            "image": "https://michaelyagi.github.io/images/tidbyt/star_field.gif",
+            "source": "https://gifer.com/en/WDrB"
         }
     ]
 }
