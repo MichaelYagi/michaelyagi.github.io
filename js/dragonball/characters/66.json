@@ -1,6 +1,6 @@
 {
   "id": 66,
-  "name": "Vegeta",
+  "name": "Vegetto",
   "ki": "180 Billion",
   "maxKi": "10.8 Septillion",
   "race": "Saiyan",
@@ -20,7 +20,7 @@
   "transformations": [
     {
       "id": 40,
-      "name": "Vegeta SSJ",
+      "name": "Vegetto SSJ",
       "image": "https://dragonball-api.com/transformaciones/Vegetto.webp",
       "ki": "9 Trillion",
       "deletedAt": null
