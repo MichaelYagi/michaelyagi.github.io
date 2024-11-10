@@ -1,17 +1,17 @@
 {
   "id": 66,
-  "name": "Vegetto",
+  "name": "Vegito",
   "ki": "180 Billion",
   "maxKi": "10.8 Septillion",
   "race": "Saiyan",
-  "gender": "male",
-  "description": "Vegetto is the strongest character within the original manga and one of the most powerful characters in the entire series in general. ",
+  "gender": "Male",
+  "description": "Vegito is the strongest character within the original manga and one of the most powerful characters in the entire series in general. ",
   "image": "https://dragonball-api.com/transformaciones/Vegetto.webp",
   "affiliation": "Z Fighter",
   "deletedAt": null,
   "originPlanet": {
     "id": 2,
-    "name": "Land",
+    "name": "Earth",
     "isDestroyed": false,
     "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
     "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
@@ -20,7 +20,7 @@
   "transformations": [
     {
       "id": 40,
-      "name": "Vegetto SSJ",
+      "name": "Vegito SSJ",
       "image": "https://dragonball-api.com/transformaciones/Vegetto.webp",
       "ki": "9 Trillion",
       "deletedAt": null
