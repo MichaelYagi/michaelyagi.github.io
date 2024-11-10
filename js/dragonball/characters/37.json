@@ -4,7 +4,7 @@
   "ki": "3.2 Billion",
   "maxKi": "3.2 Billion",
   "race": "God",
-  "gender": "male",
+  "gender": "Male",
   "description": "It is the fusion between Shin and Kibito. ",
   "image": "https://dragonball-api.com/characters/Kibito_shin_Artwork.webp",
   "affiliation": "Other",
@@ -13,7 +13,7 @@
     "id": 21,
     "name": "Core of the World",
     "isDestroyed": false,
-    "description": "The Core of the World is the native planet of the entire nucleic species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
+    "description": "The Core of the World is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
     "image": "https://dragonball-api.com/planetas/Planeta_Sagrado.webp",
     "deletedAt": null
   },
