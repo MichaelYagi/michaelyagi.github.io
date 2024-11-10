@@ -1,0 +1,21 @@
+{
+  "id": 31,
+  "name": "Babidi",
+  "ki": "0",
+  "maxKi": "0",
+  "race": "majin",
+  "gender": "male",
+  "description": "Also known as Bóbidi or Bábidi, he is a powerful Madoshi sorcerer, \"son\" of the great magician Bibbidi, founder of the Majin family. ",
+  "image": "https://dragonball-api.com/characters/Babidi_Artwork.webp",
+  "affiliation": "Villain",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 16,
+    "name": "A stranger",
+    "isDestroyed": false,
+    "description": "No information",
+    "image": "https://dragonball-api.com/planetas/planetwhatis.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

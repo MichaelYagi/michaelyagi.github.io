@@ -1,0 +1,21 @@
+{
+  "id": 71,
+  "name": "Kaio of the West",
+  "ki": "unknown",
+  "maxKi": "unknown",
+  "race": "Benign Nucleic",
+  "gender": "male",
+  "description": "The Kaiō of the West is the rival of the Kaio of the North. ",
+  "image": "https://dragonball-api.com/characters/West Kaio.webp",
+  "affiliation": "Other",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 21,
+    "name": "Core of the World",
+    "isDestroyed": false,
+    "description": "The Core of the World is the native planet of the entire nucleic species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
+    "image": "https://dragonball-api.com/planetas/nucleo_mundo.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

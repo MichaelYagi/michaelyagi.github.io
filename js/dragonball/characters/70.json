@@ -1,0 +1,21 @@
+{
+  "id": 70,
+  "name": "East Kaio",
+  "ki": "unknown",
+  "maxKi": "unknown",
+  "race": "Benign Nucleic",
+  "gender": "Female",
+  "description": "The Eastern Kaiō is a Kaio that only appears in the anime. ",
+  "image": "https://dragonball-api.com/characters/kaio del este.webp",
+  "affiliation": "Other",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 21,
+    "name": "Core of the World",
+    "isDestroyed": false,
+    "description": "The Core of the World is the native planet of the entire nucleic species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
+    "image": "https://dragonball-api.com/planetas/nucleo_mundo.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

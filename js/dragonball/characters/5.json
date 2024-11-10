@@ -1,0 +1,50 @@
+{
+  "id": 5,
+  "name": "Frieza",
+  "ki": "530,000",
+  "maxKi": "52.71 Septillion",
+  "race": "Frieza Race",
+  "gender": "male",
+  "description": "Frieza is the space tyrant and the main antagonist of the Frieza saga.",
+  "image": "https://dragonball-api.com/characters/Freezer.webp",
+  "affiliation": "Army of Frieza",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 4,
+    "name": "Frieza No. 79",
+    "isDestroyed": true,
+    "description": "Artificial planet used by Frieza as a base of operations and cloning center.",
+    "image": "https://dragonball-api.com/planetas/PlanetaFreezer.webp",
+    "deletedAt": null
+  },
+  "transformations": [
+    {
+      "id": 14,
+      "name": "Frieza 2nd Form",
+      "image": "https://dragonball-api.com/transformaciones/freezer 2nd forma.webp",
+      "ki": "1,060,000",
+      "deletedAt": null
+    },
+    {
+      "id": 15,
+      "name": "Frieza 3rd Form",
+      "image": "https://dragonball-api.com/transformaciones/Freezer_3.webp",
+      "ki": "2,120,000",
+      "deletedAt": null
+    },
+    {
+      "id": 16,
+      "name": "Freezer Perfect Form",
+      "image": "https://dragonball-api.com/transformaciones/render_freezer_perfect_form_by_poh2000-d4n0ewd.webp",
+      "ki": "60,000,000",
+      "deletedAt": null
+    },
+    {
+      "id": 17,
+      "name": "Freezer Perfect Form (Golden)",
+      "image": "https://dragonball-api.com/transformaciones/freezer_gold.webp",
+      "ki": "100 Quintillion",
+      "deletedAt": null
+    }
+  ]
+}

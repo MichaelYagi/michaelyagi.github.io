@@ -1,0 +1,21 @@
+{
+  "id": 44,
+  "name": "Grand Priest ",
+  "ki": "969 Googolplex",
+  "maxKi": "969 Googolplex",
+  "race": "Angel",
+  "gender": "male",
+  "description": "The Grand Priest is the tournament supervisor and one of the most powerful beings. ",
+  "image": "https://dragonball-api.com/characters/Grand priest.webp",
+  "affiliation": "Other",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 24,
+    "name": "Mobile Temple of the King of All",
+    "isDestroyed": false,
+    "description": "The mobile temple of the King of All (throne room), is as its name indicates, a mobile temple in which resides the thrones of the two Kings of All in the Survival Location in Dragon Ball Super.",
+    "image": "https://dragonball-api.com/planetas/Trono_del_Rey_de_Todo.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

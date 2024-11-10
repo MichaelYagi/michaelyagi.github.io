@@ -1,0 +1,29 @@
+{
+  "id": 67,
+  "name": "Janemba",
+  "ki": "15 Billion",
+  "maxKi": "75 Billion",
+  "race": "Evil",
+  "gender": "male",
+  "description": "Janemba is a demon of pure evil and great evil power. ",
+  "image": "https://dragonball-api.com/transformaciones/Janemba_artwork_SDBH.webp",
+  "affiliation": "Other",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 18,
+    "name": "Another World",
+    "isDestroyed": false,
+    "description": "The Other World, in counterpart to the World of the living, is, in Dragon Ball, the version of the world of the dead. ",
+    "image": "https://dragonball-api.com/planetas/otro mundo.webp",
+    "deletedAt": null
+  },
+  "transformations": [
+    {
+      "id": 42,
+      "name": "Super Janemba",
+      "image": "https://dragonball-api.com/transformaciones/Super-Janemba_artwork_SDBH.webp",
+      "ki": "75 Billion",
+      "deletedAt": null
+    }
+  ]
+}

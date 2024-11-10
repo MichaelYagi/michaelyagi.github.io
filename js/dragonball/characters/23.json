@@ -1,0 +1,21 @@
+{
+  "id": 23,
+  "name": "Android 16",
+  "ki": "440,000,000",
+  "maxKi": "440,000,000",
+  "race": "Android",
+  "gender": "male",
+  "description": "Android 16 is a giant android known for his love of nature and life.",
+  "image": "https://dragonball-api.com/characters/Androide_16.webp",
+  "affiliation": "Villain",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

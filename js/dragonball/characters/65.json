@@ -1,0 +1,50 @@
+{
+  "id": 65,
+  "name": "gogeta",
+  "ki": "250 Billion",
+  "maxKi": "15 septillion",
+  "race": "Saiyan",
+  "gender": "male",
+  "description": "Gogeta is the resulting fusion of Son Goku and Vegeta, when they perform the Fusion Dance correctly to confront Broly. ",
+  "image": "https://dragonball-api.com/transformaciones/gogeta.webp",
+  "affiliation": "Z Fighter",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": [
+    {
+      "id": 36,
+      "name": "Gogeta SSJ",
+      "image": "https://dragonball-api.com/transformaciones/gogeta_ssj_render_2_by_ssjrose890_de2z0ra-pre.webp",
+      "ki": "6.3 sextillion",
+      "deletedAt": null
+    },
+    {
+      "id": 37,
+      "name": "Gogeta SSJ4",
+      "image": "https://dragonball-api.com/transformaciones/GOGETA SSJ4.webp",
+      "ki": "168 quadrillion",
+      "deletedAt": null
+    },
+    {
+      "id": 38,
+      "name": "Gogeta SSJB",
+      "image": "https://dragonball-api.com/transformaciones/gogeta SSJB.webp",
+      "ki": "12.6 septillion",
+      "deletedAt": null
+    },
+    {
+      "id": 39,
+      "name": "Gogeta SSJB Evolved",
+      "image": "https://dragonball-api.com/transformaciones/gogeta__bm__ssb_evolution___1__con_aura__by_ssjrose890_df682g0-fullview.webp",
+      "ki": "1.26 octillion",
+      "deletedAt": null
+    }
+  ]
+}

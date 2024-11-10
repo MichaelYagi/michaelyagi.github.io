@@ -1,0 +1,50 @@
+{
+  "id": 32,
+  "name": "Majin Buu",
+  "ki": "8 Billion",
+  "maxKi": "100 Trillion",
+  "race": "majin",
+  "gender": "male",
+  "description": "Also known as Original Boo, he is the original, pure form of Majin-Boo, and the last form of Boo to appear in Dragon Ball Z.",
+  "image": "https://dragonball-api.com/characters/BuuGordo_Universo7.webp",
+  "affiliation": "Villain",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": [
+    {
+      "id": 32,
+      "name": "Super Buu",
+      "image": "https://dragonball-api.com/transformaciones/Super_Buu_Artwork.webp",
+      "ki": "5,670,000,000",
+      "deletedAt": null
+    },
+    {
+      "id": 33,
+      "name": "Majin Buu (Gotenks)",
+      "image": "https://dragonball-api.com/transformaciones/Gotenks-Buu-removebg-preview.webp",
+      "ki": "12,300,000,000",
+      "deletedAt": null
+    },
+    {
+      "id": 34,
+      "name": "Majin Buu (Gohan)",
+      "image": "https://dragonball-api.com/transformaciones/Super_Buu_Gohan_Absorbido.webp",
+      "ki": "14,800,000,000",
+      "deletedAt": null
+    },
+    {
+      "id": 35,
+      "name": "Majin Buu (Pure)",
+      "image": "https://dragonball-api.com/transformaciones/majin buu pure.webp",
+      "ki": "4,000,000,000",
+      "deletedAt": null
+    }
+  ]
+}

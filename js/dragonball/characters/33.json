@@ -1,0 +1,21 @@
+{
+  "id": 33,
+  "name": "Bills",
+  "ki": "102 Billion",
+  "maxKi": "100 septillion",
+  "race": "God",
+  "gender": "male",
+  "description": "God of Destruction Beerus, also known as Beers, or Beerus in Latin America and initially in Spain[1], is a character that was introduced in the film Dragon Ball Z: Battle of the Gods, where he is the main antagonist of the film. ",
+  "image": "https://dragonball-api.com/characters/Beerus_DBS_Broly_Artwork.webp",
+  "affiliation": "Other",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 19,
+    "name": "Beerus' Planet ",
+    "isDestroyed": false,
+    "description": "Beerus' Planet, a celestial body located within the world of the living in Universe 7, which appears for the first time in the movie Dragon Ball Z: Battle of the Gods.",
+    "image": "https://dragonball-api.com/planetas/Templo_de_Bills2.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

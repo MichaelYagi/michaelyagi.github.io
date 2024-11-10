@@ -1,0 +1,21 @@
+{
+  "id": 28,
+  "name": "Android 15",
+  "ki": "175,000,000",
+  "maxKi": "175,000,000",
+  "race": "Android",
+  "gender": "male",
+  "description": "Android 15 is another android that appears in the same movie as Android 13.",
+  "image": "https://dragonball-api.com/characters/15Dokkan.webp",
+  "affiliation": "Villain",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

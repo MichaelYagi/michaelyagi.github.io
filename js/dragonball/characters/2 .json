@@ -1,0 +1,57 @@
+{
+  "id": 2,
+  "name": "Vegeta",
+  "ki": "54,000,000",
+  "maxKi": "19.84 Septillion",
+  "race": "Saiyan",
+  "gender": "male",
+  "description": "Prince of the Saiyans, initially a villain, but later joins the Z Fighters. ",
+  "image": "https://dragonball-api.com/characters/vegeta_normal.webp",
+  "affiliation": "Z Fighter",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 3,
+    "name": "Vegeta",
+    "isDestroyed": true,
+    "description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7. ",
+    "image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
+    "deletedAt": null
+  },
+  "transformations": [
+    {
+      "id": 7,
+      "name": "Vegeta SSJ",
+      "image": "https://dragonball-api.com/transformaciones/vegeta SSJ (2).webp",
+      "ki": "330,000,000",
+      "deletedAt": null
+    },
+    {
+      "id": 8,
+      "name": "Vegeta SSJ2",
+      "image": "https://dragonball-api.com/transformaciones/vegeta SSJ2.webp",
+      "ki": "24 Billion",
+      "deletedAt": null
+    },
+    {
+      "id": 9,
+      "name": "Vegeta SSJ4",
+      "image": "https://dragonball-api.com/transformaciones/vegeta ssj4.webp",
+      "ki": "1.8 Trillion",
+      "deletedAt": null
+    },
+    {
+      "id": 10,
+      "name": "Vegeta SSJB",
+      "image": "https://dragonball-api.com/transformaciones/vegeta SSJB.webp",
+      "ki": "100 Quintillion",
+      "deletedAt": null
+    },
+    {
+      "id": 11,
+      "name": "Vegeta Mega Instinc Evil",
+      "image": "https://dragonball-api.com/transformaciones/vegeta mega instinct.webp",
+      "ki": "19.84 Septillion",
+      "deletedAt": null
+    }
+  ]
+}

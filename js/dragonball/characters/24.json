@@ -1,0 +1,21 @@
+{
+  "id": 24,
+  "name": "Android 19",
+  "ki": "122,000,000",
+  "maxKi": "160,000,000",
+  "race": "Android",
+  "gender": "male",
+  "description": "Android 19 is one of the androids created by Dr. Gero.",
+  "image": "https://dragonball-api.com/characters/Android19.webp",
+  "affiliation": "Villain",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

@@ -1,0 +1,21 @@
+{
+  "id": 14,
+  "name": "Chi-Chi",
+  "ki": "0",
+  "maxKi": "0",
+  "race": "human",
+  "gender": "Female",
+  "description": "Goku's wife and Gohan's mother. ",
+  "image": "https://dragonball-api.com/characters/ChiChi_DBS.webp",
+  "affiliation": "Z Fighter",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

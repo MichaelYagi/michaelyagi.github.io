@@ -1,0 +1,21 @@
+{
+  "id": 26,
+  "name": "Android 13",
+  "ki": "195,000,000",
+  "maxKi": "562,500,000",
+  "race": "Android",
+  "gender": "male",
+  "description": "Android 13 is a dangerous android that appears in the movie \"Cooler Returns.\"",
+  "image": "https://dragonball-api.com/characters/Androide13normal.webp",
+  "affiliation": "Villain",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

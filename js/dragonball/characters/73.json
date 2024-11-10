@@ -1,0 +1,21 @@
+{
+  "id": 73,
+  "name": "Eastern Kaio-shin",
+  "ki": "unknown",
+  "maxKi": "unknown",
+  "race": "Nucleic",
+  "gender": "male",
+  "description": "He is one of the Kaio-shin, the gods of creation who are responsible for creating life throughout Universe 7 and protecting it from supreme threats.\n",
+  "image": "https://dragonball-api.com/characters/Kaio-shin_del_este_Artwork.webp",
+  "affiliation": "Other",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 21,
+    "name": "Core of the World",
+    "isDestroyed": false,
+    "description": "The Core of the World is the native planet of the entire nucleic species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
+    "image": "https://dragonball-api.com/planetas/nucleo_mundo.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

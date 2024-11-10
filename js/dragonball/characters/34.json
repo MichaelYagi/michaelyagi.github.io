@@ -1,0 +1,21 @@
+{
+  "id": 34,
+  "name": "Whis",
+  "ki": "15 septillion",
+  "maxKi": "110 septillion",
+  "race": "Angel",
+  "gender": "male",
+  "description": "Whis is one of the sons of the High Priest, younger brother of Vados, Korn and Kus. ",
+  "image": "https://dragonball-api.com/characters/Whis_DBS_Broly_Artwork.webp",
+  "affiliation": "Assistant of Beerus",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 19,
+    "name": "Beerus' Planet ",
+    "isDestroyed": false,
+    "description": "Beerus' Planet, a celestial body located within the world of the living in Universe 7, which appears for the first time in the movie Dragon Ball Z: Battle of the Gods.",
+    "image": "https://dragonball-api.com/planetas/Templo_de_Bills2.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

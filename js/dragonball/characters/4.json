@@ -1,0 +1,21 @@
+{
+  "id": 4,
+  "name": "Bulma",
+  "ki": "0",
+  "maxKi": "0",
+  "race": "human",
+  "gender": "Female",
+  "description": "Bulma is the female protagonist of the Dragon Ball manga series and its anime adaptations Dragon Ball, Dragon Ball Z, Dragon Ball Super, and Dragon Ball GT. ",
+  "image": "https://dragonball-api.com/characters/bulma.webp",
+  "affiliation": "Z Fighter",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

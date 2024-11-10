@@ -1,0 +1,21 @@
+{
+  "id": 38,
+  "name": "Jiren",
+  "ki": "121 Quintillion",
+  "maxKi": "12.1 Septillion",
+  "race": "Jiren Race",
+  "gender": "male",
+  "description": "Jiren is a powerful fighter from Universe 11 and one of the most formidable opponents in the tournament.",
+  "image": "https://dragonball-api.com/characters/Jiren.webp",
+  "affiliation": "Pride Troopers",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 25,
+    "name": "Universe 11",
+    "isDestroyed": false,
+    "description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball. ",
+    "image": "https://dragonball-api.com/planetas/Universo_11.webp",
+    "deletedAt": null
+  },
+  "transformations": []
+}

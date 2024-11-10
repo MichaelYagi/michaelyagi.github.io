@@ -1,0 +1,36 @@
+{
+  "id": 15,
+  "name": "Gotenks",
+  "ki": "65,600,000",
+  "maxKi": "34.8 Billion",
+  "race": "Saiyan",
+  "gender": "male",
+  "description": " Gotenks, also initially known as Gotrunk in the Spanish dub of Spain, is the result of the Fusion Dance performed correctly by Goten and Trunks.",
+  "image": "https://dragonball-api.com/characters/Gotenks_Artwork.webp",
+  "affiliation": "Z Fighter",
+  "deletedAt": null,
+  "originPlanet": {
+    "id": 2,
+    "name": "Land",
+    "isDestroyed": false,
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+    "deletedAt": null
+  },
+  "transformations": [
+    {
+      "id": 30,
+      "name": "Gotenks SSJ",
+      "image": "https://dragonball-api.com/transformaciones/gotenks ssj.webp",
+      "ki": "5.7 Billion",
+      "deletedAt": null
+    },
+    {
+      "id": 31,
+      "name": "Gotenks SSJ3",
+      "image": "https://dragonball-api.com/transformaciones/Gotenks_SSJ3.webp",
+      "ki": "45.6 Billion",
+      "deletedAt": null
+    }
+  ]
+}
