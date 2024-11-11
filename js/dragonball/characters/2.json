@@ -4,7 +4,7 @@
   "ki": "54,000,000",
   "maxKi": "19.84 Septillion",
   "race": "Saiyan",
-  "gender": "male",
+  "gender": "Male",
   "description": "Prince of the Saiyans, initially a villain, but later joins the Z Fighters. ",
   "image": "https://dragonball-api.com/characters/vegeta_normal.webp",
   "affiliation": "Z Fighter",
@@ -48,8 +48,8 @@
     },
     {
       "id": 11,
-      "name": "Vegeta Mega Instinc Evil",
-      "image": "https://dragonball-api.com/transformaciones/vegeta mega instinct.webp",
+      "name": "Vegeta Mega Instinct Evil",
+      "image": "https://dragonball-api.com/transformaciones/vegeta%20mega%20instinto.webp",
       "ki": "19.84 Septillion",
       "deletedAt": null
     }

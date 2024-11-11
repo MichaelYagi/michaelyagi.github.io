@@ -4,7 +4,7 @@
   "ki": "60,000,000",
   "maxKi": "90 Septillion",
   "race": "Saiyan",
-  "gender": "male",
+  "gender": "Male",
   "description": "The protagonist of the series, known for his great power and friendly personality. ",
   "image": "https://dragonball-api.com/characters/goku_normal.webp",
   "affiliation": "Z Fighter",
@@ -55,7 +55,7 @@
     },
     {
       "id": 44,
-      "name": "Goku Ultra Instinc",
+      "name": "Goku Ultra Instinct",
       "image": "https://dragonball-api.com/transformaciones/goku_ultra.webp",
       "ki": "90 Septillion",
       "deletedAt": null
