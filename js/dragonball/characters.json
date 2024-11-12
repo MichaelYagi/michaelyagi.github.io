@@ -296,7 +296,7 @@
       "race": "Android",
       "gender": "Male",
       "description": "Dr. Gero is the mad scientist who created Androids 17, 18, and 19.",
-      "image": "https://dragonball-api.com/characters/Dr._Gero nadroide 20.webp",
+      "image": "https://dragonball-api.com/characters/Dr._Gero%20nadroide%2020.webp",
       "affiliation": "Villain",
       "deletedAt": null
     },
@@ -500,7 +500,7 @@
       "race": "Angel",
       "gender": "Male",
       "description": "The Grand Priest is the tournament supervisor and one of the most powerful beings. ",
-      "image": "https://dragonball-api.com/characters/Grand priest.webp",
+      "image": "https://dragonball-api.com/characters/Grand%20priest.webp",
       "affiliation": "Other",
       "deletedAt": null
     },
@@ -596,7 +596,7 @@
       "race": "Shinjin",
       "gender": "Female",
       "description": "The Eastern Kaiō is a Kaio that only appears in the anime. ",
-      "image": "https://dragonball-api.com/characters/kaio del este.webp",
+      "image": "https://dragonball-api.com/characters/kaio%20del%20este.webp",
       "affiliation": "Other",
       "deletedAt": null
     },
