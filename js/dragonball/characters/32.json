@@ -42,7 +42,7 @@
     {
       "id": 35,
       "name": "Majin Buu (Pure)",
-      "image": "https://dragonball-api.com/transformaciones/majin buu pure.webp",
+      "image": "https://dragonball-api.com/transformaciones/majin%20buu%20pure.webp",
       "ki": "4,000,000,000",
       "deletedAt": null
     }

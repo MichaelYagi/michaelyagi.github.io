@@ -21,7 +21,7 @@
     {
       "id": 19,
       "name": "Imperfect Form",
-      "image": "https://dragonball-api.com/transformaciones/cell imperfect.webp",
+      "image": "https://dragonball-api.com/transformaciones/cell%20imperfect.webp",
       "ki": "370,000,000",
       "deletedAt": null
     },
@@ -35,7 +35,7 @@
     {
       "id": 21,
       "name": "Super Perfect Form",
-      "image": "https://dragonball-api.com/transformaciones/cell perfect.webp",
+      "image": "https://dragonball-api.com/transformaciones/cell%20perfect.webp",
       "ki": "10,970,000,000",
       "deletedAt": null
     }

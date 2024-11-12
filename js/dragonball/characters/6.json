@@ -21,7 +21,7 @@
     {
       "id": 18,
       "name": "Zarbon Monster",
-      "image": "https://dragonball-api.com/transformaciones/zarbon monster.webp",
+      "image": "https://dragonball-api.com/transformaciones/zarbon%20monster.webp",
       "ki": "30,000",
       "deletedAt": null
     }

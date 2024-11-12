@@ -35,14 +35,14 @@
     {
       "id": 28,
       "name": "SSJ3 Trunks",
-      "image": "https://dragonball-api.com/transformaciones/trunks ssj3.webp",
+      "image": "https://dragonball-api.com/transformaciones/trunks%20ssj3.webp",
       "ki": "1.25 Billion",
       "deletedAt": null
     },
     {
       "id": 29,
       "name": "Trunks Rage",
-      "image": "https://dragonball-api.com/transformaciones/trunks ssj iracundo.webp",
+      "image": "https://dragonball-api.com/transformaciones/trunks%20ssj%20iracundo.webp",
       "ki": "17.5 Quintillion ",
       "deletedAt": null
     }

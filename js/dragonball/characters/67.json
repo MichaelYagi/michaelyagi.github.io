@@ -14,7 +14,7 @@
     "name": "Another World",
     "isDestroyed": false,
     "description": "The Other World, in counterpart to the World of the living, is, in Dragon Ball, the version of the world of the dead. ",
-    "image": "https://dragonball-api.com/planetas/otro mundo.webp",
+    "image": "https://dragonball-api.com/planetas/otro%20mundo.webp",
     "deletedAt": null
   },
   "transformations": [

@@ -21,14 +21,14 @@
     {
       "id": 40,
       "name": "Vegito SSJ",
-      "image": "https://dragonball-api.com/transformaciones/Vegetto.webp",
+      "image": "https://michaelyagi.github.io/images/dragonball/vegito_ssj.png",
       "ki": "9 Trillion",
       "deletedAt": null
     },
     {
       "id": 41,
       "name": "Vegito SSJB",
-      "image": "https://dragonball-api.com/transformaciones/VEGITO SSJB.webp",
+      "image": "https://dragonball-api.com/transformaciones/VEGITO%20SSJB.webp",
       "ki": "10.8 Septillion",
       "deletedAt": null
     }

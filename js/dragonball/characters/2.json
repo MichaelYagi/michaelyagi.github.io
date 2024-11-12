@@ -21,28 +21,28 @@
     {
       "id": 7,
       "name": "Vegeta SSJ",
-      "image": "https://dragonball-api.com/transformaciones/vegeta SSJ (2).webp",
+      "image": "https://dragonball-api.com/transformaciones/vegeta%20SSJ%20(2).webp",
       "ki": "330,000,000",
       "deletedAt": null
     },
     {
       "id": 8,
       "name": "Vegeta SSJ2",
-      "image": "https://dragonball-api.com/transformaciones/vegeta SSJ2.webp",
+      "image": "https://dragonball-api.com/transformaciones/vegeta%20SSJ2.webp",
       "ki": "24 Billion",
       "deletedAt": null
     },
     {
       "id": 9,
       "name": "Vegeta SSJ4",
-      "image": "https://dragonball-api.com/transformaciones/vegeta ssj4.webp",
+      "image": "https://dragonball-api.com/transformaciones/vegeta%20ssj4.webp",
       "ki": "1.8 Trillion",
       "deletedAt": null
     },
     {
       "id": 10,
       "name": "Vegeta SSJB",
-      "image": "https://dragonball-api.com/transformaciones/vegeta SSJB.webp",
+      "image": "https://dragonball-api.com/transformaciones/vegeta%20SSJB.webp",
       "ki": "100 Quintillion",
       "deletedAt": null
     },
