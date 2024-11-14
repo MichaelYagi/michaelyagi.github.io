@@ -11,10 +11,10 @@
   "deletedAt": null,
   "originPlanet": {
     "id": 21,
-    "name": "Core of the World",
+    "name": "World Core",
     "isDestroyed": false,
-    "description": "The Core of the World is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
-    "image": "https://dragonball-api.com/planetas/Planeta_Sagrado.webp",
+    "description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
+    "image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
     "deletedAt": null
   },
   "transformations": []
