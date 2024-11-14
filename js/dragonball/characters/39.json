@@ -5,7 +5,7 @@
   "maxKi": "7.5 Sextillion",
   "race": "God",
   "gender": "Male",
-  "description": "Toppo is the leader of the Pride Troops, warriors of justice from Universe 11 who act as protectors of peace and superheroes of good. ",
+  "description": "Toppo is the leader of the Pride Troops, warriors of justice from Universe 11 who act as protectors of peace and superheroes of good.",
   "image": "https://dragonball-api.com/characters/Toppo.webp",
   "affiliation": "Pride Troopers",
   "deletedAt": null,
@@ -13,7 +13,7 @@
     "id": 25,
     "name": "Universe 11",
     "isDestroyed": false,
-    "description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball. ",
+    "description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball.",
     "image": "https://dragonball-api.com/planetas/Universo_11.webp",
     "deletedAt": null
   },

@@ -5,7 +5,7 @@
   "maxKi": "40 Quintillion",
   "race": "Android",
   "gender": "Male",
-  "description": "Before being kidnapped, he is the twin brother of Android Number 18, who like her before being an Android was a normal human until they were kidnapped by Dr. Gero, and that is why they hate him. ",
+  "description": "Before being kidnapped, he is the twin brother of Android Number 18, who like her before being an Android was a normal human until they were kidnapped by Dr. Gero, and that is why they hate him.",
   "image": "https://dragonball-api.com/characters/17_Artwork.webp",
   "affiliation": "Villain",
   "deletedAt": null,
@@ -13,7 +13,7 @@
     "id": 2,
     "name": "Earth",
     "isDestroyed": false,
-    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
     "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
     "deletedAt": null
   },

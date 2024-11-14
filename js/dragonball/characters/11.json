@@ -5,7 +5,7 @@
   "maxKi": "1 Billion",
   "race": "Human",
   "gender": "Male",
-  "description": "Goku's close friend and brave warrior, he is a character from the Dragon Ball manga and anime. ",
+  "description": "Goku's close friend and brave warrior, he is a character from the Dragon Ball manga and anime.",
   "image": "https://dragonball-api.com/characters/Krilin_Universo7.webp",
   "affiliation": "Z Fighter",
   "deletedAt": null,
@@ -13,7 +13,7 @@
     "id": 2,
     "name": "Earth",
     "isDestroyed": false,
-    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
     "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
     "deletedAt": null
   },

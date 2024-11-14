@@ -5,7 +5,7 @@
   "maxKi": "3,200",
   "race": "Namekian",
   "gender": "Male",
-  "description": "Piccolo's successor as the new Namekian protector of Earth. ",
+  "description": "Piccolo's successor as the new Namekian protector of Earth.",
   "image": "https://dragonball-api.com/characters/Dende_Artwork.webp",
   "affiliation": "Z Fighter",
   "deletedAt": null,
@@ -13,7 +13,7 @@
     "id": 1,
     "name": "Namek",
     "isDestroyed": true,
-    "description": "Home planet of the Namekians. ",
+    "description": "Home planet of the Namekians.",
     "image": "https://dragonball-api.com/planetas/Namek_U7.webp",
     "deletedAt": null
   },

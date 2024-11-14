@@ -5,7 +5,7 @@
   "maxKi": "90 Septillion",
   "race": "Saiyan",
   "gender": "Male",
-  "description": "The protagonist of the series, known for his great power and friendly personality. ",
+  "description": "The protagonist of the series, known for his great power and friendly personality.",
   "image": "https://dragonball-api.com/characters/goku_normal.webp",
   "affiliation": "Z Fighter",
   "deletedAt": null,
@@ -13,7 +13,7 @@
     "id": 3,
     "name": "Vegeta",
     "isDestroyed": true,
-    "description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7. ",
+    "description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7.",
     "image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
     "deletedAt": null
   },

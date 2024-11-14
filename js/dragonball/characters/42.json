@@ -5,7 +5,7 @@
   "maxKi": "99.5 septillion",
   "race": "Angel",
   "gender": "Female",
-  "description": "Marcarita is the guiding angel of Universe 11, servant and martial arts teacher of the God of Destruction Vermoud. ",
+  "description": "Marcarita is the guiding angel of Universe 11, servant and martial arts teacher of the God of Destruction Vermoud.",
   "image": "https://dragonball-api.com/characters/Marcarita.webp",
   "affiliation": "Assistant of Vermoud",
   "deletedAt": null,
@@ -13,7 +13,7 @@
     "id": 25,
     "name": "Universe 11",
     "isDestroyed": false,
-    "description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball. ",
+    "description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball.",
     "image": "https://dragonball-api.com/planetas/Universo_11.webp",
     "deletedAt": null
   },

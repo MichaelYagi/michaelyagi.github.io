@@ -5,7 +5,7 @@
   "maxKi": "40 septillion",
   "race": "Saiyan",
   "gender": "Male",
-  "description": "Son Gohanda in his time in Spain, or simply Gohan in Latin America, is one of the main characters of the story arcs of Dragon Ball Z, Dragon Ball Super and Dragon Ball GT. ",
+  "description": "Son Gohanda in his time in Spain, or simply Gohan in Latin America, is one of the main characters of the story arcs of Dragon Ball Z, Dragon Ball Super and Dragon Ball GT.",
   "image": "https://dragonball-api.com/characters/gohan.webp",
   "affiliation": "Z Fighter",
   "deletedAt": null,
@@ -13,7 +13,7 @@
     "id": 2,
     "name": "Earth",
     "isDestroyed": false,
-    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. ",
+    "description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
     "image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
     "deletedAt": null
   },

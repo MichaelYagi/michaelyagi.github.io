@@ -13,7 +13,7 @@
     "id": 1,
     "name": "Namek",
     "isDestroyed": true,
-    "description": "Home planet of the Namekians. ",
+    "description": "Home planet of the Namekians.",
     "image": "https://dragonball-api.com/planetas/Namek_U7.webp",
     "deletedAt": null
   },
