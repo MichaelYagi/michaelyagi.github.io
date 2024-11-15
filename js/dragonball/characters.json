@@ -489,7 +489,7 @@
 			"race": "Android",
 			"gender": "Male",
 			"description": "Android 16 is a giant android known for his love of nature and life.",
-			"image": "https://dragonball-api.com/characters/Androide_16.webp",
+			"image": "https://michaelyagi.github.io/images/dragonball/Android16.png",
 			"affiliation": "Villain",
 			"planetKey": "2",
 			"transformations": []
@@ -554,7 +554,7 @@
 			"race": "Android",
 			"gender": "Male",
 			"description": "Android 15 is another android that appears in the same movie as Android 13.",
-			"image": "https://dragonball-api.com/characters/15Dokkan.webp",
+			"image": "https://michaelyagi.github.io/images/dragonball/Android15Dokkan.webp",
 			"affiliation": "Villain",
 			"planetKey": "2",
 			"transformations": []
@@ -567,7 +567,7 @@
 			"race": "Namekian",
 			"gender": "Male",
 			"description": "He is a Namekian (inhabitant of the planet Namek), who is characterized by being part of the few members of the \"warrior lineage\", and being the most powerful among them along with Piccolo.",
-			"image": "https://dragonball-api.com/characters/Nail_Artwork.webp",
+			"image": "https://michaelyagi.github.io/images/dragonball/nail.webp",
 			"affiliation": "Z Fighter",
 			"planetKey": "1",
 			"transformations": []
