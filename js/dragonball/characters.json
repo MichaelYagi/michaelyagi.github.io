@@ -1,5 +1,5 @@
 {
-	"items": [
+	"characters": [
 		{
 			"id": 1,
 			"name": "Goku",
@@ -7,18 +7,11 @@
 			"maxKi": "90 Septillion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "The protagonist of the series, known for his great power and friendly personality.",
+			"description": "The protagonist of the series, known for his great power and friendly personality. Originally sent to Earth as a flying infant with the mission of conquering it. However, falling off a cliff gave him a brutal blow that although it almost killed him, it altered his memory and nullified all the violent instincts of his species, making him grow with a pure and kind heart, but retaining all the powers of his race. However, in the new continuity of Dragon Ball it is established that he was sent by his parents to Earth with the aim of surviving at all costs the destruction of his planet by Freeza. Later, Kakarot, now known as Son Goku, would become the prince consort of Mount Fry-pan and leader of the Z Warriors, as well as the greatest defender of Earth and Universe 7, managing to keep them safe from destruction on countless occasions, despite not considering himself a hero or savior.",
 			"image": "https://dragonball-api.com/characters/goku_normal.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 3,
-				"name": "Vegeta",
-				"isDestroyed": true,
-				"description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7.",
-				"image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
-				"deletedAt": null
-			},
+			"planetId": 3,
 			"transformations": [
 				{
 					"id": 1,
@@ -71,18 +64,11 @@
 			"maxKi": "19.84 Septillion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "Prince of the Saiyans, initially a villain, but later joins the Z Fighters.",
+			"description": "Prince of the Saiyans, initially a villain, but later joins the Z Fighters. Although at the beginning of Dragon Ball Z, Vegeta plays an antagonistic role, soon after he decides to rebel against the Freeza Empire, becoming a key ally to the Z Fighters. Over time he would change his way of being, choosing to remain and live on Earth to fight by his side against the imminent adversities to overcome. Along with Piccolo, he is one of Goku's former enemies who has evolved from being a villain and antihero, to finally a hero throughout the course of history, thus becoming the deuteragonist of the series.",
 			"image": "https://dragonball-api.com/characters/vegeta_normal.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 3,
-				"name": "Vegeta",
-				"isDestroyed": true,
-				"description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7.",
-				"image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
-				"deletedAt": null
-			},
+			"planetId": 3,
 			"transformations": [
 				{
 					"id": 7,
@@ -128,18 +114,11 @@
 			"maxKi": "500,000,000",
 			"race": "Namekian",
 			"gender": "Male",
-			"description": "He is a Namekian who emerged after being created in the last moments of his father's life, being his current reincarnation.",
+			"description": "He is a Namekian who emerged after being created in the last moments of his father's life, being his current reincarnation. Although at first he was Son Goku's archenemy, over time he became less evil until finally becoming a kind being and member of the Z Warriors. Over time, he also began to take a liking to his disciple Son Gohan, whom he saw as a kind of \"scion\" and forming a bond of friendship with him.",
 			"image": "https://dragonball-api.com/characters/picolo_normal.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 1,
-				"name": "Namek",
-				"isDestroyed": true,
-				"description": "Home planet of the Namekians.",
-				"image": "https://dragonball-api.com/planetas/Namek_U7.webp",
-				"deletedAt": null
-			},
+			"planetId": 1,
 			"transformations": [
 				{
 					"id": 12,
@@ -164,18 +143,11 @@
 			"maxKi": "0",
 			"race": "Human",
 			"gender": "Female",
-			"description": "Bulma is the feMale protagonist of the Dragon Ball manga series and its anime adaptations Dragon Ball, Dragon Ball Z, Dragon Ball Super, and Dragon Ball GT.",
+			"description": "Bulma is the female protagonist of the Dragon Ball manga series and its anime adaptations Dragon Ball, Dragon Ball Z, Dragon Ball Super and Dragon Ball GT. She is the daughter of Dr. Brief and his wife Panchy, Tights' younger sister and a great friend of Son Goku with whom she begins the search for the Dragon Balls. In Dragon Ball Z she had Trunks, the firstborn of her future husband Vegeta, her daughter Bra[3] and her adult son from the alternate time Trunks of the Alternate Future.",
 			"image": "https://dragonball-api.com/characters/bulma.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -189,14 +161,7 @@
 			"image": "https://dragonball-api.com/characters/Freezer.webp",
 			"affiliation": "Army of Frieza",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 4,
-				"name": "Frieza No. 79",
-				"isDestroyed": true,
-				"description": "Artificial planet used by Frieza as a base of operations and cloning center.",
-				"image": "https://dragonball-api.com/planetas/PlanetaFreezer.webp",
-				"deletedAt": null
-			},
+			"planetId": 4,
 			"transformations": [
 				{
 					"id": 14,
@@ -239,14 +204,7 @@
 			"image": "https://dragonball-api.com/characters/zarbon.webp",
 			"affiliation": "Army of Frieza",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 4,
-				"name": "Frieza No. 79",
-				"isDestroyed": true,
-				"description": "Artificial planet used by Frieza as a base of operations and cloning center.",
-				"image": "https://dragonball-api.com/planetas/PlanetaFreezer.webp",
-				"deletedAt": null
-			},
+			"planetId": 4,
 			"transformations": [
 				{
 					"id": 18,
@@ -268,14 +226,7 @@
 			"image": "https://dragonball-api.com/characters/dodoria.webp",
 			"affiliation": "Army of Frieza",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 4,
-				"name": "Frieza No. 79",
-				"isDestroyed": true,
-				"description": "Artificial planet used by Frieza as a base of operations and cloning center.",
-				"image": "https://dragonball-api.com/planetas/PlanetaFreezer.webp",
-				"deletedAt": null
-			},
+			"planetId": 4,
 			"transformations": []
 		},
 		{
@@ -285,18 +236,11 @@
 			"maxKi": "25,000",
 			"race": "Frieza Race",
 			"gender": "Male",
-			"description": "Ginyu is the leader of the most prestigious mercenary elite of the Freeza Army, which is named the Ginew Special Forces in his honor.[9]",
+			"description": "Ginyu is the leader of the most prestigious mercenary elite of the Freeza Army, which is named the Ginew Special Forces in his honor.",
 			"image": "https://dragonball-api.com/characters/ginyu.webp",
 			"affiliation": "Army of Frieza",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 1,
-				"name": "Namek",
-				"isDestroyed": true,
-				"description": "Home planet of the Namekians.",
-				"image": "https://dragonball-api.com/planetas/Namek_U7.webp",
-				"deletedAt": null
-			},
+			"planetId": 1,
 			"transformations": []
 		},
 		{
@@ -306,18 +250,11 @@
 			"maxKi": "5 Billion",
 			"race": "Android",
 			"gender": "Male",
-			"description": "Cell, known as Célula in Spain, is a bioandroid created by Dr. Gero's computer, who came from the future of line 3 with the intention of taking revenge on Goku for having destroyed the Red Ribbon Army, and with it the dream of ",
+			"description": "Cell is a bio-android created by Dr. Gero's computer, who came from the future of line 3 with the intention of taking revenge on Goku for having finished off the Red Ribbon Army, and with it the dream of every villain: to dominate the world. He is the main antagonist of the Androids and Cell Arc.",
 			"image": "https://dragonball-api.com/characters/celula.webp",
 			"affiliation": "Freelancer",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": [
 				{
 					"id": 19,
@@ -349,18 +286,11 @@
 			"maxKi": "40 septillion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "Son Gohanda in his time in Spain, or simply Gohan in Latin America, is one of the main characters of the story arcs of Dragon Ball Z, Dragon Ball Super and Dragon Ball GT.",
+			"description": "Gohan is one of the main characters of the story arcs of Dragon Ball Z, Dragon Ball Super and Dragon Ball GT. He is a half-breed between a Saiyan and an Earthling. He is the first son of Son Goku and Chi-Chi, older brother of Son Goten, husband of Videl and father of Pan.",
 			"image": "https://dragonball-api.com/characters/gohan.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": [
 				{
 					"id": 22,
@@ -399,18 +329,11 @@
 			"maxKi": "1 Billion",
 			"race": "Human",
 			"gender": "Male",
-			"description": "Goku's close friend and brave warrior, he is a character from the Dragon Ball manga and anime.",
+			"description": "Close friend of Goku and brave warrior, he is a character from the Dragon Ball manga and anime. He is one of the main disciples of Kame-Sen'nin, Warrior Z, and Son Goku's best friend. He is, along with Bulma, one of the main supporting characters of Dragon Ball, Dragon Ball Z and Dragon Ball Super. He appears in Dragon Ball GT as a secondary character. In the Majin Buu Arc, he retires from martial arts, opting to start a family, as the husband of Android 18 and the father of Marron.",
 			"image": "https://dragonball-api.com/characters/Krilin_Universo7.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -420,18 +343,11 @@
 			"maxKi": "80,000,000",
 			"race": "Human",
 			"gender": "Male",
-			"description": "Master of martial arts and member of the Z Fighters.  ",
+			"description": "Master of martial arts and member of the Z Fighters. He is a character that appears in the manga and anime Dragon Ball, Dragon Ball Z, Dragon Ball GT and later in Dragon Ball Super.",
 			"image": "https://dragonball-api.com/characters/Tenshinhan_Universo7.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -445,14 +361,7 @@
 			"image": "https://dragonball-api.com/characters/Final_Yamcha.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -462,18 +371,11 @@
 			"maxKi": "0",
 			"race": "Human",
 			"gender": "Female",
-			"description": "Goku's wife and Gohan's mother.",
+			"description": "Goku's wife and Gohan's mother. She is the princess of Mount Fry-pan, being the daughter of the deceased queen of this mountain and King Gyuma, she would end up meeting Son Goku when she was just a girl and years later during her adolescence she would be his wife and become the strict but loving mother of Gohan and Goten.",
 			"image": "https://dragonball-api.com/characters/ChiChi_DBS.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -483,18 +385,11 @@
 			"maxKi": "34.8 Billion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": " Gotenks, also initially known as Gotrunk in the Spanish dub of Spain, is the result of the Fusion Dance performed correctly by Goten and Trunks.",
+			"description": " Gotenks is the result of the Fusion Dance performed correctly by Goten and Trunks.",
 			"image": "https://dragonball-api.com/characters/Gotenks_Artwork.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": [
 				{
 					"id": 30,
@@ -519,18 +414,11 @@
 			"maxKi": "37.4 septllion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "Son of Vegeta and Bulma.",
+			"description": "Son of Vegeta and Bulma. He is a half-blood between an Earthling and a Saiyan born on Earth, and the son of Bulma and Vegeta, who is introduced in the Androids and Cell Arc. Later in his life as a young man, he ends up becoming a martial arts fighter, the best friend of Son Goten and the older brother of his sister Bra.",
 			"image": "https://dragonball-api.com/characters/Trunks_Buu_Artwork.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": [
 				{
 					"id": 26,
@@ -569,18 +457,11 @@
 			"maxKi": "350,000,000",
 			"race": "Human",
 			"gender": "Male",
-			"description": "Martial arts teacher and Goku's mentor.",
+			"description": "Martial arts master and mentor to Goku. Known as Muten Rosh, he was once the strongest Earthling on Earth and is remembered by many as the \"God of Martial Arts\", but before he could claim that title he had to work and study martial arts with his master Mutaito and his eternal rival Tsuru-Sen'nin.",
 			"image": "https://dragonball-api.com/characters/roshi.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -590,18 +471,11 @@
 			"maxKi": "180,000,000",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "He is a low-class Saiyan from Planet Vegeta in Universe 7. He belongs to the Saiyan Army, which is under the leadership of King Vegeta, and is the leader of his squad during the annexation of the planet by the colonial forces of the Freeza Empire.",
+			"description": "He is a low-class Saiyan from Planet Vegeta of Universe 7. He belongs to the Saiyan Army, which is under the leadership of King Vegeta, and is the head of his squad during the annexation of the planet by the colonial forces of the Freeza Empire. He is the husband of Gine and the biological father of Kakarot and Raditz.",
 			"image": "https://dragonball-api.com/characters/Bardock_Artwork.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 3,
-				"name": "Vegeta",
-				"isDestroyed": true,
-				"description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7.",
-				"image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
-				"deletedAt": null
-			},
+			"planetId": 3,
 			"transformations": []
 		},
 		{
@@ -611,7 +485,7 @@
 			"maxKi": "0",
 			"race": "Human",
 			"gender": "Female",
-			"description": "Character who suffers personality changes when sneezing.",
+			"description": "Character who suffers personality changes when sneezing. She is one of the main characters of the Dragon Ball manga and its eponymous anime; Lunch is a girl who suffers from a split personality disorder that, as a result of her allergic reactions, causes her to switch between two different personalities, neither of the personalities remembering what the other did or said.",
 			"image": "https://dragonball-api.com/characters/Lunch_traje_de_sirvienta_en_el_manga.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
@@ -619,7 +493,7 @@
 				"id": 2,
 				"name": "Earth",
 				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
+				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. It is located in the Milky Way Solar System of the Northern Galaxies of Universe 7, a place overseen by the North Kai, and has its equivalent in Universe 6. The home of the Earthlings and the Z Warriors. It has been attacked on several occasions by powerful enemies.",
 				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
 				"deletedAt": null
 			},
@@ -636,14 +510,7 @@
 			"image": "https://dragonball-api.com/characters/Mr_Satan_DBSuper.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -653,18 +520,11 @@
 			"maxKi": "3,200",
 			"race": "Namekian",
 			"gender": "Male",
-			"description": "Piccolo's successor as the new Namekian protector of Earth.",
+			"description": "Piccolo's successor as the new Namekian protector of Earth. He is a small Namekian who lived in the village of Moori, along with his brother Scargo and many others of his kind. He is the 108th son of the Great Patriarch and later God of Earth, replacing God.",
 			"image": "https://dragonball-api.com/characters/Dende_Artwork.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 1,
-				"name": "Namek",
-				"isDestroyed": true,
-				"description": "Home planet of the Namekians.",
-				"image": "https://dragonball-api.com/planetas/Namek_U7.webp",
-				"deletedAt": null
-			},
+			"planetId": 1,
 			"transformations": []
 		},
 		{
@@ -674,18 +534,11 @@
 			"maxKi": "40 Quintillion",
 			"race": "Android",
 			"gender": "Male",
-			"description": "Before being kidnapped, he is the twin brother of Android Number 18, who like her before being an Android was a normal Human until they were kidnapped by Dr. Gero, and that is why they hate him.",
+			"description": "Before being kidnapped, he is the twin brother of Android 18, who like her before being an Android was a normal human until they were kidnapped by Dr. Gero, and that is why they hate him. After his change from human to Android, a chip was inserted in him with the aim of destroying Son Goku, who in his youth exterminated the Red Ribbon Army. Considering himself defective because he did not want to be 'anyone's slave', Dr. Gero had placed both brothers with a shutdown device to stop them at any moment of disobedience, but when the scientist wakes them up, 17's resentment and rebellion were such that he took it upon himself to destroy the control that would imprison him again and then mercilessly killed his own creator. His situation would go against him, since Cell had the mission of absorbing 17 and 18 to complete his development and become Perfect Cell.",
 			"image": "https://dragonball-api.com/characters/17_Artwork.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -699,14 +552,7 @@
 			"image": "https://dragonball-api.com/characters/Androide_16.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -720,14 +566,7 @@
 			"image": "https://dragonball-api.com/characters/Android19.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -741,14 +580,7 @@
 			"image": "https://dragonball-api.com/characters/Dr._Gero%20nadroide%2020.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -762,14 +594,7 @@
 			"image": "https://dragonball-api.com/characters/Androide13normal.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -783,14 +608,7 @@
 			"image": "https://dragonball-api.com/characters/14Dokkan.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -804,14 +622,7 @@
 			"image": "https://dragonball-api.com/characters/15Dokkan.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -825,14 +636,7 @@
 			"image": "https://dragonball-api.com/characters/Nail_Artwork.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 1,
-				"name": "Namek",
-				"isDestroyed": true,
-				"description": "Home planet of the Namekians.",
-				"image": "https://dragonball-api.com/planetas/Namek_U7.webp",
-				"deletedAt": null
-			},
+			"planetId": 1,
 			"transformations": []
 		},
 		{
@@ -842,18 +646,11 @@
 			"maxKi": "1,500 ",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "He is the son of Bardock and Gine, and older brother of Son Goku.",
+			"description": "He is the son of Bardock and Gine, and the older brother of Son Goku. He is one of the few Saiyans who survived the destruction of Planet Vegeta, and was part of Vegeta's team. He is the first antagonist of Dragon Ball Z.",
 			"image": "https://dragonball-api.com/characters/Raditz_artwork_Dokkan.webp",
 			"affiliation": "Army of Frieza",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 3,
-				"name": "Vegeta",
-				"isDestroyed": true,
-				"description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7.",
-				"image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
-				"deletedAt": null
-			},
+			"planetId": 3,
 			"transformations": []
 		},
 		{
@@ -863,18 +660,11 @@
 			"maxKi": "0",
 			"race": "Majin",
 			"gender": "Male",
-			"description": "Also known as Bóbidi or Bábidi, he is a powerful Madoshi sorcerer, \"son\" of the great magician Bibbidi, founder of the Majin family.",
+			"description": "Also known as Bóbidi or Bábidi, he is a powerful Madoshi sorcerer, the \"son\" of the great wizard Bibbidi, founder of the Majin family. The \"M\" that they both wear on the belt of their outfits as well as on the forehead of those who have been possessed to become part of the Majin family.",
 			"image": "https://dragonball-api.com/characters/Babidi_Artwork.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 16,
-				"name": "unknown",
-				"isDestroyed": false,
-				"description": "No information",
-				"image": "https://michaelyagi.github.io/images/dragonball/MajinHideout.webp",
-				"deletedAt": null
-			},
+			"planetId": 16,
 			"transformations": []
 		},
 		{
@@ -888,14 +678,7 @@
 			"image": "https://dragonball-api.com/characters/BuuGordo_Universo7.webp",
 			"affiliation": "Villain",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": [
 				{
 					"id": 32,
@@ -934,18 +717,11 @@
 			"maxKi": "100 septillion",
 			"race": "God",
 			"gender": "Male",
-			"description": "God of Destruction Beerus, also known as Beers, or Beerus in Latin America and initially in Spain[1], is a character that was introduced in the film Dragon Ball Z: Battle of the Gods, where he is the main antagonist of the film.",
+			"description": "God of Destruction Beerus is a character that was introduced in the film Dragon Ball Z: Battle of Gods, where he is the main antagonist of the film, and who appears in the Dragon Ball Super manga and anime as a main character. He holds the position of God of Destruction of the entire Universe 7, being the place where the history of Dragon Ball takes place.",
 			"image": "https://dragonball-api.com/characters/Beerus_DBS_Broly_Artwork.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 19,
-				"name": "Beerus' Planet ",
-				"isDestroyed": false,
-				"description": "Beerus' Planet, a celestial body located within the world of the living in Universe 7, which appears for the first time in the movie Dragon Ball Z: Battle of the Gods.",
-				"image": "https://dragonball-api.com/planetas/Templo_de_Bills2.webp",
-				"deletedAt": null
-			},
+			"planetId": 19,
 			"transformations": []
 		},
 		{
@@ -955,18 +731,11 @@
 			"maxKi": "110 septillion",
 			"race": "Angel",
 			"gender": "Male",
-			"description": "Whis is one of the sons of the High Priest, younger brother of Vados, Korn and Kus.",
+			"description": "Whis is one of the Grand Priest's sons, younger brother of Vados, Korn and Kus. He is the guiding angel in charge of assisting and serving as a teacher to the God of Destruction of Universe 7, Beerus.",
 			"image": "https://dragonball-api.com/characters/Whis_DBS_Broly_Artwork.webp",
 			"affiliation": "Assistant of Beerus",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 19,
-				"name": "Beerus' Planet ",
-				"isDestroyed": false,
-				"description": "Beerus' Planet, a celestial body located within the world of the living in Universe 7, which appears for the first time in the movie Dragon Ball Z: Battle of the Gods.",
-				"image": "https://dragonball-api.com/planetas/Templo_de_Bills2.webp",
-				"deletedAt": null
-			},
+			"planetId": 19,
 			"transformations": []
 		},
 		{
@@ -976,18 +745,11 @@
 			"maxKi": "500 Septillion",
 			"race": "unknown",
 			"gender": "Male",
-			"description": "Zeno is the supreme being of the multiverse and has overwhelming power. The King of Everything, also known as Zen Oo (Zeno Sama in Spain and Zen Oo Sama in Latin America) and nicknamed by Son Goku as Todito (全ぜんちゃん, Zen-chan ",
+			"description": "Zeno is the supreme being of the multiverse and has overwhelming power. The King of All and nicknamed by Son Goku as Todito (全ぜんちゃん, Zen-chan), is the ruler and absolute god of all universes and the ultimate sovereign of all that exists in Dragon Ball.",
 			"image": "https://dragonball-api.com/characters/Zeno_Artwork.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 24,
-				"name": "Mobile Temple of the King of All",
-				"isDestroyed": false,
-				"description": "The mobile temple of the King of All (throne room), is as its name indicates, a mobile temple in which resides the thrones of the two Kings of All in the Survival Location in Dragon Ball Super.",
-				"image": "https://dragonball-api.com/planetas/Trono_del_Rey_de_Todo.webp",
-				"deletedAt": null
-			},
+			"planetId": 24,
 			"transformations": []
 		},
 		{
@@ -997,18 +759,11 @@
 			"maxKi": "3.2 Billion",
 			"race": "God",
 			"gender": "Male",
-			"description": "It is the fusion between Shin and Kibito.",
+			"description": "A fusion between Shin and Kibito, they were permanently united through the use of the mythical Portara earrings. They are currently separated thanks to a wish granted by the Namekian Dragon Balls.",
 			"image": "https://dragonball-api.com/characters/Kibito_shin_Artwork.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 21,
-				"name": "World Core",
-				"isDestroyed": false,
-				"description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
-				"image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
-				"deletedAt": null
-			},
+			"planetId": 21,
 			"transformations": []
 		},
 		{
@@ -1022,14 +777,7 @@
 			"image": "https://dragonball-api.com/characters/Jiren.webp",
 			"affiliation": "Pride Troopers",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 25,
-				"name": "Universe 11",
-				"isDestroyed": false,
-				"description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball.",
-				"image": "https://dragonball-api.com/planetas/Universo_11.webp",
-				"deletedAt": null
-			},
+			"planetId": 25,
 			"transformations": []
 		},
 		{
@@ -1039,18 +787,11 @@
 			"maxKi": "7.5 Sextillion",
 			"race": "God",
 			"gender": "Male",
-			"description": "Toppo is the leader of the Pride Troops, warriors of justice from Universe 11 who act as protectors of peace and superheroes of good.",
+			"description": "Toppo is the leader of the Pride Troopers, warriors of justice from Universe 11 who act as protectors of peace and superheroes of good. He has been trained by the angel guide Marcarita, thus becoming a candidate as a future God of Destruction in his universe.",
 			"image": "https://dragonball-api.com/characters/Toppo.webp",
 			"affiliation": "Pride Troopers",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 25,
-				"name": "Universe 11",
-				"isDestroyed": false,
-				"description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball.",
-				"image": "https://dragonball-api.com/planetas/Universo_11.webp",
-				"deletedAt": null
-			},
+			"planetId": 25,
 			"transformations": []
 		},
 		{
@@ -1064,14 +805,7 @@
 			"image": "https://dragonball-api.com/characters/Dispo_render.webp",
 			"affiliation": "Pride Troopers",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 25,
-				"name": "Universe 11",
-				"isDestroyed": false,
-				"description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball.",
-				"image": "https://dragonball-api.com/planetas/Universo_11.webp",
-				"deletedAt": null
-			},
+			"planetId": 25,
 			"transformations": []
 		},
 		{
@@ -1081,18 +815,11 @@
 			"maxKi": "99.5 septillion",
 			"race": "Angel",
 			"gender": "Female",
-			"description": "Marcarita is the guiding angel of Universe 11, servant and martial arts teacher of the God of Destruction Vermoud.",
+			"description": "Marcarita is the guiding angel of Universe 11, servant and martial arts teacher of the God of Destruction Vermoud. She is a character from the Universal Survival Arc of Dragon Ball Super.",
 			"image": "https://dragonball-api.com/characters/Marcarita.webp",
 			"affiliation": "Assistant of Vermoud",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 25,
-				"name": "Universe 11",
-				"isDestroyed": false,
-				"description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball.",
-				"image": "https://dragonball-api.com/planetas/Universo_11.webp",
-				"deletedAt": null
-			},
+			"planetId": 25,
 			"transformations": []
 		},
 		{
@@ -1106,14 +833,7 @@
 			"image": "https://dragonball-api.com/characters/Vermoud.webp",
 			"affiliation": "Pride Troopers",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 25,
-				"name": "Universe 11",
-				"isDestroyed": false,
-				"description": "Universe 11 is, as its name indicates, the eleventh of the twelve universes currently existing in the world of Dragon Ball.",
-				"image": "https://dragonball-api.com/planetas/Universo_11.webp",
-				"deletedAt": null
-			},
+			"planetId": 25,
 			"transformations": []
 		},
 		{
@@ -1123,18 +843,11 @@
 			"maxKi": "969 Googolplex",
 			"race": "Angel",
 			"gender": "Male",
-			"description": "The Grand Priest is the tournament supervisor and one of the most powerful beings.",
+			"description": "The Grand Priest is the overseer of the tournament and one of the most powerful beings. Grand Minister of the Omni-Kings , he is an Angel who acts as a close advisor and guiding figure to Zeno and Future Zeno . He occasionally enforces the Divine Decrees of the Zenos and welcomes guests to his palace . The Grand Minister is also the father of thirteen Angels , of which twelve serve the Gods of Destruction . Due to his position and power, he is perhaps the second strongest being in the Multiverse.",
 			"image": "https://dragonball-api.com/characters/Grand%20priest.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 24,
-				"name": "Mobile Temple of the King of All",
-				"isDestroyed": false,
-				"description": "The mobile temple of the King of All (throne room), is as its name indicates, a mobile temple in which resides the thrones of the two Kings of All in the Survival Location in Dragon Ball Super.",
-				"image": "https://dragonball-api.com/planetas/Trono_del_Rey_de_Todo.webp",
-				"deletedAt": null
-			},
+			"planetId": 24,
 			"transformations": []
 		},
 		{
@@ -1148,14 +861,7 @@
 			"image": "https://dragonball-api.com/characters/Kaio_del_Norte.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 11,
-				"name": "Northern Kaiō",
-				"isDestroyed": false,
-				"description": "Planet Kaio is located at the end of the long Serpent Path.",
-				"image": "https://dragonball-api.com/planetas/Planeta_del_Kaio_del_Norte.webp",
-				"deletedAt": null
-			},
+			"planetId": 11,
 			"transformations": []
 		},
 		{
@@ -1169,14 +875,7 @@
 			"image": "https://dragonball-api.com/characters/Androide_18_Artwork.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": []
 		},
 		{
@@ -1186,18 +885,11 @@
 			"maxKi": "15 septillion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "Gogeta is the resulting fusion of Son Goku and Vegeta, when they perform the Fusion Dance correctly to confront Broly.",
+			"description": "Gogeta is the fusion that results from Son Goku and Vegeta, when they perform the Fusion Dance correctly to face Broly. His voice is a dual voice that contains the voices of both Goku and Vegeta. Together with the almighty power of the two, with Vegeta's cunning and insight, and Goku's prodigal martial arts skill, he is one of the most fearsome warriors to challenge to a fight.",
 			"image": "https://dragonball-api.com/transformaciones/gogeta.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": [
 				{
 					"id": 36,
@@ -1231,23 +923,16 @@
 		},
 		{
 			"id": 66,
-			"name": "Vegetto",
+			"name": "Vegito",
 			"ki": "180 Billion",
 			"maxKi": "10.8 Septillion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "Vegetto is the strongest character within the original manga and one of the most powerful characters in the entire series in general.",
+			"description": "Vegito is the strongest character in the original manga and one of the most powerful characters in the entire series in general. His power is the result of the maximum combined power of Goku and Vegeta, multiplying their strength several times, being one of the most powerful fusions within the franchise.",
 			"image": "https://dragonball-api.com/transformaciones/Vegetto.webp",
 			"affiliation": "Z Fighter",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 2,
-				"name": "Earth",
-				"isDestroyed": false,
-				"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place.",
-				"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
-				"deletedAt": null
-			},
+			"planetId": 2,
 			"transformations": [
 				{
 					"id": 40,
@@ -1272,18 +957,11 @@
 			"maxKi": "75 Billion",
 			"race": "Evil",
 			"gender": "Male",
-			"description": "Janemba is a demon of pure evil and great evil power.",
+			"description": "Janemba is a demon of pure evil and great malignant power. Created from the actions of a teenage ogre named Psyche Oni, who was responsible for guarding the soul-purifying machine, which explodes as a result of the ogre's carelessness, the evil souls end up using his body as a host, thus creating this demon.",
 			"image": "https://dragonball-api.com/transformaciones/Janemba_artwork_SDBH.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 18,
-				"name": "Another World",
-				"isDestroyed": false,
-				"description": "The Other World, in counterpart to the World of the living, is, in Dragon Ball, the version of the world of the dead.",
-				"image": "https://dragonball-api.com/planetas/otro%20mundo.webp",
-				"deletedAt": null
-			},
+			"planetId": 18,
 			"transformations": [
 				{
 					"id": 42,
@@ -1301,18 +979,11 @@
 			"maxKi": "11.2 Septillion",
 			"race": "Saiyan",
 			"gender": "Male",
-			"description": "Broly is a Saiyan who possesses gigantic and uncontrollable power, which manifests itself in all its magnitude when he becomes the Legendary Super Saiyan.",
+			"description": "Broly is a Saiyan who possesses gigantic and uncontrollable power, which manifests itself in all its magnitude when he becomes the Legendary Super Saiyan. Even when he was just a baby, his power level reached immense figures that caused astonishment and concern among those of his race.",
 			"image": "https://dragonball-api.com/transformaciones/Broly_DBS_Base.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 3,
-				"name": "Vegeta",
-				"isDestroyed": true,
-				"description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7.",
-				"image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
-				"deletedAt": null
-			},
+			"planetId": 3,
 			"transformations": [
 				{
 					"id": 43,
@@ -1330,18 +1001,11 @@
 			"maxKi": "unknown",
 			"race": "Shinjin",
 			"gender": "Male",
-			"description": "The South Kaio is the only reference we have to the other Kaiō gods in the manga, beyond the North Kaiō Sama since he is the only Kaiō, along with the North Kaiō, to appear in the manga, and one of the four ",
+			"description": "The South Kaio is the only reference we have to the other Kaiō gods in the manga, beyond the North Kaiō Sama, since he is the only Kaiō, along with the North Kaiō, to appear in the manga, and one of the four that appear in the anime, along with the Grand Kaio.",
 			"image": "https://dragonball-api.com/characters/Kaio_del_sur_cuerpo_completo.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 3,
-				"name": "Vegeta",
-				"isDestroyed": true,
-				"description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan-Tsufruian War in the year 730, is a fictional rocky planet from the manga and anime series Dragon Ball and located in the Milky Way of the Northern Galaxies of Universe 7.",
-				"image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
-				"deletedAt": null
-			},
+			"planetId": 3,
 			"transformations": []
 		},
 		{
@@ -1351,18 +1015,11 @@
 			"maxKi": "unknown",
 			"race": "Shinjin",
 			"gender": "Female",
-			"description": "The Eastern Kaiō is a Kaio that only appears in the anime.",
+			"description": "The Eastern Kaiō is a Kaio who only appears in the anime. She likes challenges and training her disciples hard, who stand out for being very fast warriors, the clearest example being Chapuchai.",
 			"image": "https://dragonball-api.com/characters/kaio%20del%20este.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 21,
-				"name": "World Core",
-				"isDestroyed": false,
-				"description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
-				"image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
-				"deletedAt": null
-			},
+			"planetId": 21,
 			"transformations": []
 		},
 		{
@@ -1372,18 +1029,11 @@
 			"maxKi": "unknown",
 			"race": "Shinjin",
 			"gender": "Male",
-			"description": "The Kaiō of the West is the rival of the Kaio of the North.",
+			"description": "The West Kaiō is the rival of the North Kaio. And as his name suggests, he controls the Western Galaxy.",
 			"image": "https://dragonball-api.com/characters/Kaio%20del%20oeste.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 21,
-				"name": "World Core",
-				"isDestroyed": false,
-				"description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
-				"image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
-				"deletedAt": null
-			},
+			"planetId": 21,
 			"transformations": []
 		},
 		{
@@ -1393,18 +1043,11 @@
 			"maxKi": "unknown",
 			"race": "Shinjin",
 			"gender": "Male",
-			"description": "Great Kaio is the most important Kaio of the Other World and is the God who is responsible for managing the other Kaiō to take care of whose sectors of the Galaxy.",
+			"description": "Great Kaio is the most important Kaio of the Other World and is the God in charge of managing the other Kaiō so that they take care of their sectors of the Galaxy. His appearance is that of an old man with a long, very gray beard, highlighted by dark glasses that he never takes off in the series. He has his own planet, the Grand Kaio Planet, in which the gravity is 10 times greater than that of the planet Earth.",
 			"image": "https://dragonball-api.com/characters/Gran_kaio_sama12.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 20,
-				"name": "Planet of the Great Kaio",
-				"isDestroyed": false,
-				"description": "The Planet of the Great Kaio is where the Otherworld Martial Arts Tournament is organized in honor of the death of the North Kaio (Kaito), where powerful warriors participate.",
-				"image": "https://dragonball-api.com/planetas/Planetadaikaiosama.webp",
-				"deletedAt": null
-			},
+			"planetId": 20,
 			"transformations": []
 		},
 		{
@@ -1414,18 +1057,11 @@
 			"maxKi": "unknown",
 			"race": "Shinjin",
 			"gender": "Male",
-			"description": "He is one of the Kaio-shin, the gods of creation who are responsible for creating life throughout Universe 7 and protecting it from supreme threats.\n",
+			"description": "He is one of the Kaio-shin, the gods of creation who are in charge of creating life throughout Universe 7 and protecting it from supreme threats.\tPreviously, he used to be in charge of protecting the eastern part of the universe, since after the death of the other Kaio-shin at the hands of Majin-Boo, he became the main Kaio-shin of Universe 7.",
 			"image": "https://dragonball-api.com/characters/Kaio-shin_del_este_Artwork.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 21,
-				"name": "World Core",
-				"isDestroyed": false,
-				"description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
-				"image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
-				"deletedAt": null
-			},
+			"planetId": 21,
 			"transformations": []
 		},
 		{
@@ -1439,14 +1075,7 @@
 			"image": "https://dragonball-api.com/characters/Kaio-shin%20del%20norte.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 22,
-				"name": "Sacred Planet",
-				"isDestroyed": false,
-				"description": "The Sacred Planet is the planet located in the Kaio-shin Kingdom where the Kaio-shin of Universe 7 reside. It should not be confused with the World Core. The Kaio-shin Kingdom, in which the planet is located, ",
-				"image": "https://dragonball-api.com/planetas/Planeta_Sagrado.webp",
-				"deletedAt": null
-			},
+			"planetId": 22,
 			"transformations": []
 		},
 		{
@@ -1460,14 +1089,7 @@
 			"image": "https://dragonball-api.com/characters/Kaio-shin_del_Sur_Dokkan.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 22,
-				"name": "Sacred Planet",
-				"isDestroyed": false,
-				"description": "The Sacred Planet is the planet located in the Kaio-shin Kingdom where the Kaio-shin of Universe 7 reside. It should not be confused with the World Core. The Kaio-shin Kingdom, in which the planet is located, ",
-				"image": "https://dragonball-api.com/planetas/Planeta_Sagrado.webp",
-				"deletedAt": null
-			},
+			"planetId": 22,
 			"transformations": []
 		},
 		{
@@ -1481,14 +1103,7 @@
 			"image": "https://dragonball-api.com/characters/Kaio-shin_del_Oeste_Dokkan.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 22,
-				"name": "Sacred Planet",
-				"isDestroyed": false,
-				"description": "The Sacred Planet is the planet located in the Kaio-shin Kingdom where the Kaio-shin of Universe 7 reside. It should not be confused with the World Core. The Kaio-shin Kingdom, in which the planet is located, ",
-				"image": "https://dragonball-api.com/planetas/Planeta_Sagrado.webp",
-				"deletedAt": null
-			},
+			"planetId": 22,
 			"transformations": []
 		},
 		{
@@ -1498,18 +1113,11 @@
 			"maxKi": "unknown",
 			"race": "Shinjin",
 			"gender": "Male",
-			"description": "The Great Kaio-shin, also known as Sacred Kaiosama in Latin America, was the main Kaio-shin of Universe 7 and supervisor of the other Kaio-shin of the same universe.\n",
+			"description": "The Grand Kaio-shin, also known as the Holy Kaio-shin in Latin America, was the main Kaio-shin of Universe 7 and supervisor of the other Kaio-shin of the same universe. After being absorbed by Majin Buu, the Grand Kaio-shin of Universe 7 became the most dominant facet of Fat Buu, still living today within his body through his spirit.",
 			"image": "https://dragonball-api.com/characters/Gran_Kaio-shin_Artwork.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 21,
-				"name": "World Core",
-				"isDestroyed": false,
-				"description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
-				"image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
-				"deletedAt": null
-			},
+			"planetId": 21,
 			"transformations": []
 		},
 		{
@@ -1519,19 +1127,118 @@
 			"maxKi": "unknown",
 			"race": "Shinjin",
 			"gender": "Male",
-			"description": "Kibito is the assistant and bodyguard of the Eastern Kaio-shin.",
+			"description": "Kibito is the assistant and bodyguard of the Eastern Kaio-shin. He is an expert fighter and has certain healing and magical powers as befits his role. His most famous technique is the Kai-Kai.",
 			"image": "https://dragonball-api.com/characters/Kibito_Artwork.webp",
 			"affiliation": "Other",
 			"deletedAt": null,
-			"originPlanet": {
-				"id": 21,
-				"name": "World Core",
-				"isDestroyed": false,
-				"description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
-				"image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
-				"deletedAt": null
-			},
+			"planetId": 21,
 			"transformations": []
+		}
+	],
+	"planets": [
+		{
+			"id": 1,
+			"name": "Namek",
+			"isDestroyed": true,
+			"description": "Home planet of the Namekians. Scene of important battles and the acquisition of the Namek Dragon Balls.",
+			"image": "https://dragonball-api.com/planetas/Namek_U7.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 2,
+			"name": "Earth",
+			"isDestroyed": false,
+			"description": "Earth, also called Dragon World, is the main planet where the Dragon Ball series takes place. It is located in the Milky Way Solar System of the Northern Galaxies of Universe 7, a place overseen by the North Kai, and has its equivalent in Universe 6. The home of the Earthlings and the Z Warriors. It has been attacked on several occasions by powerful enemies.",
+			"image": "https://dragonball-api.com/planetas/Tierra_Dragon_Ball_Z.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 3,
+			"name": "Vegeta",
+			"isDestroyed": true,
+			"description": "Planet Vegeta, known as Planet Plant before the end of the Saiyan–Tsubu War in 730, is a fictional rocky planet in the Dragon Ball manga and anime series located in the Milky Way Galaxy of Universe 7 until its destruction by Frieza in 737–739. Homeworld of the Saiyans, destroyed by Frieza. Formerly known as Planet Plant.",
+			"image": "https://dragonball-api.com/planetas/Planeta_Vegeta_en_Dragon_Ball_Super_Broly.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 4,
+			"name": "Frieza No. 79",
+			"isDestroyed": true,
+			"description": "Artificial planet used by Frieza as a base of operations and cloning center.",
+			"image": "https://dragonball-api.com/planetas/PlanetaFreezer.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 11,
+			"name": "Northern Kaiō",
+			"isDestroyed": false,
+			"description": "Planet Kaio is located at the end of the long Snake Road. It is where the North Kaio, his pet Bubbles, whom he uses as part of his training, and Gregory live.",
+			"image": "https://dragonball-api.com/planetas/Planeta_del_Kaio_del_Norte.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 16,
+			"name": "unknown",
+			"isDestroyed": false,
+			"description": "No information",
+			"image": "https://michaelyagi.github.io/images/dragonball/MajinHideout.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 18,
+			"name": "Another World",
+			"isDestroyed": false,
+			"description": "The Other World, in contrast to the World of the Living, is Dragon Ball's version of the World of the Dead. It is where characters go when they die, and also where the higher deities of the universe reside. In episode 53 of the anime, the Other World was described as \"the next dimension\", and the act of wishing to bring a dead person back to life with the Dragon Balls is called \"bringing (them) to this dimension\".",
+			"image": "https://dragonball-api.com/planetas/otro%20mundo.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 19,
+			"name": "Beerus' Planet ",
+			"isDestroyed": false,
+			"description": "Beerus' Planet, a celestial body located within the world of the living in Universe 7, which appears for the first time in the movie Dragon Ball Z: Battle of the Gods.",
+			"image": "https://dragonball-api.com/planetas/Templo_de_Bills2.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 20,
+			"name": "Planet of the Great Kaio",
+			"isDestroyed": false,
+			"description": "The Planet of the Great Kaio is where the Otherworld Martial Arts Tournament is organized in honor of the death of the North Kaio (Kaito), where powerful warriors participate.",
+			"image": "https://dragonball-api.com/planetas/Planetadaikaiosama.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 21,
+			"name": "World Core",
+			"isDestroyed": false,
+			"description": "The World Core is the native planet of the entire shinjin species, from which the benevolent Kaio and Kaio-shin arise, as well as the malevolent Makaio, Makaio-shin and Demonic Gods in counterpart.",
+			"image": "https://michaelyagi.github.io/images/dragonball/db_macrocosm.png",
+			"deletedAt": null
+		},
+		{
+			"id": 22,
+			"name": "Sacred Planet",
+			"isDestroyed": false,
+			"description": "The Sacred Planet is the planet located in the Kaio-shin Realm where the Kaio-shin of Universe 7 reside. It should not be confused with the World Core. The Kaio-shin Realm, in which the planet is located, is a special realm completely separate in the macrocosm of Universe 7, that is, it is separated from the Other World, the World of the Living, and the Dark Demon Realm.",
+			"image": "https://dragonball-api.com/planetas/Planeta_Sagrado.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 24,
+			"name": "Mobile Temple of the King of All",
+			"isDestroyed": false,
+			"description": "The mobile temple of the King of All (throne room), is as its name indicates, a mobile temple in which resides the thrones of the two Kings of All in the Survival Location in Dragon Ball Super.",
+			"image": "https://dragonball-api.com/planetas/Trono_del_Rey_de_Todo.webp",
+			"deletedAt": null
+		},
+		{
+			"id": 25,
+			"name": "Universe 11",
+			"isDestroyed": false,
+			"description": "Universe 11, as its name suggests, is the eleventh of the twelve universes currently existing in the world of Dragon Ball. It is the twin of Universe 2 and the place of origin of the Pride Troopers.",
+			"image": "https://dragonball-api.com/planetas/Universo_11.webp",
+			"deletedAt": null
 		}
 	]
 }
