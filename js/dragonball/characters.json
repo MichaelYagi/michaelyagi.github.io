@@ -1059,7 +1059,7 @@
 			"image": "https://dragonball-api.com/planetas/Planeta_del_Kaio_del_Norte.webp"
 		},
 		"16": {
-			"name": "unknown",
+			"name": "Unknown",
 			"isDestroyed": false,
 			"description": "No information",
 			"image": "https://michaelyagi.github.io/images/dragonball/MajinHideout.webp"
