@@ -283,7 +283,7 @@
 					"id": 25,
 					"name": "Gohan Beast",
 					"image": "https://dragonball-api.com/transformaciones/beast_gohan___dragon_ball_super_super_hero_by_rmrlr2020_dfbqvta-pre.webp",
-					"ki": " 25.6 Septillion"
+					"ki": "25.6 Septillion"
 				}
 			]
 		},
@@ -562,7 +562,7 @@
 		{
 			"id": 29,
 			"name": "Nail",
-			"ki": "42,000 ",
+			"ki": "42,000",
 			"maxKi": "42,000",
 			"race": "Namekian",
 			"gender": "Male",
@@ -575,8 +575,8 @@
 		{
 			"id": 30,
 			"name": "Raditz",
-			"ki": "1,500 ",
-			"maxKi": "1,500 ",
+			"ki": "1,500",
+			"maxKi": "1,500",
 			"race": "Saiyan",
 			"gender": "Male",
 			"description": "He is the son of Bardock and Gine, and the older brother of Son Goku. He is one of the few Saiyans who survived the destruction of Planet Vegeta, and was part of Vegeta's team. He is the first antagonist of Dragon Ball Z.",
@@ -1084,7 +1084,7 @@
 			"image": "https://dragonball-api.com/planetas/otro%20mundo.webp"
 		},
 		"19": {
-			"name": "Beerus' Planet ",
+			"name": "Beerus' Planet",
 			"isDestroyed": false,
 			"description": "Beerus' Planet, a celestial body located within the world of the living in Universe 7, which appears for the first time in the movie Dragon Ball Z: Battle of the Gods.",
 			"image": "https://dragonball-api.com/planetas/Templo_de_Bills2.webp"
