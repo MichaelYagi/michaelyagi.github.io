@@ -14,13 +14,15 @@
         const cjs = new Castjs();
         console.log("test1")
         document.getElementById('cast').addEventListener('click', function() {
-            console.log("test2")
             // Check if casting is available
+            console.log("test2")
             if (cjs.available) {
                 console.log("test3")
                 // Initiate new cast session with a simple video
                 //cjs.cast('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4');
-                cjs.cast('https://shashin.ngrok.app/api/v1/image/609a0b78-fd47-3e8d-bf46-1c2c2aeecf63');
+                cjs.cast('https://shashin.ngrok.app/api/v1/image/609a0b78-fd47-3e8d-bf46-1c2c2aeecf63.jpg');
+
+                //cjs.cast('https://img.freepik.com/free-photo/cute-spitz-with-camera_144627-7079.jpg');
             }
         });
     </script>
