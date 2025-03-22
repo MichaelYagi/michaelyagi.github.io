@@ -22,7 +22,7 @@
 
       <p><strong>Get Started</strong></p>
 
-      <p>Download and open the latest artifact at <a href="https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" target="_blank">RepoFlow</a>. It may take a few minutes to download dependencies and start the sever.</p> 
+      <p>Download and open the latest artifact at <a id="shashinVersionLink" href="https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" target="_blank">RepoFlow</a>. It may take a few minutes to download dependencies and start the sever.</p> 
       
       <p>Read the <a href="http://127.0.0.1:6624/articles" target="_blank">Quick Start</a> guide after server start.</p>
 
@@ -44,11 +44,15 @@
     $(document).ready(function () {
       $("#copyrightYear").text("2021-" + (new Date().getFullYear()) + " Shashin");
 
-      ajaxGet("https://api.github.com/repos/michaelyagi/shashin/releases", function(success, response) {
-        if (success && response.length > 0) {
-          const latestRelease = response[0];
+      ajaxGet("https://shashin.ngrok.app/api/v1/tags", function(success, response) {
+        if (success && response.hasOwnProperty("tags") && response.tags.length > 0) {
+          const latestRelease = response.tags[0];
           const latestTag = latestRelease.tag_name;
           const latestNotes = latestRelease.body;
+          let parsedVersion = (latestTag.substring(0, 1) === "v") ? latestTag.substring(1, latestTag.length) : "";
+
+          const shashinVersionLink = $("#shashinVersionLink").attr("href") + "/" + parsedVersion;
+          $("#shashinVersionLink").attr("href", shashinVersionLink);
 
           $("#releaseNotesTitle").html("<hr><h2 class='mb-4'>"+latestTag+" Release Notes</h2>");
           const converter = new showdown.Converter()
@@ -61,10 +65,6 @@
         $.ajax({
             url: url,
             type: "GET",
-            headers: {
-              "Accept": "application/vnd.github+json",
-              "Authorization": "Bearer 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"
-            },
             contentType: "application/json",
             success: function (response) {
               callback(true,response);
