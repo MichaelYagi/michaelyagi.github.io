@@ -86,9 +86,3 @@
   .bd-mode-toggle .dropdown-menu .active .bi {
     display: block !important;
   }
-
-  .container {
-    width: auto;
-    max-width: 680px;
-    padding: 0 15px;
-  }
