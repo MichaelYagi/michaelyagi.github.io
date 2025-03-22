@@ -21,13 +21,10 @@
     $(document).ready(function () {
         $("#copyrightYear").text("2021-" + (new Date().getFullYear()) + " Shashin");
 
-        const headers = {
-            "x-api-key": "e456ff02-81ad-39e0-b3bb-a8b4802d8392"
-        };
+        const headers = {};
 
-        ajaxGet("https://shashin.ngrok.app/api/v1/user/self", "GET", headers, function(success, response) {
+        ajaxGet("https://shashin.ngrok.app/api/v1/tags", "GET", headers, function(success, response) {
             console.log(success);
-            console.log(response);
             if (success && response.hasOwnProperty("status") && response.status === "success") {
                 console.log(response);
             }
