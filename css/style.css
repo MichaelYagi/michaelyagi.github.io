@@ -6,8 +6,8 @@
     -webkit-mask-size: cover;
     mask-size: cover;
     margin-bottom: 2px;
-    height: 20px;
-    width: 20px;
+    height: 0.9rem;
+    width: 0.9rem;
 }
 
 .bd-placeholder-img {
