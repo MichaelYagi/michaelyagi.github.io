@@ -12,10 +12,11 @@
   <link href="../css/bootstrap.min.css" rel="stylesheet">
   <link href="../css/bootstrap-icons.css" rel="stylesheet">
   <script src="../js/jquery-3.7.1.min.js"></script>
+  <script src="../js/showdown.min.js"></script>
 </head>
 
 <body class="d-flex flex-column h-100">
-  <main class="vh-100 d-flex justify-content-center align-items-center">
+  <main class="vh-100 d-flex">
     <div class="container" style="width: auto;max-width: 680px;padding: 0 15px;">
       <h2 class="mt-5 mb-3">Shashin <small class="text-muted">- a self-hosted media gallery app</small></h2>
 
@@ -24,10 +25,13 @@
       <p>Download and open the latest artifact at <a href="https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" target="_blank">RepoFlow</a>. It may take a few minutes to download dependencies and start the sever.</p> 
       
       <p>Read the <a href="http://127.0.0.1:6624/articles" target="_blank">Quick Start</a> guide after server start.</p>
+
+      <div id="releaseNotesTitle"></div>
+      <div id="releaseNotesBody" style="padding-bottom: 80px;"></div>
     </div>
   </main>
 
-  <footer class="footer mt-auto py-3 bg-body-tertiary">
+  <footer class="footer fixed-bottom bg-body-tertiary">
     <div class="container" style="width: auto;max-width: 680px;padding: 0 15px;">
       <span class="text-body-secondary me-3">&copy; <span id="copyrightYear"></span></span>
       <a class="me-2" href="https://github.com/MichaelYagi" target="_blank"><span class="bi-github" style="color: #FFFFFF;font-size: 1.0rem;"></span></a>
@@ -37,7 +41,42 @@
   </footer>
 
   <script type="text/javascript">
-    $("#copyrightYear").text("2021-" + (new Date().getFullYear()) + " Shashin");
+    $(document).ready(function () {
+      $("#copyrightYear").text("2021-" + (new Date().getFullYear()) + " Shashin");
+
+      ajaxGet("https://api.github.com/repos/michaelyagi/shashin/releases", function(success, response) {
+        if (success && response.length > 0) {
+          const latestRelease = response[0];
+          const latestTag = latestRelease.tag_name;
+          const latestNotes = latestRelease.body;
+
+          $("#releaseNotesTitle").html("<hr><h2 class='mb-4'>"+latestTag+" Release Notes</h2>");
+          const converter = new showdown.Converter()
+          const html = converter.makeHtml(latestNotes);
+          $("#releaseNotesBody").html(html);
+        }
+      });
+      
+      function ajaxGet(url, callback) {
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: {
+              "Accept": "application/vnd.github+json",
+              "Authorization": "Bearer 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"
+            },
+            contentType: "application/json",
+            success: function (response) {
+              callback(true,response);
+            },
+            error: function (xhr) {
+              callback(false,[]);
+            }
+        });
+      }
+    });
+
+    
   </script>
 </body>
 
