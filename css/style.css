@@ -5,7 +5,6 @@
     mask: url("https://michaelyagi.github.io/fonts/bluesky.svg") no-repeat 50% 50%;
     -webkit-mask-size: cover;
     mask-size: cover;
-    margin-bottom: 2px;
     height: 0.9rem;
     width: 0.9rem;
 }
