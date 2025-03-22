@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<html lang="en" class="h-100" data-bs-theme="dark">
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="author" content="Michael Yagi">
+    <meta name="description" content="Test portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.css" rel="stylesheet">
+    <script src="../js/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+  <span id="ajaxStuff"></span>
+  
+  <script type="text/javascript">
+    $(document).ready(function () {
+        $("#copyrightYear").text("2021-" + (new Date().getFullYear()) + " Shashin");
+
+        const headers = {
+            "x-api-key": "e456ff02-81ad-39e0-b3bb-a8b4802d8392"
+        };
+
+        ajaxGet("https://shashin.ngrok.app/api/v1/user/self", "GET", headers, function(success, response) {
+            console.log(success);
+            console.log(response);
+            if (success && response.hasOwnProperty("status") && response.status === "success") {
+                console.log(response);
+            }
+        });
+
+        function ajaxGet(url, type, headers, callback) {
+            $.ajax({
+                url: url,
+                type: type,
+                headers: headers,
+                contentType: "application/json",
+                success: function (response) {
+                    callback(true,response);
+                },
+                error: function (xhr) {
+                    callback(false,[]);
+                }
+            });
+        }
+    });
+
+    
+  </script>
+</body>
+
+</html>
