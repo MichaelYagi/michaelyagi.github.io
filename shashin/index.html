@@ -67,7 +67,7 @@
           const latestRelease = response.tags[0];
           const latestTag = latestRelease.tag_name;
           const latestNotes = latestRelease.body;
-          let parsedVersion = (latestTag.substring(0, 1) === "v") ? latestTag.substring(1, latestTag.length) : "";
+          let parsedVersion = (latestTag.substring(0, 1) === "v") ? latestTag.substring(1, latestTag.length) : latestTag;
 
           const shashinVersionLink = $("#shashinVersionLink").attr("href") + "/" + parsedVersion;
           $("#shashinVersionLink").attr("href", shashinVersionLink);
