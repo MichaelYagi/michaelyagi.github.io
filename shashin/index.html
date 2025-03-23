@@ -20,6 +20,8 @@
     <div class="container" style="width: auto;max-width: 680px;padding: 0 15px;">
       <h2 class="mt-5 mb-3"><img src="../images/kamon_transparent_inverted.png" style="height: 45px;" class="mb-2 me-2"> Shashin <small class="text-muted"> a self-hosted media gallery</small></h2>
 
+      <p><a class="btn btn-success" id="shashinVersionLinkButton" href="https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" role="button">Download</a></p>
+
       <p>
         <strong>Features</strong>
         <div class="row">
@@ -67,10 +69,22 @@
           const latestRelease = response.tags[0];
           const latestTag = latestRelease.tag_name;
           const latestNotes = latestRelease.body;
-          let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/"+latestTag.substring(1, latestTag.length) : "";
+          let parsedVersion = (latestTag.substring(0, 1) === "v") ? latestTag.substring(1, latestTag.length) : "";
+          let processedVersionPath = (parsedVersion === "") ? "" : "/" + parsedVersion;
 
-          const shashinVersionLink = $("#shashinVersionLink").attr("href") + parsedVersion;
+          let fileName = "/shashin-" + parsedVersion + ".jar";
+          if (getOS() === "Windows") {
+            fileName = "/shashin-" + parsedVersion + ".exe";
+          }
+          if (processedVersionPath === "") {
+            fileName = "";
+          }
+
+          const shashinVersionLink = $("#shashinVersionLink").attr("href") + processedVersionPath;
+          const shashinVersionLinkButton = $("#shashinVersionLinkButton").attr("href") + processedVersionPath + fileName;
+
           $("#shashinVersionLink").attr("href", shashinVersionLink);
+          $("#shashinVersionLinkButton").attr("href", shashinVersionLinkButton);
 
           $("#releaseNotesTitle").html("<hr><h2 class='mb-4'>"+latestTag+" Release Notes</h2>");
           const converter = new showdown.Converter()
@@ -91,6 +105,29 @@
               callback(false,[]);
             }
         });
+      }
+
+      function getOS() {
+          let userAgent = window.navigator.userAgent,
+              platform = (window.navigator.hasOwnProperty("userAgentData") && window.navigator.userAgentData.platform) || window.navigator.platform,
+              macosPlatforms = ["macintosh", "macintel", "macppc", "mac68k"],
+              windowsPlatforms = ["win32", "win64", "windows", "wince"],
+              iosPlatforms = ["iphone", "ipad", "ipod"],
+              os = "";
+
+          if (platform !== undefined && platform !== null && macosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
+              os = "MacOS";
+          } else if (platform !== undefined && platform !== null && iosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
+              os = "iOS";
+          } else if (platform !== undefined && platform !== null && windowsPlatforms.indexOf(platform.toLowerCase()) !== -1) {
+              os = "Windows";
+          } else if (platform !== undefined && platform !== null && /linux/.test(platform.toLowerCase())) {
+              os = "Linux";
+          } else if (userAgent !== undefined && userAgent !== null && /android/.test(userAgent.toLowerCase())) {
+              os = "Android";
+          }
+
+          return os;
       }
     });
 
