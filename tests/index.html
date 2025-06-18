@@ -27,6 +27,7 @@
             <div class="row">
                 <div><label for="cube-speed">Rotation Speed</label></div>
                 <div><input type="range" id="cube-speed" min="0" max="50" value="5"><span id="cube-speed-text">5</span></div>
+                <div><button id="decrease-button">-</button><button id="increase-button">+</button></div>
             </div>
             <div class="row">
                 <div><label for="cube-size">Cube Size</label></div>
@@ -44,6 +45,7 @@
 
     <script>
         const canvas = document.getElementById('canvas');
+        const speedText = document.getElementById("cube-speed-text");
         const speedDefault = 5;
         const colorDefault = "#00FF00";
         const characterDefault = '#';
@@ -89,9 +91,31 @@
         speedPickerEl.addEventListener("input", function(e) {
             e.preventDefault();
 
-            const speedText = document.getElementById("cube-speed-text");
             speedText.textContent = parseInt(speedPickerEl.value);
             speed = parseInt(speedPickerEl.value)/100;
+        }, false);
+        const decreaseSpeedEl = document.getElementById("decrease-button");
+        decreaseSpeedEl.addEventListener("click", function(e) {
+            e.preventDefault();
+
+            const currentSpeed = parseInt(speedPickerEl.value);
+            if (currentSpeed > 0) {
+                speedPickerEl.value = parseInt(speedPickerEl.value) - 1;
+                speedText.textContent = parseInt(speedPickerEl.value);
+                speed = parseInt(speedPickerEl.value)/100;
+            }
+        }, false);
+
+        const increaseSpeedEl = document.getElementById("increase-button");
+        increaseSpeedEl.addEventListener("click", function(e) {
+            e.preventDefault();
+
+            const currentSpeed = parseInt(speedPickerEl.value);
+            if (currentSpeed < 50) {
+                speedPickerEl.value = parseInt(speedPickerEl.value) + 1;
+                speedText.textContent = parseInt(speedPickerEl.value);
+                speed = parseInt(speedPickerEl.value)/100;
+            }
         }, false);
 
         // Color picker input
