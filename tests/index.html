@@ -201,7 +201,9 @@
                 let dx = x2 - x1;
                 let dy = y2 - y1;
                 let steps = Math.max(Math.abs(dx), Math.abs(dy));
-                if (steps === 0) continue;
+                if (steps === 0) {
+                    continue;
+                }
 
                 for (let t = 0; t <= steps; t++) {
                     let x = Math.round(x1 + (dx * t) / steps);
