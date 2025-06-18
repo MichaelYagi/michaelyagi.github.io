@@ -1,53 +1,220 @@
 <!DOCTYPE html>
 <html>
-
-<html lang="en" class="h-100" data-bs-theme="dark">
-    <meta charset="utf-8">
-    <title></title>
-    <meta name="author" content="Michael Yagi">
-    <meta name="description" content="Test portal">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="../css/style.css" rel="stylesheet">
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
-    <link href="../css/bootstrap-icons.css" rel="stylesheet">
-    <script src="../js/jquery-3.7.1.min.js"></script>
+<head>
+    <title>ASCII Rotating Cube</title>
+    <style>
+        body { background: #000000; color: #FFFFFF; font-family: monospace; }
+        pre { background: #000000; width: fit-content; }
+        table { border: none; }
+        #cube-speed { width: 200px; }
+        #canvas { color: #00FF00; }
+    </style>
 </head>
-
 <body>
-  <span id="ajaxStuff"></span>
-  
-  <script type="text/javascript">
-    $(document).ready(function () {
-        $("#copyrightYear").text("2021-" + (new Date().getFullYear()) + " Shashin");
+    <table cellspacing="0" cellpadding="0">
+        <tr>
+            <td><label for="cube-color">Cube Color</label></td>
+            <td><input type="color" id="cube-color" value="#00FF00"></td>
+        </tr>
+        <tr>
+            <td><label for="cube-character">Character</label></td>
+            <td><input type="text" id="cube-character" minlength="1" maxlength="6" value="#" size="20"></td>
+        </tr>
+        <tr>
+            <td><label for="cube-speed">Rotation Speed</label></td>
+            <td><input type="range" id="cube-speed" min="0" max="50" value="5"><span id="cube-speed-text">5</span></td>
+        </tr>
+        <tr>
+            <td><label for="cube-size">Cube Size</label></td>
+            <td><input type="number" id="cube-size" value=20 size="24"></td>
+        </tr>
+        <tr>
+            <td><label for="cube-font-size">Font Size</label></td>
+            <td><input type="number" id="cube-font-size" value=10 size="24"></td>
+        </tr>
+    </table>
+    <button id="reset-button">Reset</button>
 
-        const headers = {};
-
-        ajaxGet("https://shashin.ngrok.app/api/v1/tags", "GET", headers, function(success, response) {
-            console.log(success);
-            if (success && response.hasOwnProperty("status") && response.status === "success") {
-                console.log(response);
-            }
-        });
-
-        function ajaxGet(url, type, headers, callback) {
-            $.ajax({
-                url: url,
-                type: type,
-                headers: headers,
-                contentType: "application/json",
-                success: function (response) {
-                    callback(true,response);
-                },
-                error: function (xhr) {
-                    callback(false,[]);
-                }
-            });
-        }
-    });
-
+    <pre id="canvas"></pre>
     
-  </script>
-</body>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const speedDefault = 5;
+        const colorDefault = "#00FF00";
+        const characterDefault = '#';
+        const heightDefault = 20;
+        const fontSizeDefault = 10;
 
+        // Font size picker
+        canvas.style.fontSize = fontSizeDefault+"px";
+        canvas.style.lineHeight = fontSizeDefault+"px";
+        const cubeFontSizeEl = document.getElementById("cube-font-size");
+        cubeFontSizeEl.value = fontSizeDefault;
+        cubeFontSizeEl.addEventListener("change", function(e) {
+            e.preventDefault();
+
+            canvas.style.fontSize = cubeFontSizeEl.value+"px";
+            canvas.style.lineHeight = cubeFontSizeEl.value+"px";
+        }, false);
+
+        // Cube size picker
+        let height = heightDefault;
+        let width = height*2;
+        const cubeSizeEl = document.getElementById("cube-size");
+        cubeSizeEl.value = heightDefault;
+        cubeSizeEl.addEventListener("change", function(e) {
+            e.preventDefault();
+
+            height = parseInt(cubeSizeEl.value);
+            width = height*2;
+        }, false);
+
+        // Speed picker
+        let speed = speedDefault/100;
+        const speedPickerEl = document.getElementById("cube-speed");
+        speedPickerEl.value = speedDefault;
+        speedPickerEl.addEventListener("input", function(e) {
+            e.preventDefault();
+
+            const speedText = document.getElementById("cube-speed-text");
+            speedText.textContent = parseInt(speedPickerEl.value);
+            speed = parseInt(speedPickerEl.value)/100;
+        }, false);
+
+        // Color picker input
+        const colorPickerEl = document.getElementById("cube-color");
+        colorPickerEl.value = colorDefault;
+        colorPickerEl.addEventListener("input", function(e) {
+            e.preventDefault();
+
+            canvas.style.color = colorPickerEl.value; 
+        }, false);
+
+        // Character input
+        let character = characterDefault;
+        const characterPickerEl = document.getElementById("cube-character");
+        characterPickerEl.value = character;
+        characterPickerEl.addEventListener("input", function(e) {
+            e.preventDefault();
+
+            character = characterPickerEl.value.trim();
+
+            if (character.length === 0) {
+                characterPickerEl.value = characterDefault;
+                character = characterDefault;
+            }
+
+            drawFrame();
+        }, false);
+
+        // Reset button
+        const resetButtonEl = document.getElementById("reset-button");
+        resetButtonEl.addEventListener("click", function(e) {
+            e.preventDefault();
+
+            cubeFontSizeEl.value = fontSizeDefault;
+            canvas.style.fontSize = fontSizeDefault+"px";
+            canvas.style.lineHeight = fontSizeDefault+"px";
+            cubeSizeEl.value = heightDefault;
+            height = heightDefault;
+            width = height*2;
+            character = characterDefault;
+            characterPickerEl.value = characterDefault;
+            colorPickerEl.value = colorDefault;
+            speedPickerEl.value = speedDefault;
+            const speedText = document.getElementById("cube-speed-text");
+            speedText.textContent = speedDefault;
+
+            speed = speedDefault/100;
+            canvas.style.color = colorDefault;
+            drawFrame();
+        }, false);
+
+        // Cube vertices
+        const vertices = [
+            [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], // back face
+            [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]      // front face
+        ];
+
+        // Edges connecting vertices
+        const edges = [
+            [0, 1], [1, 2], [2, 3], [3, 0], // back face
+            [4, 5], [5, 6], [6, 7], [7, 4], // front face
+            [0, 4], [1, 5], [2, 6], [3, 7]  // connecting edges
+        ];
+
+        // Screen parameters
+        const distance = 4;
+        let angle = 0;
+
+        // Rotate point around Y and X axes
+        function rotatePoint(x, y, z, angleX, angleY) {
+            let cosY = Math.cos(angleY);
+            let sinY = Math.sin(angleY);
+            let x1 = x * cosY - z * sinY;
+            let z1 = z * cosY + x * sinY;
+
+            let cosX = Math.cos(angleX);
+            let sinX = Math.sin(angleX);
+            let y1 = y * cosX - z1 * sinX;
+            let z2 = z1 * cosX + y * sinX;
+
+            return [x1, y1, z2];
+        }
+
+        // Project 3D point to 2D
+        function project(x, y, z) {
+            const fov = 2;
+            const viewerDistance = distance;
+            const factor = fov / (viewerDistance + z);
+            const x2d = x * factor * width / 2 + width / 2;
+            const y2d = -y * factor * height / 2 + height / 2;
+            return [Math.round(x2d), Math.round(y2d)];
+        }
+
+        // Draw frame
+        function drawFrame() {
+            let buffer = Array(height).fill().map(() => Array(width).fill(' '));
+
+            // Project and rotate vertices
+            let projected = vertices.map(([x, y, z]) => {
+                let [x1, y1, z1] = rotatePoint(x, y, z, angle * 0.5, angle);
+                return project(x1, y1, z1);
+            });
+
+            // Draw edges
+            for (let [i, j] of edges) {
+                let [x1, y1] = projected[i];
+                let [x2, y2] = projected[j];
+
+                // Simple line drawing
+                let dx = x2 - x1;
+                let dy = y2 - y1;
+                let steps = Math.max(Math.abs(dx), Math.abs(dy));
+                if (steps === 0) continue;
+
+                for (let t = 0; t <= steps; t++) {
+                    let x = Math.round(x1 + (dx * t) / steps);
+                    let y = Math.round(y1 + (dy * t) / steps);
+                    if (x >= 0 && x < width && y >= 0 && y < height) {
+                        buffer[y][x] = character;
+                    }
+                }
+            }
+
+            // Update canvas
+            canvas.textContent = buffer.map(row => row.join('')).join('\n');
+        }
+
+        // Animation loop
+        function animate() {
+            drawFrame();
+            angle += speed;
+            requestAnimationFrame(animate);
+        }
+
+        // Start animation
+        animate();
+    </script>
+</body>
 </html>
