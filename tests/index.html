@@ -30,11 +30,11 @@
             </div>
             <div class="row">
                 <div><label for="cube-size">Cube Size</label></div>
-                <div><input type="number" id="cube-size" value=20 size="24"></div>
+                <div><input type="number" id="cube-size" max="100" value=20 size="24"></div>
             </div>
             <div class="row">
                 <div><label for="cube-font-size">Font Size</label></div>
-                <div><input type="number" id="cube-font-size" value=10 size="24"></div>
+                <div><input type="number" id="cube-font-size" max="100" value=10 size="24"></div>
             </div>
             <button id="reset-button">Reset</button>
 
@@ -58,6 +58,10 @@
         cubeFontSizeEl.addEventListener("change", function(e) {
             e.preventDefault();
 
+            const tempFontSize = parseInt(cubeFontSizeEl.value);
+            if (tempFontSize > 100) {
+                cubeFontSizeEl.value = 100;
+            }
             canvas.style.fontSize = cubeFontSizeEl.value+"px";
             canvas.style.lineHeight = cubeFontSizeEl.value+"px";
         }, false);
@@ -70,6 +74,10 @@
         cubeSizeEl.addEventListener("change", function(e) {
             e.preventDefault();
 
+            const tempHeight = parseInt(cubeSizeEl.value);
+            if (tempHeight > 100) {
+                cubeSizeEl.value = 100;
+            }
             height = parseInt(cubeSizeEl.value);
             width = height*2;
         }, false);
@@ -104,12 +112,9 @@
 
             character = characterPickerEl.value.trim();
 
-            if (character.length === 0) {
-                characterPickerEl.value = characterDefault;
-                character = characterDefault;
+            if (character.length > 0) {
+                drawFrame();
             }
-
-            drawFrame();
         }, false);
 
         // Reset button
