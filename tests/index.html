@@ -2,41 +2,46 @@
 <html>
 <head>
     <title>ASCII Rotating Cube</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.css" rel="stylesheet">
+    <script src="../js/jquery-3.7.1.min.js"></script>
     <style>
         body { background: #000000; color: #FFFFFF; font-family: monospace; }
         pre { background: #000000; width: fit-content; }
-        table { border: none; }
         #cube-speed { width: 200px; }
         #canvas { color: #00FF00; }
     </style>
 </head>
-<body>
-    <table cellspacing="0" cellpadding="0">
-        <tr>
-            <td><label for="cube-color">Cube Color</label></td>
-            <td><input type="color" id="cube-color" value="#00FF00"></td>
-        </tr>
-        <tr>
-            <td><label for="cube-character">Character</label></td>
-            <td><input type="text" id="cube-character" minlength="1" maxlength="6" value="#" size="20"></td>
-        </tr>
-        <tr>
-            <td><label for="cube-speed">Rotation Speed</label></td>
-            <td><input type="range" id="cube-speed" min="0" max="50" value="5"><span id="cube-speed-text">5</span></td>
-        </tr>
-        <tr>
-            <td><label for="cube-size">Cube Size</label></td>
-            <td><input type="number" id="cube-size" value=20 size="24"></td>
-        </tr>
-        <tr>
-            <td><label for="cube-font-size">Font Size</label></td>
-            <td><input type="number" id="cube-font-size" value=10 size="24"></td>
-        </tr>
-    </table>
-    <button id="reset-button">Reset</button>
+<body class="d-flex flex-column h-100">
+    <main class="vh-100 d-flex">
+        <div class="container" style="width: auto;max-width: 680px;padding: 0 15px;">
+            <div class="row">
+                <div><label for="cube-color">Cube Color</label></div>
+                <div><input type="color" id="cube-color" value="#00FF00"></div>
+            </div>
+            <div class="row">
+                <div><label for="cube-character">Character</label></div>
+                <div><input type="text" id="cube-character" minlength="1" maxlength="6" value="#" size="20"></div>
+            </div>
+            <div class="row">
+                <div><label for="cube-speed">Rotation Speed</label></div>
+                <div><input type="range" id="cube-speed" min="0" max="50" value="5"><span id="cube-speed-text">5</span></div>
+            </div>
+            <div class="row">
+                <div><label for="cube-size">Cube Size</label></div>
+                <div><input type="number" id="cube-size" value=20 size="24"></div>
+            </div>
+            <div class="row">
+                <div><label for="cube-font-size">Font Size</label></div>
+                <div><input type="number" id="cube-font-size" value=10 size="24"></div>
+            </div>
+            <button id="reset-button">Reset</button>
 
-    <pre id="canvas"></pre>
-    
+            <pre id="canvas"class="overflow-hidden"></pre>
+        </div>        
+    </main>
+
     <script>
         const canvas = document.getElementById('canvas');
         const speedDefault = 5;
