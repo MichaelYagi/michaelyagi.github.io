@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Colored ASCII Cube</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: monospace;
+            white-space: pre;
+            font-size: 12px;
+            line-height: 12px;
+        }
+        .face1 { color: red; }
+        .face2 { color: lime; }
+        .face3 { color: yellow; }
+        .face4 { color: cyan; }
+        .face5 { color: magenta; }
+        .face6 { color: orange; }
+    </style>
+</head>
+<body>
+<input type="hidden" id="cube-size" max="100" value=35 size="24">
+<!-- <div>
+<label for="cube-size">Cube Size</label><br>
+<input type="number" id="cube-size" max="100" value=35 size="24">
+</div> -->
+<div>
+<label for="cube-character">Character</label><br>
+<input type="text" id="cube-character" minlength="1" maxlength="1" value="+" size="20">
+</div>
+
+<div>
+<label for="cube-font-size">Font Size</label><br>
+<input type="number" id="cube-font-size" max="100" value=10 size="24">
+</div>
+
+<div>
+<label for="cube-speed">Rotation Speed</label><br>
+<input type="range" id="cube-speed" min="0" max="50" value="4"><span id="cube-speed-text">4</span></div>
+<button id="decrease-button">-</button><button id="increase-button">+</button>
+</div>
+
+<div><button id="reset-button">Reset</button></div>
+
+<pre id="canvas" class="overflow-hidden"></pre>
+
+<script>
+    const speedDefault = 4;
+    const heightDefault = 35;
+    const fontSizeDefault = 12;
+    const characterDefault = '+';
+    const canvas = document.getElementById("canvas");
+    const speedText = document.getElementById("cube-speed-text");
+    
+    let A = 0, B = 0;
+
+    // Speed picker
+    let speed = speedDefault/100;
+    const speedPickerEl = document.getElementById("cube-speed");
+    speedPickerEl.value = speedDefault;
+    speedPickerEl.addEventListener("input", function(e) {
+        e.preventDefault();
+
+        speedText.textContent = parseInt(speedPickerEl.value);
+        speed = parseInt(speedPickerEl.value)/100;
+    }, false);
+
+    const decreaseSpeedEl = document.getElementById("decrease-button");
+    decreaseSpeedEl.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        const currentSpeed = parseInt(speedPickerEl.value);
+        if (currentSpeed > 0) {
+            speedPickerEl.value = parseInt(speedPickerEl.value) - 1;
+            speedText.textContent = parseInt(speedPickerEl.value);
+            speed = parseInt(speedPickerEl.value)/100;
+        }
+    }, false);
+
+    const increaseSpeedEl = document.getElementById("increase-button");
+    increaseSpeedEl.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        const currentSpeed = parseInt(speedPickerEl.value);
+        if (currentSpeed < 50) {
+            speedPickerEl.value = parseInt(speedPickerEl.value) + 1;
+            speedText.textContent = parseInt(speedPickerEl.value);
+            speed = parseInt(speedPickerEl.value)/100;
+        }
+    }, false);
+
+    // Cube size picker
+    let height = heightDefault;
+    let width = height*1.4;
+    const cubeSizeEl = document.getElementById("cube-size");
+    cubeSizeEl.value = heightDefault;
+    cubeSizeEl.addEventListener("change", function(e) {
+        e.preventDefault();
+
+        const tempHeight = parseInt(cubeSizeEl.value);
+        if (tempHeight > 100) {
+            cubeSizeEl.value = 100;
+        }
+        height = parseInt(cubeSizeEl.value);
+        width = height*1.4;
+    }, false);
+
+    // Font size picker
+    canvas.style.fontSize = fontSizeDefault+"px";
+    canvas.style.lineHeight = fontSizeDefault+"px";
+    const cubeFontSizeEl = document.getElementById("cube-font-size");
+    cubeFontSizeEl.value = fontSizeDefault;
+    cubeFontSizeEl.addEventListener("change", function(e) {
+        e.preventDefault();
+
+        const tempFontSize = parseInt(cubeFontSizeEl.value);
+        if (tempFontSize > 100) {
+            cubeFontSizeEl.value = 100;
+        }
+        canvas.style.fontSize = cubeFontSizeEl.value+"px";
+        canvas.style.lineHeight = cubeFontSizeEl.value+"px";
+    }, false);
+
+    // Character input
+    let character = characterDefault;
+    const characterPickerEl = document.getElementById("cube-character");
+    characterPickerEl.value = character;
+    characterPickerEl.addEventListener("input", function(e) {
+        e.preventDefault();
+
+        character = characterPickerEl.value.trim();
+    }, false);
+
+    // Reset button
+    const resetButtonEl = document.getElementById("reset-button");
+    resetButtonEl.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        character = characterDefault;
+        characterPickerEl.value = characterDefault;
+
+        cubeFontSizeEl.value = fontSizeDefault;
+        canvas.style.fontSize = fontSizeDefault+"px";
+        canvas.style.lineHeight = fontSizeDefault+"px";
+
+        speedPickerEl.value = speedDefault;
+        const speedText = document.getElementById("cube-speed-text");
+        speedText.textContent = speedDefault;
+        speed = speedDefault/100;
+
+        cubeSizeEl.value = heightDefault;
+        height = heightDefault;
+        width = height*1.4;
+
+    }, false);
+
+    function renderFrame() {
+        const z = Array(width * height).fill(0);
+        const b = Array(width * height).fill(' ');
+        const color = Array(width * height).fill('');
+
+        function plot(x, y, zVal, ch, faceClass) {
+            const xp = Math.floor(width / 2 + x);
+            const yp = Math.floor(height / 2 - y);
+            const idx = xp + width * yp;
+            if (xp >= 0 && xp < width && yp >= 0 && yp < height && zVal > z[idx]) {
+                z[idx] = zVal;
+                b[idx] = ch;
+                color[idx] = faceClass;
+            }
+        }
+
+        // Cube vertices
+        const vertices = [
+            [-1, -1, -1], [1, -1, -1],
+            [1,  1, -1], [-1, 1, -1],
+            [-1, -1,  1], [1, -1,  1],
+            [1,  1,  1], [-1, 1,  1]
+        ];
+
+        // Cube faces (each face has four vertex indices)
+        const faces = [
+            [0, 1, 2, 3, 'face1'],
+            [4, 5, 6, 7, 'face2'],
+            [0, 1, 5, 4, 'face3'],
+            [2, 3, 7, 6, 'face4'],
+            [0, 3, 7, 4, 'face5'],
+            [1, 2, 6, 5, 'face6']
+        ];
+
+        function rotate(x, y, z) {
+            const sinA = Math.sin(A), cosA = Math.cos(A);
+            const sinB = Math.sin(B), cosB = Math.cos(B);
+            let x1 = x * cosB - z * sinB;
+            let z1 = x * sinB + z * cosB;
+            let y1 = y * cosA - z1 * sinA;
+            z1 = y * sinA + z1 * cosA;
+            return [x1, y1, z1 + 4]; // Z offset for perspective
+        }
+
+        for (const [a, b, c, d, faceClass] of faces) {
+            const v = [vertices[a], vertices[b], vertices[c], vertices[d]].map(p => rotate(...p));
+            const steps = 10;
+            for (let i = 0; i <= steps; i++) {
+                for (let j = 0; j <= steps; j++) {
+                    const x = (v[0][0] * (1 - i / steps) + v[1][0] * (i / steps)) * (1 - j / steps)
+                            + (v[3][0] * (1 - i / steps) + v[2][0] * (i / steps)) * (j / steps);
+                    const y = (v[0][1] * (1 - i / steps) + v[1][1] * (i / steps)) * (1 - j / steps)
+                            + (v[3][1] * (1 - i / steps) + v[2][1] * (i / steps)) * (j / steps);
+                    const zVal = (v[0][2] * (1 - i / steps) + v[1][2] * (i / steps)) * (1 - j / steps)
+                            + (v[3][2] * (1 - i / steps) + v[2][2] * (i / steps)) * (j / steps);
+                    plot(x * 15, y * 10, 1 / zVal, character, faceClass);
+                }
+            }
+        }
+
+        let frame = '';
+        for (let i = 0; i < b.length; i++) {
+            if (i % width === 0) {
+                frame += '\n';
+            }
+            const cls = color[i];
+            frame += cls ? `<span class="${cls}">${b[i]}</span>` : b[i];
+        }
+
+        canvas.innerHTML = frame;
+        A += (speed === 0) ? 0 : speed-0.01;
+        B += speed;
+        requestAnimationFrame(renderFrame);
+    }
+
+    renderFrame();
+</script>
+
+</body>
+</html>
