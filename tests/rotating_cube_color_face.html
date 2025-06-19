@@ -13,12 +13,6 @@
             font-size: 12px;
             line-height: 12px;
         }
-        .face1 { color: red; }
-        .face2 { color: lime; }
-        .face3 { color: yellow; }
-        .face4 { color: cyan; }
-        .face5 { color: magenta; }
-        .face6 { color: orange; }
     </style>
 </head>
 <body>
@@ -43,6 +37,8 @@
 <button id="decrease-button">-</button><button id="increase-button">+</button>
 </div>
 
+<div><button id="randomize-font-color-button">Randomize Font Colors</button></div>
+
 <div><button id="reset-button">Reset</button></div>
 
 <pre id="canvas" class="overflow-hidden"></pre>
@@ -52,10 +48,36 @@
     const heightDefault = 35;
     const fontSizeDefault = 12;
     const characterDefault = '+';
+    const face1colorDefault = "red";
+    const face2colorDefault = "lime";
+    const face3colorDefault = "yellow";
+    const face4colorDefault = "cyan";
+    const face5colorDefault = "magenta";
+    const face6colorDefault = "orange";
+
     const canvas = document.getElementById("canvas");
     const speedText = document.getElementById("cube-speed-text");
     
     let A = 0, B = 0;
+
+    // Randomize color
+    let face1color = face1colorDefault;
+    let face2color = face2colorDefault;
+    let face3color = face3colorDefault;
+    let face4color = face4colorDefault;
+    let face5color = face5colorDefault;
+    let face6color = face6colorDefault;
+    const fontColorEl = document.getElementById("randomize-font-color-button");
+    fontColorEl.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        face1color = "#" + Math.floor(Math.random()*16777215).toString(16);
+        face2color = "#" + Math.floor(Math.random()*16777215).toString(16);
+        face3color = "#" + Math.floor(Math.random()*16777215).toString(16);
+        face4color = "#" + Math.floor(Math.random()*16777215).toString(16);
+        face5color = "#" + Math.floor(Math.random()*16777215).toString(16);
+        face6color = "#" + Math.floor(Math.random()*16777215).toString(16);
+    }, false);
 
     // Speed picker
     let speed = speedDefault/100;
@@ -155,6 +177,14 @@
         height = heightDefault;
         width = height*1.4;
 
+        
+        face1color = face1colorDefault;
+        face2color = face2colorDefault;
+        face3color = face3colorDefault;
+        face4color = face4colorDefault;
+        face5color = face5colorDefault;
+        face6color = face6colorDefault;
+
     }, false);
 
     function renderFrame() {
@@ -222,8 +252,24 @@
             if (i % width === 0) {
                 frame += '\n';
             }
+            
             const cls = color[i];
-            frame += cls ? `<span class="${cls}">${b[i]}</span>` : b[i];
+            let fontColor = "";
+            if (cls === "face1") {
+                fontColor = face1color;
+            } else if (cls === "face2") {
+                fontColor = face2color;
+            } else if (cls === "face3") {
+                fontColor = face3color;
+            } else if (cls === "face4") {
+                fontColor = face4color;
+            } else if (cls === "face5") {
+                fontColor = face5color;
+            } else if (cls === "face6") {
+                fontColor = face6color;
+            }
+
+            frame += cls ? `<span class="${cls}" style="color: ${fontColor}">${b[i]}</span>` : b[i];
         }
 
         canvas.innerHTML = frame;
