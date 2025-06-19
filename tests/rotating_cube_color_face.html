@@ -38,6 +38,7 @@
 </div>
 
 <div><button id="randomize-font-color-button">Randomize Font Colors</button></div>
+<div>HSL: <input type="number" id="cube-hue" min="0" max="360" value="360"><input type="number" id="cube-saturation" min="0" max="100" value="70"><input type="number" id="cube-lightness" min="0" max="100" value="60"></div>
 
 <div><button id="reset-button">Reset</button></div>
 
@@ -47,6 +48,9 @@
     const speedDefault = 4;
     const heightDefault = 35;
     const fontSizeDefault = 12;
+    const hueDefault = 360;
+    const saturationDefault = 70;
+    const lightnessDefault = 60;
     const characterDefault = '+';
     const face1colorDefault = "red";
     const face2colorDefault = "lime";
@@ -58,7 +62,69 @@
     const canvas = document.getElementById("canvas");
     const speedText = document.getElementById("cube-speed-text");
     
-    let A = 0, B = 0;
+    let angleA = 0; 
+    let angleB = 0;
+
+    // Cube hsl
+    let hue = hueDefault;
+    const cubeHueEl = document.getElementById("cube-hue");
+    cubeHueEl.value = hueDefault;
+    cubeHueEl.addEventListener("change", function(e) {
+        e.preventDefault();
+
+        const tempHue = parseInt(cubeHueEl.value);
+        if (tempHue > hueDefault) {
+            cubeHueEl.value = hueDefault;
+        }
+        hue = parseInt(cubeHueEl.value);
+
+        face1color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face2color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face3color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face4color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face5color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face6color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+    }, false);
+
+    let saturation = saturationDefault;
+    const cubeSaturationEl = document.getElementById("cube-saturation");
+    cubeSaturationEl.value = saturationDefault;
+    cubeSaturationEl.addEventListener("change", function(e) {
+        e.preventDefault();
+
+        const tempSaturation = parseInt(cubeSaturationEl.value);
+        if (tempSaturation > saturationDefault) {
+            cubeSaturationEl.value = saturationDefault;
+        }
+        saturation = parseInt(cubeSaturationEl.value);
+
+        face1color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face2color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face3color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face4color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face5color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face6color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+    }, false);
+
+    let lightness = lightnessDefault;
+    const cubeLightnessEl = document.getElementById("cube-lightness");
+    cubeLightnessEl.value = lightnessDefault;
+    cubeLightnessEl.addEventListener("change", function(e) {
+        e.preventDefault();
+
+        const tempLightness = parseInt(cubeLightnessEl.value);
+        if (tempLightness > lightnessDefault) {
+            cubeLightnessEl.value = lightnessDefault;
+        }
+        lightness = parseInt(cubeLightnessEl.value);
+
+        face1color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face2color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face3color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face4color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face5color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face6color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+    }, false);
 
     function hslToHex(h, s, l) {
         l /= 100;
@@ -71,12 +137,8 @@
         return `#${f(0)}${f(8)}${f(4)}`;
     }
 
-    function getBrightRandomHexColorHSL() {
-        const hue = Math.floor(Math.random() * 360); // Random hue (0-359)
-        const saturation = Math.floor(Math.random() * 30) + 70; // High saturation (70-100)
-        const lightness = Math.floor(Math.random() * 20) + 60; // High lightness (60-80)
-
-        return hslToHex(hue, saturation, lightness);
+    function getBrightRandomHexColorHSL(hueValue = hueDefault, saturationValue = saturationDefault, lightnessValue = lightnessDefault) {
+        return hslToHex(Math.floor(Math.random() * hueValue), Math.floor(Math.random() * saturationValue) + 70, Math.floor(Math.random() * 20) + lightnessValue);
     }
 
     // Randomize color
@@ -90,12 +152,12 @@
     fontColorEl.addEventListener("click", function(e) {
         e.preventDefault();
 
-        face1color = getBrightRandomHexColorHSL();
-        face2color = getBrightRandomHexColorHSL();
-        face3color = getBrightRandomHexColorHSL();
-        face4color = getBrightRandomHexColorHSL();
-        face5color = getBrightRandomHexColorHSL();
-        face6color = getBrightRandomHexColorHSL();
+        face1color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face2color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face3color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face4color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face5color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face6color = getBrightRandomHexColorHSL(hue, saturation, lightness);
     }, false);
 
     // Speed picker
@@ -196,6 +258,12 @@
         height = heightDefault;
         width = height*1.4;
 
+        hue = hueDefault;
+        saturation = saturationDefault;
+        lightness = lightnessDefault;
+        cubeHueEl.value = hueDefault;
+        cubeSaturationEl.value = saturationDefault;
+        cubeLightnessEl.value = lightnessDefault;
         
         face1color = face1colorDefault;
         face2color = face2colorDefault;
@@ -241,8 +309,8 @@
         ];
 
         function rotate(x, y, z) {
-            const sinA = Math.sin(A), cosA = Math.cos(A);
-            const sinB = Math.sin(B), cosB = Math.cos(B);
+            const sinA = Math.sin(angleA), cosA = Math.cos(angleA);
+            const sinB = Math.sin(angleB), cosB = Math.cos(angleB);
             let x1 = x * cosB - z * sinB;
             let z1 = x * sinB + z * cosB;
             let y1 = y * cosA - z1 * sinA;
@@ -292,8 +360,8 @@
         }
 
         canvas.innerHTML = frame;
-        A += (speed === 0) ? 0 : speed-0.01;
-        B += speed;
+        angleA += (speed === 0) ? 0 : speed-0.01;
+        angleB += speed;
         requestAnimationFrame(renderFrame);
     }
 
