@@ -212,7 +212,7 @@
 
     // Font size picker
     canvas.style.fontSize = fontSizeDefault+"px";
-    canvas.style.lineHeight = fontSizeDefault+"px";
+    canvas.style.lineHeight = (fontSizeDefault-2).toString()+"px";
     const cubeFontSizeEl = document.getElementById("cube-font-size");
     cubeFontSizeEl.value = fontSizeDefault;
     cubeFontSizeEl.addEventListener("change", function(e) {
@@ -223,7 +223,7 @@
             cubeFontSizeEl.value = 100;
         }
         canvas.style.fontSize = cubeFontSizeEl.value+"px";
-        canvas.style.lineHeight = cubeFontSizeEl.value+"px";
+        canvas.style.lineHeight = (cubeFontSizeEl.value-2).toString()+"px";
     }, false);
 
     // Character input
@@ -246,7 +246,7 @@
 
         cubeFontSizeEl.value = fontSizeDefault;
         canvas.style.fontSize = fontSizeDefault+"px";
-        canvas.style.lineHeight = fontSizeDefault+"px";
+        canvas.style.lineHeight = (fontSizeDefault-2).toString()+"px";
 
         speedPickerEl.value = speedDefault;
         const speedText = document.getElementById("cube-speed-text");
