@@ -72,7 +72,7 @@
         e.preventDefault();
 
         const tempHue = parseInt(cubeHueEl.value);
-        if (tempHue > hueDefault) {
+        if (tempHue > 360) {
             cubeHueEl.value = hueDefault;
         }
         hue = parseInt(cubeHueEl.value);
@@ -92,7 +92,7 @@
         e.preventDefault();
 
         const tempSaturation = parseInt(cubeSaturationEl.value);
-        if (tempSaturation > saturationDefault) {
+        if (tempSaturation > 100) {
             cubeSaturationEl.value = saturationDefault;
         }
         saturation = parseInt(cubeSaturationEl.value);
@@ -112,7 +112,7 @@
         e.preventDefault();
 
         const tempLightness = parseInt(cubeLightnessEl.value);
-        if (tempLightness > lightnessDefault) {
+        if (tempLightness > 100) {
             cubeLightnessEl.value = lightnessDefault;
         }
         lightness = parseInt(cubeLightnessEl.value);
