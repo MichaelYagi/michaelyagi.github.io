@@ -137,7 +137,7 @@
     }
 
     function getBrightRandomHexColorHSL(hueValue = hueDefault, saturationValue = saturationDefault, lightnessValue = lightnessDefault) {
-        return hslToHex(Math.floor(Math.random() * hueValue), Math.floor(Math.random() * saturationValue) + 70, Math.floor(Math.random() * 20) + lightnessValue);
+        return hslToHex(Math.floor(Math.random() * hueValue), saturationValue, lightnessValue);
     }
 
     // Randomize color
