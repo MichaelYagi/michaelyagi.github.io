@@ -54,6 +54,7 @@
     const speedDefault = 4;
     const heightDefault = 35;
     const fontSizeDefault = 12;
+    const ratio = 10/fontSizeDefault;
     const hueDefault = 360;
     const saturationDefault = 100;
     const lightnessDefault = 60;
@@ -265,7 +266,7 @@
 
     // Font size picker
     canvas.style.fontSize = fontSizeDefault+"px";
-    canvas.style.lineHeight = (fontSizeDefault*5/6).toString()+"px";
+    canvas.style.lineHeight = (fontSizeDefault*ratio).toString()+"px";
     const cubeFontSizeEl = document.getElementById("cube-font-size");
     cubeFontSizeEl.value = fontSizeDefault;
     cubeFontSizeEl.addEventListener("change", function(e) {
@@ -278,10 +279,10 @@
             cubeFontSizeEl.value = 1;
         }
         canvas.style.fontSize = cubeFontSizeEl.value+"px";
-        canvas.style.lineHeight = (cubeFontSizeEl.value*5/6).toString()+"px";
+        canvas.style.lineHeight = (cubeFontSizeEl.value*ratio).toString()+"px";
 
         console.log("fontSize:"+cubeFontSizeEl.value+"px");
-        console.log("lineHeight:"+(cubeFontSizeEl.value*5/6).toString()+"px");
+        console.log("lineHeight:"+(cubeFontSizeEl.value*ratio).toString()+"px");
     }, false);
 
     // Character input
@@ -304,7 +305,7 @@
 
         cubeFontSizeEl.value = fontSizeDefault;
         canvas.style.fontSize = fontSizeDefault+"px";
-        canvas.style.lineHeight = (fontSizeDefault*5/6).toString()+"px";
+        canvas.style.lineHeight = (fontSizeDefault*ratio).toString()+"px";
 
         speedPickerEl.value = speedDefault;
         const speedText = document.getElementById("cube-speed-text");
@@ -345,7 +346,7 @@
                     cubeFontSizeEl.value = 100;
                 }
                 canvas.style.fontSize = cubeFontSizeEl.value+"px";
-                canvas.style.lineHeight = (cubeFontSizeEl.value*5/6).toString()+"px";
+                canvas.style.lineHeight = (cubeFontSizeEl.value*ratio).toString()+"px";
             } else if (keyCode === 40 || keyCode === 83) { // down or s - decrease font size
                 if (cubeFontSizeEl.value === "") {
                     cubeFontSizeEl.value = fontSizeDefault;
@@ -356,7 +357,7 @@
                     cubeFontSizeEl.value = 1;
                 }
                 canvas.style.fontSize = cubeFontSizeEl.value+"px";
-                canvas.style.lineHeight = (cubeFontSizeEl.value*5/6).toString()+"px";
+                canvas.style.lineHeight = (cubeFontSizeEl.value*ratio).toString()+"px";
             } else if (keyCode === 39 || keyCode === 68) { // right or d - increase speed
                 const currentSpeed = parseInt(speedPickerEl.value);
                 if (currentSpeed < 50) {
