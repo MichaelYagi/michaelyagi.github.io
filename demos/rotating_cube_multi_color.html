@@ -117,6 +117,13 @@
     let saturation = saturationDefault;
     let lightness = lightnessDefault;
 
+    let face1colorHex = face1colorDefault;
+    let face2colorHex = face2colorDefault;
+    let face3colorHex = face3colorDefault;
+    let face4colorHex = face4colorDefault;
+    let face5colorHex = face5colorDefault;
+    let face6colorHex = face6colorDefault;
+
     const cubeHueEl = document.getElementById("cube-hue");
     cubeHueEl.value = hueDefault;
     cubeHueEl.addEventListener("change", function(e) {
@@ -147,12 +154,12 @@
         }
         saturation = parseInt(cubeSaturationEl.value);
 
-        face1color = hslToHex(hexToHue(face1color), saturation, lightness);
-        face2color = hslToHex(hexToHue(face2color), saturation, lightness);
-        face3color = hslToHex(hexToHue(face3color), saturation, lightness);
-        face4color = hslToHex(hexToHue(face4color), saturation, lightness);
-        face5color = hslToHex(hexToHue(face5color), saturation, lightness);
-        face6color = hslToHex(hexToHue(face6color), saturation, lightness);
+        face1color = hslToHex(hexToHue(face1colorHex), saturation, lightness);
+        face2color = hslToHex(hexToHue(face2colorHex), saturation, lightness);
+        face3color = hslToHex(hexToHue(face3colorHex), saturation, lightness);
+        face4color = hslToHex(hexToHue(face4colorHex), saturation, lightness);
+        face5color = hslToHex(hexToHue(face5colorHex), saturation, lightness);
+        face6color = hslToHex(hexToHue(face6colorHex), saturation, lightness);
     }, false);
 
     const cubeLightnessEl = document.getElementById("cube-lightness");
@@ -166,12 +173,12 @@
         }
         lightness = parseInt(cubeLightnessEl.value);
 
-        face1color = hslToHex(hexToHue(face1color), saturation, lightness);
-        face2color = hslToHex(hexToHue(face2color), saturation, lightness);
-        face3color = hslToHex(hexToHue(face3color), saturation, lightness);
-        face4color = hslToHex(hexToHue(face4color), saturation, lightness);
-        face5color = hslToHex(hexToHue(face5color), saturation, lightness);
-        face6color = hslToHex(hexToHue(face6color), saturation, lightness);
+        face1color = hslToHex(hexToHue(face1colorHex), saturation, lightness);
+        face2color = hslToHex(hexToHue(face2colorHex), saturation, lightness);
+        face3color = hslToHex(hexToHue(face3colorHex), saturation, lightness);
+        face4color = hslToHex(hexToHue(face4colorHex), saturation, lightness);
+        face5color = hslToHex(hexToHue(face5colorHex), saturation, lightness);
+        face6color = hslToHex(hexToHue(face6colorHex), saturation, lightness);
     }, false);
 
     function hslToHex(h, s, l) {
@@ -201,11 +208,17 @@
         e.preventDefault();
 
         face1color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face1colorHex = face1color;
         face2color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face2colorHex = face2color;
         face3color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face3colorHex = face3color;
         face4color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face4colorHex = face4color;
         face5color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face5colorHex = face5color;
         face6color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face6colorHex = face6color;
     }, false);
 
     // Speed picker
