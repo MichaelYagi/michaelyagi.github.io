@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII Rotating Icosahedron</title>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    pre {
+      font-size: 10px;
+      line-height: 10px;
+      letter-spacing: 4px;
+      white-space: pre;
+    }
+    .edge0 { color: #ff0000; } /* Red */
+    .edge1 { color: #00ff00; } /* Green */
+    .edge2 { color: #ffff00; } /* Yellow */
+    .edge3 { color: #0000ff; } /* Blue */
+    .edge4 { color: #ff00ff; } /* Magenta */
+    .edge5 { color: #00ffff; } /* Cyan */
+    .edge6 { color: #ff6666; } /* Light Red */
+    .edge7 { color: #66ff66; } /* Light Green */
+    .edge8 { color: #ffff66; } /* Light Yellow */
+    .edge9 { color: #6666ff; } /* Light Blue */
+  </style>
+</head>
+<body>
+  <pre id="canvas"></pre>
+  <script>
+    const canvasWidth = 120;
+    const canvasHeight = 40;
+    const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio for icosahedron
+    const icosahedron = {
+      vertices: [
+        [0, 1, phi], [0, 1, -phi], [0, -1, phi], [0, -1, -phi],
+        [1, phi, 0], [-1, phi, 0], [1, -phi, 0], [-1, -phi, 0],
+        [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1]
+      ],
+      edges: [
+        [0, 2], [0, 4], [0, 5], [0, 8], [0, 9],
+        [1, 3], [1, 4], [1, 5], [1, 10], [1, 11],
+        [2, 6], [2, 7], [2, 8], [2, 9], [3, 6],
+        [3, 7], [3, 10], [3, 11], [4, 5], [4, 8],
+        [4, 10], [5, 9], [5, 11], [6, 7], [6, 8],
+        [6, 10], [7, 9], [7, 11], [8, 10], [9, 11]
+      ]
+    };
+
+    function rotateX(vertex, angle) {
+      const cosA = Math.cos(angle), sinA = Math.sin(angle);
+      return [
+        vertex[0],
+        vertex[1] * cosA - vertex[2] * sinA,
+        vertex[1] * sinA + vertex[2] * cosA
+      ];
+    }
+
+    function rotateY(vertex, angle) {
+      const cosA = Math.cos(angle), sinA = Math.sin(angle);
+      return [
+        vertex[0] * cosA + vertex[2] * sinA,
+        vertex[1],
+        -vertex[0] * sinA + vertex[2] * cosA
+      ];
+    }
+
+    function project(vertex) {
+      const scale = 30 / (vertex[2] + 5);
+      return [
+        Math.floor(vertex[0] * scale + canvasWidth / 2),
+        Math.floor(vertex[1] * scale + canvasHeight / 2)
+      ];
+    }
+
+    function drawLine(canvas, colorBuffer, x0, y0, x1, y1, colorClass, z0, z1) {
+      const dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+      const sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+      let err = dx - dy;
+      let x = x0, y = y0;
+      const steps = Math.max(dx, dy) || 1;
+      const zStep = (z1 - z0) / steps;
+      let z = z0;
+
+      while (true) {
+        if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight) {
+          if (z > zBuffer[y][x]) {
+            zBuffer[y][x] = z;
+            canvas[y][x] = '#';
+            colorBuffer[y][x] = colorClass; // Fixed: Changed colorColored to colorBuffer
+          }
+        }
+        if (x === x1 && y === y1) break;
+        const e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x += sx; }
+        if (e2 < dx) { err += dx; y += sy; }
+        z += zStep;
+      }
+    }
+
+    let zBuffer, colorBuffer; // Declare globally to persist between frames
+    function render() {
+      const angle = Date.now() * 0.001;
+      const rotatedVertices = icosahedron.vertices.map(v => {
+        let vertex = rotateX(v, angle);
+        vertex = rotateY(vertex, angle);
+        return vertex;
+      });
+
+      const canvas = Array(canvasHeight).fill().map(() => Array(canvasWidth).fill(' '));
+      zBuffer = Array(canvasHeight).fill().map(() => Array(canvasWidth).fill(-Infinity));
+      colorBuffer = Array(canvasHeight).fill().map(() => Array(canvasWidth).fill(''));
+
+      icosahedron.edges.forEach((edge, edgeIndex) => {
+        const v0 = rotatedVertices[edge[0]], v1 = rotatedVertices[edge[1]];
+        const [x0, y0] = project(v0);
+        const [x1, y1] = project(v1);
+        drawLine(canvas, colorBuffer, x0, y0, x1, y1, `edge${edgeIndex % 10}`, v0[2], v1[2]);
+      });
+
+      let output = '';
+      for (let y = 0; y < canvasHeight; y++) {
+        for (let x = 0; x < canvasWidth; x++) {
+          const char = canvas[y][x];
+          const colorClass = colorBuffer[y][x];
+          output += colorClass ? `<span class="${colorClass}">${char}</span>` : char;
+        }
+        output += '\n';
+      }
+      document.getElementById('canvas').innerHTML = output;
+      requestAnimationFrame(render);
+    }
+
+    render();
+  </script>
+</body>
+</html>
