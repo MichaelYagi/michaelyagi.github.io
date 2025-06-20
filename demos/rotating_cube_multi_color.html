@@ -16,6 +16,7 @@
     </style>
 </head>
 <body>
+<div id="inputs">
 <input type="hidden" id="cube-size" max="100" value=35 size="24">
 <!-- <div>
 <label for="cube-size">Cube Size</label><br>
@@ -33,13 +34,14 @@
 
 <div>
 <label for="cube-speed">Rotation Speed</label><br>
-<input type="range" id="cube-speed" min="0" max="50" value="4"><span id="cube-speed-text">4</span></div>
+<input type="range" id="cube-speed" min="0" max="50" value="4"><span id="cube-speed-text">4</span>
 <button id="decrease-button">-</button><button id="increase-button">+</button>
 </div>
 
 <div><button id="randomize-font-color-button">Randomize Font Colors</button> HSL: <input type="number" id="cube-hue" min="0" max="360" value="360"><input type="number" id="cube-saturation" min="0" max="100" value="100"><input type="number" id="cube-lightness" min="0" max="100" value="60"></div>
 
 <div><button id="reset-button">Reset</button></div>
+</div>
 
 <pre id="canvas" class="overflow-hidden"></pre>
 
@@ -63,6 +65,8 @@
     
     let angleA = 0; 
     let angleB = 0;
+
+    // Listeners
 
     // Cube hsl
     let hue = hueDefault;
@@ -221,6 +225,8 @@
         const tempFontSize = parseInt(cubeFontSizeEl.value);
         if (tempFontSize > 100) {
             cubeFontSizeEl.value = 100;
+        } else if (tempFontSize === 0) {
+            cubeFontSizeEl.value = 1;
         }
         canvas.style.fontSize = cubeFontSizeEl.value+"px";
         canvas.style.lineHeight = (cubeFontSizeEl.value-2).toString()+"px";
@@ -272,6 +278,52 @@
         face6color = face6colorDefault;
 
     }, false);
+
+    document.addEventListener('keydown', (event) => {
+        const keyCode = event.keyCode;
+
+        if (document.activeElement !== characterPickerEl) {
+            if (keyCode === 27) { // esc - reset
+                resetButtonEl.click();
+            } else if (keyCode === 38 || keyCode === 87) { // up or w - increase font size
+                cubeFontSizeEl.value = parseInt(cubeFontSizeEl.value) + 1;
+                const tempFontSize = parseInt(cubeFontSizeEl.value);
+                if (tempFontSize > 100) {
+                    cubeFontSizeEl.value = 100;
+                }
+                canvas.style.fontSize = cubeFontSizeEl.value+"px";
+                canvas.style.lineHeight = (cubeFontSizeEl.value-2).toString()+"px";
+            } else if (keyCode === 40 || keyCode === 83) { // down or s - decrease font size
+                cubeFontSizeEl.value = parseInt(cubeFontSizeEl.value) - 1;
+                const tempFontSize = parseInt(cubeFontSizeEl.value);
+                if (tempFontSize === 0) {
+                    cubeFontSizeEl.value = 1;
+                }
+                canvas.style.fontSize = cubeFontSizeEl.value+"px";
+                canvas.style.lineHeight = (cubeFontSizeEl.value-2).toString()+"px";
+            } else if (keyCode === 39 || keyCode === 68) { // right or d - increase speed
+                const currentSpeed = parseInt(speedPickerEl.value);
+                if (currentSpeed < 50) {
+                    speedPickerEl.value = parseInt(speedPickerEl.value) + 1;
+                    speedText.textContent = parseInt(speedPickerEl.value);
+                    speed = parseInt(speedPickerEl.value)/100;
+                }
+            } else if (keyCode === 37 || keyCode === 65) { // left or a - decrease speed
+                const currentSpeed = parseInt(speedPickerEl.value);
+                if (currentSpeed > 0) {
+                    speedPickerEl.value = parseInt(speedPickerEl.value) - 1;
+                    speedText.textContent = parseInt(speedPickerEl.value);
+                    speed = parseInt(speedPickerEl.value)/100;
+                }
+            } else if (keyCode === 32) { // space - pause
+                speedPickerEl.value = 0;
+                speedText.textContent = 0;
+                speed = 0;
+            } else if (keyCode === 82) { // r - random color
+                fontColorEl.click();
+            }
+        }
+    });
 
     function renderFrame() {
         const z = Array(width * height).fill(0);
