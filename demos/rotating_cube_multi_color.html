@@ -45,6 +45,8 @@
 
 <div><button id="randomize-font-color-button">Random Face Colors</button></div>
 
+<div><button id="toggle-direction-button">Toggle Direction</button></div>
+
 <div><button id="reset-button">Reset</button></div>
 </div>
 
@@ -280,9 +282,6 @@
         }
         canvas.style.fontSize = cubeFontSizeEl.value+"px";
         canvas.style.lineHeight = (cubeFontSizeEl.value*ratio).toString()+"px";
-
-        console.log("fontSize:"+cubeFontSizeEl.value+"px");
-        console.log("lineHeight:"+(cubeFontSizeEl.value*ratio).toString()+"px");
     }, false);
 
     // Character input
@@ -293,6 +292,19 @@
         e.preventDefault();
 
         character = characterPickerEl.value.trim();
+    }, false);
+
+    // Direction
+    let toggle = false;
+    const directionButtonEl = document.getElementById("toggle-direction-button");
+    directionButtonEl.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        if (toggle === false) {
+            toggle = true;
+        } else {
+            toggle = false;
+        }
     }, false);
 
     // Reset button
@@ -430,9 +442,21 @@
             const sinA = Math.sin(angleA), cosA = Math.cos(angleA);
             const sinB = Math.sin(angleB), cosB = Math.cos(angleB);
             let x1 = x * cosB - z * sinB;
+            if (toggle === true) {
+                x1 = x * cosB + z * sinB;
+            }
             let z1 = x * sinB + z * cosB;
+            if (toggle === true) {
+                z1 = x * sinB - z * cosB;
+            }
             let y1 = y * cosA - z1 * sinA;
+            if (toggle === true) {
+                y1 = y * cosA + z1 * sinA;
+            }
             z1 = y * sinA + z1 * cosA;
+            if (toggle === true) {
+               z1 = y * sinA - z1 * cosA;
+            }
             return [x1, y1, z1 + 4]; // Z offset for perspective
         }
 
