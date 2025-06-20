@@ -35,7 +35,7 @@
 <div>
 <label for="cube-speed">Rotation Speed</label><br>
 <input type="range" id="cube-speed" min="0" max="50" value="4"><span id="cube-speed-text">4</span>
-<button id="decrease-button">-</button><button id="increase-button">+</button>
+<button id="decrease-button">-</button><button id="increase-button">+</button><button id="increment-button">increment</button>
 </div>
 
 <div><button id="randomize-font-color-button">Randomize Font Colors</button> HSL: <input type="number" id="cube-hue" min="0" max="360" value="360"><input type="number" id="cube-saturation" min="0" max="100" value="100"><input type="number" id="cube-lightness" min="0" max="100" value="60"></div>
@@ -198,6 +198,18 @@
         }
     }, false);
 
+    const incrementSpeedEl = document.getElementById("increment-button");
+    incrementSpeedEl.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        speedPickerEl.value = 0;
+        speedText.textContent = 0;
+        speed = 0.01;
+        setTimeout(() => {
+            speed = 0;
+        }, 0);
+    }, false);
+
     // Cube size picker
     let height = heightDefault;
     let width = height*1.4;
@@ -327,6 +339,13 @@
                 speed = 0;
             } else if (keyCode === 82) { // r - random color
                 fontColorEl.click();
+            } else if (keyCode === 73) { // i - increment frame
+                speedPickerEl.value = 0;
+                speedText.textContent = 0;
+                speed = 0.01;
+                setTimeout(() => {
+                    speed = 0;
+                }, 0);
             }
         } else {
             characterPickerEl.value = event.key.trim().charAt(0);
