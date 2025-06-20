@@ -332,6 +332,8 @@
         lightness = lightnessDefault;
         cubeSaturationEl.value = saturationDefault;
         cubeLightnessEl.value = lightnessDefault;
+
+        toggle = false;
         
         face1color = face1colorDefault;
         face2color = face2colorDefault;
@@ -388,6 +390,12 @@
                 speedPickerEl.value = 0;
                 speedText.textContent = 0;
                 speed = 0;
+            } else if (keyCode === 84) { // t - toggle direction
+                if (toggle === false) {
+                    toggle = true;
+                } else {
+                    toggle = false;
+                }
             } else if (keyCode === 82) { // r - random color
                 fontColorEl.click();
             } else if (keyCode === 73) { // i - increment frame
