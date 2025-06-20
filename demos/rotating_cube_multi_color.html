@@ -18,7 +18,6 @@
 <body>
 <div id="inputs">
 <input type="hidden" id="cube-size" max="100" value=35 size="24">
-<input type="hidden" id="cube-hue" min="0" max="360" value="360">
 <!-- <div>
 <label for="cube-size">Cube Size</label><br>
 <input type="number" id="cube-size" max="100" value=35 size="24">
@@ -113,7 +112,6 @@
         return hsl[0]; // Hue is the first element
     }
 
-    let hue = hueDefault;
     let saturation = saturationDefault;
     let lightness = lightnessDefault;
 
@@ -123,25 +121,6 @@
     let face4colorHex = face4colorDefault;
     let face5colorHex = face5colorDefault;
     let face6colorHex = face6colorDefault;
-
-    const cubeHueEl = document.getElementById("cube-hue");
-    cubeHueEl.value = hueDefault;
-    cubeHueEl.addEventListener("change", function(e) {
-        e.preventDefault();
-
-        const tempHue = parseInt(cubeHueEl.value);
-        if (tempHue > 360) {
-            cubeHueEl.value = hueDefault;
-        }
-        hue = parseInt(cubeHueEl.value);
-
-        face1color = getBrightRandomHexColorHSL(hue, saturation, lightness);
-        face2color = getBrightRandomHexColorHSL(hue, saturation, lightness);
-        face3color = getBrightRandomHexColorHSL(hue, saturation, lightness);
-        face4color = getBrightRandomHexColorHSL(hue, saturation, lightness);
-        face5color = getBrightRandomHexColorHSL(hue, saturation, lightness);
-        face6color = getBrightRandomHexColorHSL(hue, saturation, lightness);
-    }, false);
 
     const cubeSaturationEl = document.getElementById("cube-saturation");
     cubeSaturationEl.value = saturationDefault;
@@ -207,17 +186,17 @@
     fontColorEl.addEventListener("click", function(e) {
         e.preventDefault();
 
-        face1color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face1color = getBrightRandomHexColorHSL(361, saturation, lightness);
         face1colorHex = face1color;
-        face2color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face2color = getBrightRandomHexColorHSL(361, saturation, lightness);
         face2colorHex = face2color;
-        face3color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face3color = getBrightRandomHexColorHSL(361, saturation, lightness);
         face3colorHex = face3color;
-        face4color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face4color = getBrightRandomHexColorHSL(361, saturation, lightness);
         face4colorHex = face4color;
-        face5color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face5color = getBrightRandomHexColorHSL(361, saturation, lightness);
         face5colorHex = face5color;
-        face6color = getBrightRandomHexColorHSL(hue, saturation, lightness);
+        face6color = getBrightRandomHexColorHSL(361, saturation, lightness);
         face6colorHex = face6color;
     }, false);
 
@@ -333,10 +312,8 @@
         height = heightDefault;
         width = height*1.4;
 
-        hue = hueDefault;
         saturation = saturationDefault;
         lightness = lightnessDefault;
-        cubeHueEl.value = hueDefault;
         cubeSaturationEl.value = saturationDefault;
         cubeLightnessEl.value = lightnessDefault;
         
