@@ -10,73 +10,71 @@
             color: white;
             font-family: monospace;
             white-space: pre;
-            font-size: 12px;
-            line-height: 10px;
+            font-size: 10px;
+            line-height: 8px;
         }
+        #canvas {
+            display: inline-block;
+        }
+        .face1 { color: #FF0000; }
+        .face2 { color: #FFA500; }
+        .face3 { color: #FFFF00; }
+        .face4 { color: #008000; }
+        .face5 { color: #1E90FF; }
+        .face6 { color: #6A5ACD; }
     </style>
 </head>
 <body>
 <div id="inputs">
-<input type="hidden" id="cube-size" max="100" value=35 size="24">
-<!-- <div>
-<label for="cube-size">Cube Size</label><br>
-<input type="number" id="cube-size" max="100" value=35 size="24">
-</div> -->
 <div>
 <label for="cube-character">Character</label><br>
 <input type="text" id="cube-character" minlength="1" maxlength="1" value="+" size="20">
 </div>
-
 <div>
 <label for="cube-font-size">Font Size</label><br>
-<input type="number" id="cube-font-size" max="100" value=10 size="24">
+<input type="number" id="cube-font-size" max="50" value=10 size="24">
 </div>
-
 <div>
 <label for="cube-speed">Rotation Speed</label><br>
-<input type="range" id="cube-speed" min="0" max="50" value="4"><span id="cube-speed-text">4</span>
+<input type="range" id="cube-speed" min="0" max="20" value="4"><span id="cube-speed-text">4</span>
 <button id="decrease-button">-</button><button id="increase-button">+</button><button id="increment-button">step</button>
 </div>
-
 <div>
-<label for="cube-speed">Saturation/Lightness</label><br>
+<label for="cube-saturation">Saturation/Lightness</label><br>
 <input type="number" id="cube-saturation" min="0" max="100" value="100"><input type="number" id="cube-lightness" min="0" max="100" value="60">
 </div>
-
 <div><button id="randomize-font-color-button">Random Face Colors</button></div>
-
 <div><button id="toggle-direction-button">Toggle Direction</button></div>
-
 <div><button id="reset-button">Reset</button></div>
 </div>
-
-<pre id="canvas" class="overflow-hidden"></pre>
+<pre id="canvas"></pre>
 
 <script>
     const speedDefault = 4;
-    const heightDefault = 35;
-    const fontSizeDefault = 12;
-    const ratio = 10/fontSizeDefault;
+    const heightDefault = 30; //20; // Further reduced for performance
+    const fontSizeDefault = 10;
+    const ratio = 0.8;
     const hueDefault = 360;
     const saturationDefault = 100;
     const lightnessDefault = 60;
     const characterDefault = '+';
-    const face1colorDefault = "#FF0000"; // red
-    const face2colorDefault = "#FFA500"; // orange
-    const face3colorDefault = "#FFFF00"; // yellow
-    const face4colorDefault = "#008000"; // green
-    const face5colorDefault = "#1E90FF"; // dodgerblue
-    const face6colorDefault = "#6A5ACD"; // slateblue/purple
+    const faceColorsDefault = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#1E90FF", "#6A5ACD"];
 
     const canvas = document.getElementById("canvas");
     const speedText = document.getElementById("cube-speed-text");
     
-    let angleA = 0; 
+    let angleA = 0;
     let angleB = 0;
+    let height = heightDefault;
+    let width = height * 1.4;
+    let speed = speedDefault / 100;
+    let character = characterDefault;
+    let saturation = saturationDefault;
+    let lightness = lightnessDefault;
+    let toggle = false;
+    let faceColors = [...faceColorsDefault];
 
-    // Listeners
-
-    // Cube hsl
+    // Color conversion functions
     function hexToRgb(hex) {
         const r = parseInt(hex.slice(1, 3), 16);
         const g = parseInt(hex.slice(3, 5), 16);
@@ -85,83 +83,28 @@
     }
 
     function rgbToHsl(r, g, b) {
-        r /= 255;
-        g /= 255;
-        b /= 255;
-
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
-
         if (max === min) {
-            h = s = 0; // achromatic
+            h = s = 0;
         } else {
             const d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
             switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
             }
             h /= 6;
         }
-
         return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
     }
 
     function hexToHue(hex) {
         const { r, g, b } = hexToRgb(hex);
-        const hsl = rgbToHsl(r, g, b);
-        return hsl[0]; // Hue is the first element
+        return rgbToHsl(r, g, b)[0];
     }
-
-    let saturation = saturationDefault;
-    let lightness = lightnessDefault;
-
-    let face1colorHex = face1colorDefault;
-    let face2colorHex = face2colorDefault;
-    let face3colorHex = face3colorDefault;
-    let face4colorHex = face4colorDefault;
-    let face5colorHex = face5colorDefault;
-    let face6colorHex = face6colorDefault;
-
-    const cubeSaturationEl = document.getElementById("cube-saturation");
-    cubeSaturationEl.value = saturationDefault;
-    cubeSaturationEl.addEventListener("change", function(e) {
-        e.preventDefault();
-
-        const tempSaturation = parseInt(cubeSaturationEl.value);
-        if (tempSaturation > 100) {
-            cubeSaturationEl.value = saturationDefault;
-        }
-        saturation = parseInt(cubeSaturationEl.value);
-
-        face1color = hslToHex(hexToHue(face1colorHex), saturation, lightness);
-        face2color = hslToHex(hexToHue(face2colorHex), saturation, lightness);
-        face3color = hslToHex(hexToHue(face3colorHex), saturation, lightness);
-        face4color = hslToHex(hexToHue(face4colorHex), saturation, lightness);
-        face5color = hslToHex(hexToHue(face5colorHex), saturation, lightness);
-        face6color = hslToHex(hexToHue(face6colorHex), saturation, lightness);
-    }, false);
-
-    const cubeLightnessEl = document.getElementById("cube-lightness");
-    cubeLightnessEl.value = lightnessDefault;
-    cubeLightnessEl.addEventListener("change", function(e) {
-        e.preventDefault();
-
-        const tempLightness = parseInt(cubeLightnessEl.value);
-        if (tempLightness > 100) {
-            cubeLightnessEl.value = lightnessDefault;
-        }
-        lightness = parseInt(cubeLightnessEl.value);
-
-        face1color = hslToHex(hexToHue(face1colorHex), saturation, lightness);
-        face2color = hslToHex(hexToHue(face2colorHex), saturation, lightness);
-        face3color = hslToHex(hexToHue(face3colorHex), saturation, lightness);
-        face4color = hslToHex(hexToHue(face4colorHex), saturation, lightness);
-        face5color = hslToHex(hexToHue(face5colorHex), saturation, lightness);
-        face6color = hslToHex(hexToHue(face6colorHex), saturation, lightness);
-    }, false);
 
     function hslToHex(h, s, l) {
         l /= 100;
@@ -174,248 +117,168 @@
         return `#${f(0)}${f(8)}${f(4)}`;
     }
 
-    function getBrightRandomHexColorHSL(hueValue = hueDefault, saturationValue = saturationDefault, lightnessValue = lightnessDefault) {
-        return hslToHex(Math.floor(Math.random() * hueValue), saturationValue, lightnessValue);
+    function getBrightRandomHexColorHSL() {
+        return hslToHex(Math.floor(Math.random() * hueDefault), saturation, lightness);
     }
 
-    // Randomize color
-    let face1color = face1colorDefault;
-    let face2color = face2colorDefault;
-    let face3color = face3colorDefault;
-    let face4color = face4colorDefault;
-    let face5color = face5colorDefault;
-    let face6color = face6colorDefault;
-    const fontColorEl = document.getElementById("randomize-font-color-button");
-    fontColorEl.addEventListener("click", function(e) {
-        e.preventDefault();
+    // Event listeners
+    document.getElementById("cube-saturation").addEventListener("change", e => {
+        saturation = Math.min(parseInt(e.target.value) || saturationDefault, 100);
+        updateFaceColors();
+    });
 
-        face1color = getBrightRandomHexColorHSL(361, saturation, lightness);
-        face1colorHex = face1color;
-        face2color = getBrightRandomHexColorHSL(361, saturation, lightness);
-        face2colorHex = face2color;
-        face3color = getBrightRandomHexColorHSL(361, saturation, lightness);
-        face3colorHex = face3color;
-        face4color = getBrightRandomHexColorHSL(361, saturation, lightness);
-        face4colorHex = face4color;
-        face5color = getBrightRandomHexColorHSL(361, saturation, lightness);
-        face5colorHex = face5color;
-        face6color = getBrightRandomHexColorHSL(36, saturation, lightness);
-        face6colorHex = face6color;
-    }, false);
+    document.getElementById("cube-lightness").addEventListener("change", e => {
+        lightness = Math.min(parseInt(e.target.value) || lightnessDefault, 100);
+        updateFaceColors();
+    });
 
-    // Speed picker
-    let speed = speedDefault/100;
+    function updateFaceColors() {
+        faceColors = faceColors.map(hex => hslToHex(hexToHue(hex), saturation, lightness));
+        updateCSSColors();
+    }
+
+    function updateCSSColors() {
+        const styleSheet = document.styleSheets[0];
+        for (let i = 0; i < 6; i++) {
+            const ruleIndex = Array.from(styleSheet.cssRules).findIndex(r => r.selectorText === `.face${i + 1}`);
+            if (ruleIndex !== -1) {
+                styleSheet.deleteRule(ruleIndex);
+            }
+            styleSheet.insertRule(`.face${i + 1} { color: ${faceColors[i]}; }`, styleSheet.cssRules.length);
+        }
+    }
+
+    document.getElementById("randomize-font-color-button").addEventListener("click", () => {
+        faceColors = Array(6).fill().map(() => getBrightRandomHexColorHSL());
+        updateCSSColors();
+    });
+
     const speedPickerEl = document.getElementById("cube-speed");
-    speedPickerEl.value = speedDefault;
-    speedPickerEl.addEventListener("input", function(e) {
-        e.preventDefault();
+    speedPickerEl.addEventListener("input", () => {
+        speedText.textContent = speedPickerEl.value;
+        speed = parseInt(speedPickerEl.value) / 100;
+    });
 
-        speedText.textContent = parseInt(speedPickerEl.value);
-        speed = parseInt(speedPickerEl.value)/100;
-    }, false);
-
-    const decreaseSpeedEl = document.getElementById("decrease-button");
-    decreaseSpeedEl.addEventListener("click", function(e) {
-        e.preventDefault();
-
-        const currentSpeed = parseInt(speedPickerEl.value);
-        if (currentSpeed > 0) {
-            speedPickerEl.value = parseInt(speedPickerEl.value) - 1;
-            speedText.textContent = parseInt(speedPickerEl.value);
-            speed = parseInt(speedPickerEl.value)/100;
+    document.getElementById("decrease-button").addEventListener("click", () => {
+        if (speedPickerEl.value > 0) {
+            speedPickerEl.value--;
+            speedText.textContent = speedPickerEl.value;
+            speed = speedPickerEl.value / 100;
         }
-    }, false);
+    });
 
-    const increaseSpeedEl = document.getElementById("increase-button");
-    increaseSpeedEl.addEventListener("click", function(e) {
-        e.preventDefault();
-
-        const currentSpeed = parseInt(speedPickerEl.value);
-        if (currentSpeed < 50) {
-            speedPickerEl.value = parseInt(speedPickerEl.value) + 1;
-            speedText.textContent = parseInt(speedPickerEl.value);
-            speed = parseInt(speedPickerEl.value)/100;
+    document.getElementById("increase-button").addEventListener("click", () => {
+        if (speedPickerEl.value < 20) {
+            speedPickerEl.value++;
+            speedText.textContent = speedPickerEl.value;
+            speed = speedPickerEl.value / 100;
         }
-    }, false);
+    });
 
-    const incrementSpeedEl = document.getElementById("increment-button");
-    incrementSpeedEl.addEventListener("click", function(e) {
-        e.preventDefault();
-
+    document.getElementById("increment-button").addEventListener("click", () => {
         speedPickerEl.value = 0;
         speedText.textContent = 0;
         speed = 0.01;
-        setTimeout(() => {
-            speed = 0;
-        }, 0);
-    }, false);
+        setTimeout(() => speed = 0, 0);
+    });
 
-    // Cube size picker
-    let height = heightDefault;
-    let width = height*1.4;
-    const cubeSizeEl = document.getElementById("cube-size");
-    cubeSizeEl.value = heightDefault;
-    cubeSizeEl.addEventListener("change", function(e) {
-        e.preventDefault();
-
-        const tempHeight = parseInt(cubeSizeEl.value);
-        if (tempHeight > 100) {
-            cubeSizeEl.value = 100;
-        }
-        height = parseInt(cubeSizeEl.value);
-        width = height*1.4;
-    }, false);
-
-    // Font size picker
-    canvas.style.fontSize = fontSizeDefault+"px";
-    canvas.style.lineHeight = (fontSizeDefault*ratio).toString()+"px";
     const cubeFontSizeEl = document.getElementById("cube-font-size");
-    cubeFontSizeEl.value = fontSizeDefault;
-    cubeFontSizeEl.addEventListener("change", function(e) {
-        e.preventDefault();
+    cubeFontSizeEl.addEventListener("change", () => {
+        let fontSize = Math.min(Math.max(parseInt(cubeFontSizeEl.value) || fontSizeDefault, 1), 50);
+        cubeFontSizeEl.value = fontSize;
+        canvas.style.fontSize = `${fontSize}px`;
+        canvas.style.lineHeight = `${fontSize * ratio}px`;
+    });
 
-        const tempFontSize = parseInt(cubeFontSizeEl.value);
-        if (tempFontSize > 100) {
-            cubeFontSizeEl.value = 100;
-        } else if (tempFontSize === 0) {
-            cubeFontSizeEl.value = 1;
-        }
-        canvas.style.fontSize = cubeFontSizeEl.value+"px";
-        canvas.style.lineHeight = (cubeFontSizeEl.value*ratio).toString()+"px";
-    }, false);
-
-    // Character input
-    let character = characterDefault;
     const characterPickerEl = document.getElementById("cube-character");
-    characterPickerEl.value = character;
-    characterPickerEl.addEventListener("input", function(e) {
-        e.preventDefault();
+    characterPickerEl.addEventListener("input", () => {
+        character = characterPickerEl.value.trim() || characterDefault;
+    });
 
-        character = characterPickerEl.value.trim();
-    }, false);
+    document.getElementById("toggle-direction-button").addEventListener("click", () => {
+        toggle = !toggle;
+    });
 
-    // Direction
-    let toggle = false;
-    const directionButtonEl = document.getElementById("toggle-direction-button");
-    directionButtonEl.addEventListener("click", function(e) {
-        e.preventDefault();
-
-        if (toggle === false) {
-            toggle = true;
-        } else {
-            toggle = false;
-        }
-    }, false);
-
-    // Reset button
-    const resetButtonEl = document.getElementById("reset-button");
-    resetButtonEl.addEventListener("click", function(e) {
-        e.preventDefault();
-
+    document.getElementById("reset-button").addEventListener("click", () => {
         character = characterDefault;
         characterPickerEl.value = characterDefault;
-
         cubeFontSizeEl.value = fontSizeDefault;
-        canvas.style.fontSize = fontSizeDefault+"px";
-        canvas.style.lineHeight = (fontSizeDefault*ratio).toString()+"px";
-
+        canvas.style.fontSize = `${fontSizeDefault}px`;
+        canvas.style.lineHeight = `${fontSizeDefault * ratio}px`;
         speedPickerEl.value = speedDefault;
-        const speedText = document.getElementById("cube-speed-text");
         speedText.textContent = speedDefault;
-        speed = speedDefault/100;
-
-        cubeSizeEl.value = heightDefault;
+        speed = speedDefault / 100;
         height = heightDefault;
-        width = height*1.4;
-
+        width = height * 1.4;
         saturation = saturationDefault;
         lightness = lightnessDefault;
-        cubeSaturationEl.value = saturationDefault;
-        cubeLightnessEl.value = lightnessDefault;
-
+        document.getElementById("cube-saturation").value = saturationDefault;
+        document.getElementById("cube-lightness").value = lightnessDefault;
         toggle = false;
-        
-        face1color = face1colorDefault;
-        face2color = face2colorDefault;
-        face3color = face3colorDefault;
-        face4color = face4colorDefault;
-        face5color = face5colorDefault;
-        face6color = face6colorDefault;
-
-    }, false);
+        faceColors = [...faceColorsDefault];
+        updateCSSColors();
+    });
 
     document.addEventListener('keydown', (event) => {
-        const keyCode = event.keyCode;
-
         if (document.activeElement !== characterPickerEl) {
-            if (keyCode === 27) { // esc - reset
-                resetButtonEl.click();
-            } else if (keyCode === 38 || keyCode === 87) { // up or w - increase font size
-                if (cubeFontSizeEl.value === "") {
-                    cubeFontSizeEl.value = fontSizeDefault;
-                }
-                cubeFontSizeEl.value = parseInt(cubeFontSizeEl.value) + 1;
-                const tempFontSize = parseInt(cubeFontSizeEl.value);
-                if (tempFontSize > 100) {
-                    cubeFontSizeEl.value = 100;
-                }
-                canvas.style.fontSize = cubeFontSizeEl.value+"px";
-                canvas.style.lineHeight = (cubeFontSizeEl.value*ratio).toString()+"px";
-            } else if (keyCode === 40 || keyCode === 83) { // down or s - decrease font size
-                if (cubeFontSizeEl.value === "") {
-                    cubeFontSizeEl.value = fontSizeDefault;
-                }
-                cubeFontSizeEl.value = parseInt(cubeFontSizeEl.value) - 1;
-                const tempFontSize = parseInt(cubeFontSizeEl.value);
-                if (tempFontSize === 0) {
-                    cubeFontSizeEl.value = 1;
-                }
-                canvas.style.fontSize = cubeFontSizeEl.value+"px";
-                canvas.style.lineHeight = (cubeFontSizeEl.value*ratio).toString()+"px";
-            } else if (keyCode === 39 || keyCode === 68) { // right or d - increase speed
-                const currentSpeed = parseInt(speedPickerEl.value);
-                if (currentSpeed < 50) {
-                    speedPickerEl.value = parseInt(speedPickerEl.value) + 1;
-                    speedText.textContent = parseInt(speedPickerEl.value);
-                    speed = parseInt(speedPickerEl.value)/100;
-                }
-            } else if (keyCode === 37 || keyCode === 65) { // left or a - decrease speed
-                const currentSpeed = parseInt(speedPickerEl.value);
-                if (currentSpeed > 0) {
-                    speedPickerEl.value = parseInt(speedPickerEl.value) - 1;
-                    speedText.textContent = parseInt(speedPickerEl.value);
-                    speed = parseInt(speedPickerEl.value)/100;
-                }
-            } else if (keyCode === 32) { // space - pause
-                speedPickerEl.value = 0;
-                speedText.textContent = 0;
-                speed = 0;
-            } else if (keyCode === 84) { // t - toggle direction
-                if (toggle === false) {
-                    toggle = true;
-                } else {
-                    toggle = false;
-                }
-            } else if (keyCode === 82) { // r - random color
-                fontColorEl.click();
-            } else if (keyCode === 73) { // i - increment frame
-                speedPickerEl.value = 0;
-                speedText.textContent = 0;
-                speed = 0.01;
-                setTimeout(() => {
+            switch (event.keyCode) {
+                case 27: // esc - reset
+                    document.getElementById("reset-button").click();
+                    break;
+                case 38: case 87: // up or w - increase font size
+                    cubeFontSizeEl.value = Math.min(parseInt(cubeFontSizeEl.value || fontSizeDefault) + 1, 50);
+                    canvas.style.fontSize = `${cubeFontSizeEl.value}px`;
+                    canvas.style.lineHeight = `${cubeFontSizeEl.value * ratio}px`;
+                    break;
+                case 40: case 83: // down or s - decrease font size
+                    cubeFontSizeEl.value = Math.max(parseInt(cubeFontSizeEl.value || fontSizeDefault) - 1, 1);
+                    canvas.style.fontSize = `${cubeFontSizeEl.value}px`;
+                    canvas.style.lineHeight = `${cubeFontSizeEl.value * ratio}px`;
+                    break;
+                case 39: case 68: // right or d - increase speed
+                    if (speedPickerEl.value < 20) {
+                        speedPickerEl.value++;
+                        speedText.textContent = speedPickerEl.value;
+                        speed = speedPickerEl.value / 100;
+                    }
+                    break;
+                case 37: case 65: // left or a - decrease speed
+                    if (speedPickerEl.value > 0) {
+                        speedPickerEl.value--;
+                        speedText.textContent = speedPickerEl.value;
+                        speed = speedPickerEl.value / 100;
+                    }
+                    break;
+                case 32: // space - pause
+                    speedPickerEl.value = 0;
+                    speedText.textContent = 0;
                     speed = 0;
-                }, 0);
+                    break;
+                case 84: // t - toggle direction
+                    toggle = !toggle;
+                    break;
+                case 82: // r - random color
+                    document.getElementById("randomize-font-color-button").click();
+                    break;
+                case 73: // i - increment frame
+                    document.getElementById("increment-button").click();
+                    break;
             }
         } else {
-            characterPickerEl.value = event.key.trim().charAt(0);
-            character = event.key.trim().charAt(0);
+            character = event.key.trim().charAt(0) || characterDefault;
+            characterPickerEl.value = character;
         }
     });
 
     function renderFrame() {
-        const z = Array(width * height).fill(0);
-        const b = Array(width * height).fill(' ');
-        const color = Array(width * height).fill('');
+        if (speed === 0) {
+            requestAnimationFrame(renderFrame);
+            return;
+        }
+
+        const z = new Float32Array(width * height).fill(0);
+        const b = new Array(width * height).fill(' ');
+        const color = new Array(width * height).fill('');
 
         function plot(x, y, zVal, ch, faceClass) {
             const xp = Math.floor(width / 2 + x);
@@ -428,95 +291,66 @@
             }
         }
 
-        // Cube vertices
         const vertices = [
-            [-1, -1, -1], [1, -1, -1],
-            [1,  1, -1], [-1, 1, -1],
-            [-1, -1,  1], [1, -1,  1],
-            [1,  1,  1], [-1, 1,  1]
+            [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+            [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
         ];
 
-        // Cube faces (each face has four vertex indices)
         const faces = [
-            [0, 1, 2, 3, 'face1'],
-            [4, 5, 6, 7, 'face2'],
-            [0, 1, 5, 4, 'face3'],
-            [2, 3, 7, 6, 'face4'],
-            [0, 3, 7, 4, 'face5'],
-            [1, 2, 6, 5, 'face6']
+            [0, 1, 2, 3, 'face1'], [4, 5, 6, 7, 'face2'],
+            [0, 1, 5, 4, 'face3'], [2, 3, 7, 6, 'face4'],
+            [0, 3, 7, 4, 'face5'], [1, 2, 6, 5, 'face6']
         ];
 
         function rotate(x, y, z) {
             const sinA = Math.sin(angleA), cosA = Math.cos(angleA);
             const sinB = Math.sin(angleB), cosB = Math.cos(angleB);
-            let x1 = x * cosB - z * sinB;
-            if (toggle === true) {
-                x1 = x * cosB + z * sinB;
-            }
-            let z1 = x * sinB + z * cosB;
-            if (toggle === true) {
-                z1 = x * sinB - z * cosB;
-            }
-            let y1 = y * cosA - z1 * sinA;
-            if (toggle === true) {
-                y1 = y * cosA + z1 * sinA;
-            }
-            z1 = y * sinA + z1 * cosA;
-            if (toggle === true) {
-               z1 = y * sinA - z1 * cosA;
-            }
-            return [x1, y1, z1 + 4]; // Z offset for perspective
+            const x1 = toggle ? (x * cosB + z * sinB) : (x * cosB - z * sinB);
+            const z1 = toggle ? (x * sinB - z * cosB) : (x * sinB + z * cosB);
+            const y1 = toggle ? (y * cosA + z1 * sinA) : (y * cosA - z1 * sinA);
+            const z2 = toggle ? (y * sinA - z1 * cosA) : (y * sinA + z1 * cosA);
+            return [x1, y1, z2 + 4];
         }
 
         for (const [a, b, c, d, faceClass] of faces) {
-            const v = [vertices[a], vertices[b], vertices[c], vertices[d]].map(p => rotate(...p));
-            const steps = 10;
+            const v = [vertices[a], vertices[b], vertices[c], vertices[d]].map(p => {
+                if (!p || p.length !== 3) {
+                    console.error('Invalid vertex:', p);
+                    return [0, 0, 0]; // Fallback to prevent undefined errors
+                }
+                return rotate(...p);
+            });
+            // Debug log to check v
+            if (!v.every(vec => Array.isArray(vec) && vec.length === 3)) {
+                console.error('Invalid rotated vertices:', v);
+                return; // Skip this frame to avoid crash
+            }
+            const steps = 5;
             for (let i = 0; i <= steps; i++) {
                 for (let j = 0; j <= steps; j++) {
-                    const x = (v[0][0] * (1 - i / steps) + v[1][0] * (i / steps)) * (1 - j / steps)
-                            + (v[3][0] * (1 - i / steps) + v[2][0] * (i / steps)) * (j / steps);
-                    const y = (v[0][1] * (1 - i / steps) + v[1][1] * (i / steps)) * (1 - j / steps)
-                            + (v[3][1] * (1 - i / steps) + v[2][1] * (i / steps)) * (j / steps);
-                    const zVal = (v[0][2] * (1 - i / steps) + v[1][2] * (i / steps)) * (1 - j / steps)
-                            + (v[3][2] * (1 - i / steps) + v[2][2] * (i / steps)) * (j / steps);
-                    plot(x * 15, y * 10, 1 / zVal, character, faceClass);
+                    const u = i / steps, vVal = j / steps; // Renamed v to vVal to avoid shadowing
+                    const x = (v[0][0] * (1 - u) + v[1][0] * u) * (1 - vVal) + (v[3][0] * (1 - u) + v[2][0] * u) * vVal;
+                    const y = (v[0][1] * (1 - u) + v[1][1] * u) * (1 - vVal) + (v[3][1] * (1 - u) + v[2][1] * u) * vVal;
+                    const zVal = (v[0][2] * (1 - u) + v[1][2] * u) * (1 - vVal) + (v[3][2] * (1 - u) + v[2][2] * u) * vVal;
+                    plot(x * 10, y * 8, 1 / zVal, character, faceClass);
                 }
             }
         }
 
         let frame = '';
         for (let i = 0; i < b.length; i++) {
-            if (i % width === 0) {
-                frame += '\n';
-            }
-            
-            const cls = color[i];
-            let fontColor = "";
-            if (cls === "face1") {
-                fontColor = face1color;
-            } else if (cls === "face2") {
-                fontColor = face2color;
-            } else if (cls === "face3") {
-                fontColor = face3color;
-            } else if (cls === "face4") {
-                fontColor = face4color;
-            } else if (cls === "face5") {
-                fontColor = face5color;
-            } else if (cls === "face6") {
-                fontColor = face6color;
-            }
-
-            frame += cls ? `<span class="${cls}" style="color: ${fontColor}">${b[i]}</span>` : b[i];
+            if (i % width === 0) frame += '\n';
+            frame += color[i] ? `<span class="${color[i]}">${b[i]}</span>` : b[i];
         }
 
         canvas.innerHTML = frame;
-        angleA += (speed === 0) ? 0 : ((speed === 0.01) ? 0.008 : speed-0.01);
-        angleB += (speed === 0) ? 0 : ((speed === 0.01) ? 0.009 : speed);
+        angleA += speed === 0.01 ? 0.008 : speed - 0.01;
+        angleB += speed === 0.01 ? 0.009 : speed;
         requestAnimationFrame(renderFrame);
     }
 
+    updateCSSColors();
     renderFrame();
 </script>
-
 </body>
 </html>
