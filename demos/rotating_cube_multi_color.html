@@ -511,6 +511,7 @@
             // a.href = URL.createObjectURL(blob);
             // a.download = 'div_animation.gif';
             // a.click();
+            document.getElementById("reset-button").disabled = false;
         });
 
         try {
@@ -518,12 +519,14 @@
             document.getElementById("gif-message").innerText = "GIF renderering";
         } catch(error) {
             document.getElementById("gif-message").innerText = "Error: " + error.toString();
+            document.getElementById("reset-button").disabled = false;
         }
     }
 
     // Example usage: Convert a div with ID into a GIF with 100ms delay per frame
     document.getElementById("render-gif").addEventListener("click", () => {
         if (rendered) {
+            document.getElementById("reset-button").disabled = true;
             document.getElementById("gif-message").innerText = "Rendering GIF";
             convertDivToGif('canvas', frameCount, 1);
         }
