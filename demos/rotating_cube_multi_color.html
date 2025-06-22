@@ -2,22 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Colored ASCII Cube</title>
+    <title>Colored ASCII Cube on Canvas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <script src="./html2canvas.min.js"></script>
-    <script src="./gif.js"></script>
-    <script src="./gif.worker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
     <style>
         body {
             background: black;
             color: white;
             font-family: monospace;
-            white-space: pre;
             font-size: 10px;
-            line-height: 8px;
         }
         #canvas {
             display: inline-block;
+            background: black;
+        }
+        #inputs {
+            margin-bottom: 10px;
         }
         .face1 { color: #FF0000; }
         .face2 { color: #FFA500; }
@@ -29,29 +29,29 @@
 </head>
 <body>
 <div id="inputs">
-<div>
-<label for="cube-character">Character</label><br>
-<input type="text" id="cube-character" minlength="1" maxlength="1" value="+" size="20">
+    <div>
+        <label for="cube-character">Character</label><br>
+        <input type="text" id="cube-character" minlength="1" maxlength="1" value="+" size="20">
+    </div>
+    <div>
+        <label for="cube-font-size">Font Size</label><br>
+        <input type="number" id="cube-font-size" max="50" value="10" size="24">
+    </div>
+    <div>
+        <label for="cube-speed">Rotation Speed</label><br>
+        <input type="range" id="cube-speed" min="0" max="20" value="4"><span id="cube-speed-text">4</span>
+        <button id="decrease-button">-</button><button id="increase-button">+</button><button id="increment-button">step</button>
+    </div>
+    <div>
+        <label for="cube-saturation">Saturation/Lightness</label><br>
+        <input type="number" id="cube-saturation" min="0" max="100" value="100"><input type="number" id="cube-lightness" min="0" max="100" value="50">
+    </div>
+    <div><button id="randomize-font-color-button">Random Face Colors</button></div>
+    <div><button id="toggle-direction-button">Toggle Direction</button></div>
+    <div><button id="reset-button">Reset</button></div>
+    <div><button id="render-gif" style="display: none;">Render GIF</button><span id="gif-message"></span></div>
 </div>
-<div>
-<label for="cube-font-size">Font Size</label><br>
-<input type="number" id="cube-font-size" max="50" value=10 size="24">
-</div>
-<div>
-<label for="cube-speed">Rotation Speed</label><br>
-<input type="range" id="cube-speed" min="0" max="20" value="4"><span id="cube-speed-text">4</span>
-<button id="decrease-button">-</button><button id="increase-button">+</button><button id="increment-button">step</button>
-</div>
-<div>
-<label for="cube-saturation">Saturation/Lightness</label><br>
-<input type="number" id="cube-saturation" min="0" max="100" value="100"><input type="number" id="cube-lightness" min="0" max="100" value="50">
-</div>
-<div><button id="randomize-font-color-button">Random Face Colors</button></div>
-<div><button id="toggle-direction-button">Toggle Direction</button></div>
-<div><button id="reset-button">Reset</button></div>
-<div><button id="render-gif" style="display: none;">Render GIF</button><span id="gif-message"></span></div>
-</div>
-<pre id="canvas"></pre>
+<canvas id="canvas"></canvas>
 
 <script>
     if (window.location.protocol === "http:" || window.location.protocol === "https:") {
@@ -59,7 +59,7 @@
     }
 
     const speedDefault = 4;
-    const heightDefault = 30; //20; // Further reduced for performance
+    const heightDefault = 30;
     const fontSizeDefault = 10;
     const ratio = 0.8;
     const hueDefault = 360;
@@ -69,8 +69,9 @@
     const faceColorsDefault = ['#FF0000', '#FFAA00', '#FFFF00', '#00FF00', '#00AAFF', '#5500FF'];
 
     const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
     const speedText = document.getElementById("cube-speed-text");
-    
+
     let angleA = 0;
     let angleB = 0;
     let height = heightDefault;
@@ -83,6 +84,16 @@
     let rendered = false;
     let disco = false;
     let faceColors = [...faceColorsDefault];
+    let fontSize = fontSizeDefault;
+
+    // Initialize canvas size
+    function resizeCanvas() {
+        canvas.width = width * fontSize * 0.6; // Approximate character width
+        canvas.height = height * fontSize * ratio;
+        ctx.font = `${fontSize}px monospace`;
+        ctx.textBaseline = 'top';
+    }
+    resizeCanvas();
 
     // Color conversion functions
     function hexToRgb(hex) {
@@ -96,31 +107,28 @@
         r /= 255;
         g /= 255;
         b /= 255;
-
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
-
         if (max === min) {
-            h = s = 0; // achromatic
+            h = s = 0;
         } else {
             const d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
             switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
             }
             h /= 6;
         }
-
         return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
     }
 
     function hexToHue(hex) {
         const { r, g, b } = hexToRgb(hex);
         const hsl = rgbToHsl(r, g, b);
-        return hsl[0]; // Hue is the first element
+        return hsl[0];
     }
 
     function hslToHex(h, s, l) {
@@ -142,13 +150,11 @@
     document.getElementById("cube-saturation").addEventListener("change", e => {
         rendered = false;
         let saturationValue = parseInt(e.target.value);
-
         if (saturationValue < 0) {
             document.getElementById("cube-saturation").value = 0;
         } else if (saturationValue > 100) {
             document.getElementById("cube-saturation").value = 100;
         }
-
         saturation = Math.min(saturationValue || 1, 100);
         updateFaceColors();
         rendered = true;
@@ -157,13 +163,11 @@
     document.getElementById("cube-lightness").addEventListener("change", e => {
         rendered = false;
         let lightnessValue = parseInt(e.target.value);
-
         if (lightnessValue < 0) {
             document.getElementById("cube-lightness").value = 0;
         } else if (lightnessValue > 100) {
             document.getElementById("cube-lightness").value = 100;
         }
-
         lightness = Math.min(lightnessValue || 1, 99);
         updateFaceColors();
         rendered = true;
@@ -232,10 +236,10 @@
     const cubeFontSizeEl = document.getElementById("cube-font-size");
     cubeFontSizeEl.addEventListener("change", () => {
         rendered = false;
-        let fontSize = Math.min(Math.max(parseInt(cubeFontSizeEl.value) || fontSizeDefault, 1), 50);
+        fontSize = Math.min(Math.max(parseInt(cubeFontSizeEl.value) || fontSizeDefault, 1), 50);
         cubeFontSizeEl.value = fontSize;
-        canvas.style.fontSize = `${fontSize}px`;
-        canvas.style.lineHeight = `${fontSize * ratio}px`;
+        ctx.font = `${fontSize}px monospace`;
+        resizeCanvas();
         rendered = true;
     });
 
@@ -257,8 +261,8 @@
         character = characterDefault;
         characterPickerEl.value = characterDefault;
         cubeFontSizeEl.value = fontSizeDefault;
-        canvas.style.fontSize = `${fontSizeDefault}px`;
-        canvas.style.lineHeight = `${fontSizeDefault * ratio}px`;
+        fontSize = fontSizeDefault;
+        ctx.font = `${fontSizeDefault}px monospace`;
         speedPickerEl.value = speedDefault;
         speedText.textContent = speedDefault;
         speed = speedDefault / 100;
@@ -277,6 +281,7 @@
         }
         document.getElementById("gif-message").innerText = "";
         updateCSSColors();
+        resizeCanvas();
         rendered = true;
     });
 
@@ -289,13 +294,15 @@
                     break;
                 case 38: case 87: // up or w - increase font size
                     cubeFontSizeEl.value = Math.min(parseInt(cubeFontSizeEl.value || fontSizeDefault) + 1, 50);
-                    canvas.style.fontSize = `${cubeFontSizeEl.value}px`;
-                    canvas.style.lineHeight = `${cubeFontSizeEl.value * ratio}px`;
+                    fontSize = parseInt(cubeFontSizeEl.value);
+                    ctx.font = `${fontSize}px monospace`;
+                    resizeCanvas();
                     break;
                 case 40: case 83: // down or s - decrease font size
                     cubeFontSizeEl.value = Math.max(parseInt(cubeFontSizeEl.value || fontSizeDefault) - 1, 1);
-                    canvas.style.fontSize = `${cubeFontSizeEl.value}px`;
-                    canvas.style.lineHeight = `${cubeFontSizeEl.value * ratio}px`;
+                    fontSize = parseInt(cubeFontSizeEl.value);
+                    ctx.font = `${fontSize}px monospace`;
+                    resizeCanvas();
                     break;
                 case 39: case 68: // right or d - increase speed
                     if (speedPickerEl.value < 20) {
@@ -359,18 +366,11 @@
             'b': 'b'
         };
 
-        // add keydown event listener
         document.addEventListener('keyup', function(e) {
-            // get the value of the key code from the key map
             const key = konamiAllowedKeys[e.key || e.code || e.which || e.keyCode];
-            // get the value of the required key from the konami code
             const requiredKey = konamiCode[konamiCodePosition];
-            // compare the key with the required key
             if (key === requiredKey) {
-                // move to the next key in the konami code sequence
                 konamiCodePosition++;
-
-                // if the last key is reached, activate cheats
                 if (konamiCodePosition === konamiCode.length) {
                     konamiCodePosition = 0;
                     callback(true);
@@ -389,6 +389,9 @@
             requestAnimationFrame(renderFrame);
             return;
         }
+
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const z = new Float32Array(width * height).fill(0);
         const b = new Array(width * height).fill(' ');
@@ -430,19 +433,18 @@
             const v = [vertices[a], vertices[b], vertices[c], vertices[d]].map(p => {
                 if (!p || p.length !== 3) {
                     console.error('Invalid vertex:', p);
-                    return [0, 0, 0]; // Fallback to prevent undefined errors
+                    return [0, 0, 0];
                 }
                 return rotate(...p);
             });
-            // Debug log to check v
             if (!v.every(vec => Array.isArray(vec) && vec.length === 3)) {
                 console.error('Invalid rotated vertices:', v);
-                return; // Skip this frame to avoid crash
+                return;
             }
             const steps = 5;
             for (let i = 0; i <= steps; i++) {
                 for (let j = 0; j <= steps; j++) {
-                    const u = i / steps, vVal = j / steps; // Renamed v to vVal to avoid shadowing
+                    const u = i / steps, vVal = j / steps;
                     const x = (v[0][0] * (1 - u) + v[1][0] * u) * (1 - vVal) + (v[3][0] * (1 - u) + v[2][0] * u) * vVal;
                     const y = (v[0][1] * (1 - u) + v[1][1] * u) * (1 - vVal) + (v[3][1] * (1 - u) + v[2][1] * u) * vVal;
                     const zVal = (v[0][2] * (1 - u) + v[1][2] * u) * (1 - vVal) + (v[3][2] * (1 - u) + v[2][2] * u) * vVal;
@@ -451,18 +453,21 @@
             }
         }
 
-        let frame = '';
         for (let i = 0; i < b.length; i++) {
-            if (i % width === 0) frame += '\n';
-
-            let num = i;
-            if (disco === true) {
-                num = getRandomIntInclusive(0, b.length-1);
+            if (b[i] !== ' ') {
+                const x = (i % width) * fontSize * 0.6;
+                const y = Math.floor(i / width) * fontSize * ratio;
+                let idx = i;
+                if (disco) {
+                    idx = getRandomIntInclusive(0, b.length - 1);
+                }
+                if (color[idx]) {
+                    ctx.fillStyle = faceColors[parseInt(color[idx].slice(4)) - 1];
+                    ctx.fillText(b[idx], x, y);
+                }
             }
-            frame += color[i] ? `<span class="${color[num]}">${b[num]}</span>` : b[i];
         }
 
-        canvas.innerHTML = frame;
         angleA += speed === 0.01 ? 0.008 : speed - 0.01;
         angleB += speed === 0.01 ? 0.009 : speed;
         requestAnimationFrame(renderFrame);
@@ -492,11 +497,10 @@
         });
 
         for (let i = 0; i < frameCount; i++) {
+            document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100) + "%";
             // Capture the div content for each frame
             //document.getElementById("increment-button").click();
-            const htmlCanvas = await html2canvas(targetDiv);
-            gif.addFrame(htmlCanvas, { delay: frameDelay });
-            document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100) + "%";
+            gif.addFrame(targetDiv, { delay: frameDelay });
         }
 
         gif.on('finished', function(blob) {
@@ -533,9 +537,10 @@
             if (el) {
                 el.remove();
             }
-            const fps = 120;
+            const fps = 30;
             const frameDelay = 1000 / fps;
-            convertDivToGif('canvas', frameDelay, 0.05);
+            const frameCount = 400;
+            convertDivToGif('canvas', frameCount, frameDelay);
         }
     });
 </script>
