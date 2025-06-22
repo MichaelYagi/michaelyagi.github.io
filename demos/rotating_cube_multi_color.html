@@ -49,7 +49,7 @@
 <div><button id="randomize-font-color-button">Random Face Colors</button></div>
 <div><button id="toggle-direction-button">Toggle Direction</button></div>
 <div><button id="reset-button">Reset</button></div>
-<div><button id="render-gif" style="display: none;">Render GIF</button></div>
+<div><button id="render-gif" style="display: none;">Render GIF</button><span id="gif-message"></span></div>
 </div>
 <pre id="canvas"></pre>
 
@@ -273,6 +273,7 @@
         disco = false;
         faceColors = [...faceColorsDefault];
         document.getElementById("gif-version").remove();
+        document.getElementById("gif-message").innerText = "";
         updateCSSColors();
         rendered = true;
     });
@@ -498,12 +499,14 @@
             const canvas = await html2canvas(targetDiv);
             gif.addFrame(canvas, { delay: frameDelay });
             // console.log("Frame #:"+(i+1).toString()+" of "+frameCount.toString());
+            document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100);
         }
 
         console.log("Added canvas to frames");
 
         gif.on('finished', function(blob) {
             console.log("finished");
+            document.getElementById("gif-message").innerText = "GIF renderering finished";
             // Display the generated GIF
             const img = document.createElement('img');
             img.src = URL.createObjectURL(blob);
@@ -520,15 +523,18 @@
         try {
             gif.render();
             console.log("GIF render");
+            document.getElementById("gif-message").innerText = "GIF renderering";
         } catch(error) {
             console.log(error);
             console.log("Error");
+            document.getElementById("gif-message").innerText = "Error: " + error.toString();
         }
     }
 
     // Example usage: Convert a div with ID into a GIF with 100ms delay per frame
     document.getElementById("render-gif").addEventListener("click", () => {
         if (rendered) {
+            document.getElementById("gif-message").innerText = "Rendering GIF";
             console.log("originalFramecount:"+frameCount);
             convertDivToGif('canvas', 50, 100);
         }
