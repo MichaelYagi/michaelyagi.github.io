@@ -85,6 +85,7 @@
     let disco = false;
     let faceColors = [...faceColorsDefault];
     let fontSize = fontSizeDefault;
+    let frames = 0;
 
     // Initialize canvas size
     function resizeCanvas() {
@@ -257,6 +258,7 @@
     });
 
     document.getElementById("reset-button").addEventListener("click", () => {
+        frames = 0;
         rendered = false;
         character = characterDefault;
         characterPickerEl.value = characterDefault;
@@ -499,7 +501,6 @@
         for (let i = 0; i < frameCount; i++) {
             document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100) + "%";
             // Capture the div content for each frame
-            //document.getElementById("increment-button").click();
             gif.addFrame(targetDiv, { delay: frameDelay });
         }
 
@@ -537,9 +538,11 @@
             if (el) {
                 el.remove();
             }
-            const fps = 30;
+            const fps = 60;
             const frameDelay = 1000 / fps;
-            const frameCount = 400;
+            const speed = speedPickerEl.value / 100;
+            const frameCount = 2*Math.PI/speed;
+            console.log(frameCount);
             convertDivToGif('canvas', frameCount, frameDelay);
         }
     });
