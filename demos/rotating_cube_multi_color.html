@@ -58,7 +58,7 @@
     const saturationDefault = 100;
     const lightnessDefault = 50;
     const characterDefault = '+';
-    const faceColorsDefault = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#1E90FF", "#6A5ACD"];
+    const faceColorsDefault = ['#FF0000', '#FFAA00', '#FFFF00', '#00FF00', '#00AAFF', '#5500FF'];
 
     const canvas = document.getElementById("canvas");
     const speedText = document.getElementById("cube-speed-text");
@@ -83,27 +83,34 @@
     }
 
     function rgbToHsl(r, g, b) {
-        r /= 255; g /= 255; b /= 255;
-        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        r /= 255;
+        g /= 255;
+        b /= 255;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
+
         if (max === min) {
-            h = s = 0;
+            h = s = 0; // achromatic
         } else {
             const d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
             switch (max) {
-                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
             }
             h /= 6;
         }
+
         return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
     }
 
     function hexToHue(hex) {
         const { r, g, b } = hexToRgb(hex);
-        return rgbToHsl(r, g, b)[0];
+        const hsl = rgbToHsl(r, g, b);
+        return hsl[0]; // Hue is the first element
     }
 
     function hslToHex(h, s, l) {
@@ -123,12 +130,12 @@
 
     // Event listeners
     document.getElementById("cube-saturation").addEventListener("change", e => {
-        saturation = Math.min(parseInt(e.target.value) || saturationDefault, 100);
+        saturation = Math.min(parseInt(e.target.value) || 1, 100);
         updateFaceColors();
     });
 
     document.getElementById("cube-lightness").addEventListener("change", e => {
-        lightness = Math.min(parseInt(e.target.value) || lightnessDefault, 100);
+        lightness = Math.min(parseInt(e.target.value) || 1, 99);
         updateFaceColors();
     });
 
