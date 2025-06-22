@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <title>Colored ASCII Cube</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="./html2canvas.min.js"></script>
+    <script src="./gif.js"></script>
+    <script src="./gif.worker.js"></script>
     <style>
         body {
             background: black;
@@ -46,10 +49,15 @@
 <div><button id="randomize-font-color-button">Random Face Colors</button></div>
 <div><button id="toggle-direction-button">Toggle Direction</button></div>
 <div><button id="reset-button">Reset</button></div>
+<div><button id="render-gif" style="display: none;">Render GIF</button></div>
 </div>
 <pre id="canvas"></pre>
 
 <script>
+    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+        document.getElementById("render-gif").style.display = "block";
+    }
+
     const speedDefault = 4;
     const heightDefault = 30; //20; // Further reduced for performance
     const fontSizeDefault = 10;
@@ -72,8 +80,10 @@
     let saturation = saturationDefault;
     let lightness = lightnessDefault;
     let toggleDirection = false;
+    let rendered = false;
     let disco = false;
     let faceColors = [...faceColorsDefault];
+    let frameCount = 0;
 
     // Color conversion functions
     function hexToRgb(hex) {
@@ -131,6 +141,7 @@
 
     // Event listeners
     document.getElementById("cube-saturation").addEventListener("change", e => {
+        rendered = false;
         let saturationValue = parseInt(e.target.value);
 
         if (saturationValue < 0) {
@@ -141,9 +152,11 @@
 
         saturation = Math.min(saturationValue || 1, 100);
         updateFaceColors();
+        rendered = true;
     });
 
     document.getElementById("cube-lightness").addEventListener("change", e => {
+        rendered = false;
         let lightnessValue = parseInt(e.target.value);
 
         if (lightnessValue < 0) {
@@ -154,6 +167,7 @@
 
         lightness = Math.min(lightnessValue || 1, 99);
         updateFaceColors();
+        rendered = true;
     });
 
     function updateFaceColors() {
@@ -173,57 +187,74 @@
     }
 
     document.getElementById("randomize-font-color-button").addEventListener("click", () => {
+        rendered = false;
         faceColors = Array(6).fill().map(() => getBrightRandomHexColorHSL());
         updateCSSColors();
+        rendered = true;
     });
 
     const speedPickerEl = document.getElementById("cube-speed");
     speedPickerEl.addEventListener("input", () => {
+        rendered = false;
         speedText.textContent = speedPickerEl.value;
         speed = parseInt(speedPickerEl.value) / 100;
+        rendered = true;
     });
 
     document.getElementById("decrease-button").addEventListener("click", () => {
+        rendered = false;
         if (speedPickerEl.value > 0) {
             speedPickerEl.value--;
             speedText.textContent = speedPickerEl.value;
             speed = speedPickerEl.value / 100;
         }
+        rendered = true;
     });
 
     document.getElementById("increase-button").addEventListener("click", () => {
+        rendered = false;
         if (speedPickerEl.value < 20) {
             speedPickerEl.value++;
             speedText.textContent = speedPickerEl.value;
             speed = speedPickerEl.value / 100;
         }
+        rendered = true;
     });
 
     document.getElementById("increment-button").addEventListener("click", () => {
+        rendered = false;
         speedPickerEl.value = 0;
         speedText.textContent = 0;
         speed = 0.01;
         setTimeout(() => speed = 0, 0);
+        rendered = true;
     });
 
     const cubeFontSizeEl = document.getElementById("cube-font-size");
     cubeFontSizeEl.addEventListener("change", () => {
+        rendered = false;
         let fontSize = Math.min(Math.max(parseInt(cubeFontSizeEl.value) || fontSizeDefault, 1), 50);
         cubeFontSizeEl.value = fontSize;
         canvas.style.fontSize = `${fontSize}px`;
         canvas.style.lineHeight = `${fontSize * ratio}px`;
+        rendered = true;
     });
 
     const characterPickerEl = document.getElementById("cube-character");
     characterPickerEl.addEventListener("input", () => {
+        rendered = false;
         character = characterPickerEl.value.trim() || characterDefault;
+        rendered = true;
     });
 
     document.getElementById("toggle-direction-button").addEventListener("click", () => {
+        rendered = false;
         toggleDirection = !toggleDirection;
+        rendered = true;
     });
 
     document.getElementById("reset-button").addEventListener("click", () => {
+        rendered = false;
         character = characterDefault;
         characterPickerEl.value = characterDefault;
         cubeFontSizeEl.value = fontSizeDefault;
@@ -242,9 +273,11 @@
         disco = false;
         faceColors = [...faceColorsDefault];
         updateCSSColors();
+        rendered = true;
     });
 
     document.addEventListener('keydown', (event) => {
+        rendered = false;
         if (document.activeElement !== characterPickerEl) {
             switch (event.keyCode) {
                 case 27: // esc - reset
@@ -293,6 +326,7 @@
             character = event.key.trim().charAt(0) || characterDefault;
             characterPickerEl.value = character;
         }
+        rendered = true;
     });
 
     function getRandomIntInclusive(min, max) {
@@ -414,6 +448,7 @@
         }
 
         let frame = '';
+        frameCount = b.length-1;
         for (let i = 0; i < b.length; i++) {
             if (i % width === 0) frame += '\n';
 
@@ -435,6 +470,65 @@
     konamiCodeListener(function(flag) {
         if (flag) {
             disco = !disco;
+        }
+    });
+    rendered = true;
+
+    async function convertDivToGif(divId, frameCount, frameDelay) {
+        frameCount = Math.floor(frameCount);
+        console.log("adjustedFramecount:"+frameCount);
+
+        const targetDiv = document.getElementById(divId);
+        if (!targetDiv) {
+            console.error("Div not found.");
+            return;
+        }
+
+        const gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+        });
+
+        console.log("Setup GIF");
+
+        for (let i = 0; i < frameCount; i++) {
+            // Capture the div content for each frame
+            //document.getElementById("increment-button").click();
+            const canvas = await html2canvas(targetDiv);
+            gif.addFrame(canvas, { delay: frameDelay });
+            // console.log("Frame #:"+(i+1).toString()+" of "+frameCount.toString());
+        }
+
+        console.log("Added canvas to frames");
+
+        gif.on('finished', function(blob) {
+            console.log("finished");
+            // Display the generated GIF
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(blob);
+            document.body.appendChild(img);
+
+            // Or offer for download
+            // const a = document.createElement('a');
+            // a.href = URL.createObjectURL(blob);
+            // a.download = 'div_animation.gif';
+            // a.click();
+        });
+
+        try {
+            gif.render();
+            console.log("GIF render");
+        } catch(error) {
+            console.log(error);
+            console.log("Error");
+        }
+    }
+
+    // Example usage: Convert a div with ID into a GIF with 100ms delay per frame
+    document.getElementById("render-gif").addEventListener("click", () => {
+        if (rendered) {
+            console.log("originalFramecount:"+frameCount);
+            convertDivToGif('canvas', 50, 100);
         }
     });
 </script>
