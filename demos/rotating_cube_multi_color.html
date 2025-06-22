@@ -533,8 +533,9 @@
             if (el) {
                 el.remove();
             }
-
-            convertDivToGif('canvas', 20, 0.05);
+            const fps = 120;
+            const frameDelay = 1000 / fps;
+            convertDivToGif('canvas', frameDelay, 0.05);
         }
     });
 </script>
