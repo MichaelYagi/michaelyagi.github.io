@@ -272,6 +272,7 @@
         toggleDirection = false;
         disco = false;
         faceColors = [...faceColorsDefault];
+        document.getElementById("gif-version").remove();
         updateCSSColors();
         rendered = true;
     });
@@ -506,6 +507,7 @@
             // Display the generated GIF
             const img = document.createElement('img');
             img.src = URL.createObjectURL(blob);
+            img.setAttribute("id", "gif-version");
             document.body.appendChild(img);
 
             // Or offer for download
