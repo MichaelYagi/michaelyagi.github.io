@@ -539,10 +539,9 @@
                 el.remove();
             }
             const fps = 60;
-            const frameDelay = 1000 / fps;
+            const frameDelay = 17; //1000 / fps;
             const speed = speedPickerEl.value / 100;
-            const frameCount = 2*Math.PI/speed;
-            console.log(frameCount);
+            const frameCount = 2.6*Math.PI/speed;
             convertDivToGif('canvas', frameCount, frameDelay);
         }
     });
