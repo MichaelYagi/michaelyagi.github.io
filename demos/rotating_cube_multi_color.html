@@ -71,7 +71,7 @@
     let character = characterDefault;
     let saturation = saturationDefault;
     let lightness = lightnessDefault;
-    let toggle = false;
+    let toggleDirection = false;
     let disco = false;
     let faceColors = [...faceColorsDefault];
 
@@ -220,7 +220,7 @@
     });
 
     document.getElementById("toggle-direction-button").addEventListener("click", () => {
-        toggle = !toggle;
+        toggleDirection = !toggleDirection;
     });
 
     document.getElementById("reset-button").addEventListener("click", () => {
@@ -238,7 +238,7 @@
         lightness = lightnessDefault;
         document.getElementById("cube-saturation").value = saturationDefault;
         document.getElementById("cube-lightness").value = lightnessDefault;
-        toggle = false;
+        toggleDirection = false;
         disco = false;
         faceColors = [...faceColorsDefault];
         updateCSSColors();
@@ -280,7 +280,7 @@
                     speed = 0;
                     break;
                 case 84: // t - toggle direction
-                    toggle = !toggle;
+                    toggleDirection = !toggleDirection;
                     break;
                 case 82: // r - random color
                     document.getElementById("randomize-font-color-button").click();
@@ -381,10 +381,10 @@
         function rotate(x, y, z) {
             const sinA = Math.sin(angleA), cosA = Math.cos(angleA);
             const sinB = Math.sin(angleB), cosB = Math.cos(angleB);
-            const x1 = toggle ? (x * cosB + z * sinB) : (x * cosB - z * sinB);
-            const z1 = toggle ? (x * sinB - z * cosB) : (x * sinB + z * cosB);
-            const y1 = toggle ? (y * cosA + z1 * sinA) : (y * cosA - z1 * sinA);
-            const z2 = toggle ? (y * sinA - z1 * cosA) : (y * sinA + z1 * cosA);
+            const x1 = toggleDirection ? (x * cosB + z * sinB) : (x * cosB - z * sinB);
+            const z1 = toggleDirection ? (x * sinB - z * cosB) : (x * sinB + z * cosB);
+            const y1 = toggleDirection ? (y * cosA + z1 * sinA) : (y * cosA - z1 * sinA);
+            const z2 = toggleDirection ? (y * sinA - z1 * cosA) : (y * sinA + z1 * cosA);
             return [x1, y1, z2 + 4];
         }
 
