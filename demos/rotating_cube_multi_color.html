@@ -478,11 +478,10 @@
 
     async function convertDivToGif(divId, frameCount, frameDelay) {
         frameCount = Math.floor(frameCount);
-        console.log("adjustedFramecount:"+frameCount);
 
         const targetDiv = document.getElementById(divId);
         if (!targetDiv) {
-            console.error("Div not found.");
+            document.getElementById("gif-message").innerText = "GIF renderering error: element not found";
             return;
         }
 
@@ -491,21 +490,15 @@
             quality: 10, // GIF quality (lower is smaller file size, but worse quality)
         });
 
-        console.log("Setup GIF");
-
         for (let i = 0; i < frameCount; i++) {
             // Capture the div content for each frame
             //document.getElementById("increment-button").click();
             const canvas = await html2canvas(targetDiv);
             gif.addFrame(canvas, { delay: frameDelay });
-            // console.log("Frame #:"+(i+1).toString()+" of "+frameCount.toString());
             document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100);
         }
 
-        console.log("Added canvas to frames");
-
         gif.on('finished', function(blob) {
-            console.log("finished");
             document.getElementById("gif-message").innerText = "GIF renderering finished";
             // Display the generated GIF
             const img = document.createElement('img');
@@ -522,11 +515,8 @@
 
         try {
             gif.render();
-            console.log("GIF render");
             document.getElementById("gif-message").innerText = "GIF renderering";
         } catch(error) {
-            console.log(error);
-            console.log("Error");
             document.getElementById("gif-message").innerText = "Error: " + error.toString();
         }
     }
@@ -535,8 +525,7 @@
     document.getElementById("render-gif").addEventListener("click", () => {
         if (rendered) {
             document.getElementById("gif-message").innerText = "Rendering GIF";
-            console.log("originalFramecount:"+frameCount);
-            convertDivToGif('canvas', 50, 100);
+            convertDivToGif('canvas', frameCount, 1);
         }
     });
 </script>
