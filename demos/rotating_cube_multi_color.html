@@ -495,7 +495,7 @@
             //document.getElementById("increment-button").click();
             const canvas = await html2canvas(targetDiv);
             gif.addFrame(canvas, { delay: frameDelay });
-            document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100);
+            document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100) + "%";
         }
 
         gif.on('finished', function(blob) {
