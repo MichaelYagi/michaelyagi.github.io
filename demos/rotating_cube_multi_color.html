@@ -83,7 +83,6 @@
     let rendered = false;
     let disco = false;
     let faceColors = [...faceColorsDefault];
-    let frameCount = 0;
 
     // Color conversion functions
     function hexToRgb(hex) {
@@ -272,7 +271,10 @@
         toggleDirection = false;
         disco = false;
         faceColors = [...faceColorsDefault];
-        document.getElementById("gif-version").remove();
+        let el = document.getElementById("gif-version");
+        if (el) {
+            el.remove();
+        }
         document.getElementById("gif-message").innerText = "";
         updateCSSColors();
         rendered = true;
@@ -450,7 +452,6 @@
         }
 
         let frame = '';
-        frameCount = b.length-1;
         for (let i = 0; i < b.length; i++) {
             if (i % width === 0) frame += '\n';
 
@@ -528,7 +529,12 @@
         if (rendered) {
             document.getElementById("reset-button").disabled = true;
             document.getElementById("gif-message").innerText = "Rendering GIF";
-            convertDivToGif('canvas', frameCount/4, 1);
+            let el = document.getElementById("gif-version");
+            if (el) {
+                el.remove();
+            }
+
+            convertDivToGif('canvas', 20, 0.05);
         }
     });
 </script>
