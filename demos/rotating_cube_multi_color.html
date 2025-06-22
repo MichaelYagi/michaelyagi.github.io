@@ -72,6 +72,7 @@
     let saturation = saturationDefault;
     let lightness = lightnessDefault;
     let toggle = false;
+    let disco = false;
     let faceColors = [...faceColorsDefault];
 
     // Color conversion functions
@@ -130,12 +131,28 @@
 
     // Event listeners
     document.getElementById("cube-saturation").addEventListener("change", e => {
-        saturation = Math.min(parseInt(e.target.value) || 1, 100);
+        let saturationValue = parseInt(e.target.value);
+
+        if (saturationValue < 0) {
+            document.getElementById("cube-saturation").value = 0;
+        } else if (saturationValue > 100) {
+            document.getElementById("cube-saturation").value = 100;
+        }
+
+        saturation = Math.min(saturationValue || 1, 100);
         updateFaceColors();
     });
 
     document.getElementById("cube-lightness").addEventListener("change", e => {
-        lightness = Math.min(parseInt(e.target.value) || 1, 99);
+        let lightnessValue = parseInt(e.target.value);
+
+        if (lightnessValue < 0) {
+            document.getElementById("cube-lightness").value = 0;
+        } else if (lightnessValue > 100) {
+            document.getElementById("cube-lightness").value = 100;
+        }
+
+        lightness = Math.min(lightnessValue || 1, 99);
         updateFaceColors();
     });
 
@@ -277,6 +294,57 @@
         }
     });
 
+    function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function konamiCodeListener(callback) {
+        let konamiCodePosition = 0;
+        const konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
+        const konamiAllowedKeys = {
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down',
+            65: 'a',
+            66: 'b',
+            'ArrowLeft': 'left',
+            'ArrowUp': 'up',
+            'ArrowRight': 'right',
+            'ArrowDown': 'down',
+            'KeyA': 'a',
+            'KeyB': 'b',
+            'a': 'a',
+            'b': 'b'
+        };
+
+        // add keydown event listener
+        document.addEventListener('keyup', function(e) {
+            // get the value of the key code from the key map
+            const key = konamiAllowedKeys[e.key || e.code || e.which || e.keyCode];
+            // get the value of the required key from the konami code
+            const requiredKey = konamiCode[konamiCodePosition];
+            // compare the key with the required key
+            if (key === requiredKey) {
+                // move to the next key in the konami code sequence
+                konamiCodePosition++;
+
+                // if the last key is reached, activate cheats
+                if (konamiCodePosition === konamiCode.length) {
+                    konamiCodePosition = 0;
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            } else {
+                konamiCodePosition = 0;
+                callback(false);
+            }
+        });
+    }
+
     function renderFrame() {
         if (speed === 0) {
             requestAnimationFrame(renderFrame);
@@ -347,7 +415,12 @@
         let frame = '';
         for (let i = 0; i < b.length; i++) {
             if (i % width === 0) frame += '\n';
-            frame += color[i] ? `<span class="${color[i]}">${b[i]}</span>` : b[i];
+
+            let num = i;
+            if (disco === true) {
+                num = getRandomIntInclusive(0, b.length-1);
+            }
+            frame += color[i] ? `<span class="${color[num]}">${b[num]}</span>` : b[i];
         }
 
         canvas.innerHTML = frame;
@@ -358,6 +431,11 @@
 
     updateCSSColors();
     renderFrame();
+    konamiCodeListener(function(flag) {
+        if (flag) {
+            disco = !disco;
+        }
+    });
 </script>
 </body>
 </html>
