@@ -494,8 +494,8 @@
         for (let i = 0; i < frameCount; i++) {
             // Capture the div content for each frame
             //document.getElementById("increment-button").click();
-            const canvas = await html2canvas(targetDiv);
-            gif.addFrame(canvas, { delay: frameDelay });
+            const html2canvas = await html2canvas(targetDiv);
+            gif.addFrame(html2canvas, { delay: frameDelay });
             document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100) + "%";
         }
 
