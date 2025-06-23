@@ -49,14 +49,14 @@
     <div><button id="randomize-font-color-button">Random Face Colors</button></div>
     <div><button id="toggle-direction-button">Toggle Direction</button></div>
     <div><button id="reset-button">Reset</button></div>
-    <div><button id="render-gif" style="display: none;">Render GIF</button><span id="gif-message"></span></div>
+    <div><!--<button id="render-gif" style="display: none;">Render GIF</button>--><span id="gif-message"></span></div>
 </div>
 <canvas id="canvas"></canvas>
 
 <script>
-    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
-        document.getElementById("render-gif").style.display = "block";
-    }
+    // if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+    //     document.getElementById("render-gif").style.display = "block";
+    // }
 
     const speedDefault = 4;
     const heightDefault = 30;
@@ -71,21 +71,36 @@
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     const speedText = document.getElementById("cube-speed-text");
+    const gifVersion = document.getElementById("gif-version");
 
     let angleA = 0;
     let angleB = 0;
+    let cumulativeAngleA = 0;
+    let cumulativeAngleB = 0;
+    let renderedGif = false;
+    let fullRotation = false;
     let height = heightDefault;
     let width = height * 1.4;
+    let canvasHeight = 240;
+    let canvasWidth = 252;
     let speed = speedDefault / 100;
     let character = characterDefault;
     let saturation = saturationDefault;
     let lightness = lightnessDefault;
     let toggleDirection = false;
-    let rendered = false;
     let disco = false;
     let faceColors = [...faceColorsDefault];
     let fontSize = fontSizeDefault;
     let frames = 0;
+    let gif = null;
+    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+    }
 
     // Initialize canvas size
     function resizeCanvas() {
@@ -149,7 +164,6 @@
 
     // Event listeners
     document.getElementById("cube-saturation").addEventListener("change", e => {
-        rendered = false;
         let saturationValue = parseInt(e.target.value);
         if (saturationValue < 0) {
             document.getElementById("cube-saturation").value = 0;
@@ -158,11 +172,20 @@
         }
         saturation = Math.min(saturationValue || 1, 100);
         updateFaceColors();
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     document.getElementById("cube-lightness").addEventListener("change", e => {
-        rendered = false;
         let lightnessValue = parseInt(e.target.value);
         if (lightnessValue < 0) {
             document.getElementById("cube-lightness").value = 0;
@@ -171,7 +194,17 @@
         }
         lightness = Math.min(lightnessValue || 1, 99);
         updateFaceColors();
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     function updateFaceColors() {
@@ -191,75 +224,154 @@
     }
 
     document.getElementById("randomize-font-color-button").addEventListener("click", () => {
-        rendered = false;
         faceColors = Array(6).fill().map(() => getBrightRandomHexColorHSL());
         updateCSSColors();
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     const speedPickerEl = document.getElementById("cube-speed");
     speedPickerEl.addEventListener("input", () => {
-        rendered = false;
         speedText.textContent = speedPickerEl.value;
         speed = parseInt(speedPickerEl.value) / 100;
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     document.getElementById("decrease-button").addEventListener("click", () => {
-        rendered = false;
         if (speedPickerEl.value > 0) {
             speedPickerEl.value--;
             speedText.textContent = speedPickerEl.value;
             speed = speedPickerEl.value / 100;
         }
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     document.getElementById("increase-button").addEventListener("click", () => {
-        rendered = false;
         if (speedPickerEl.value < 20) {
             speedPickerEl.value++;
             speedText.textContent = speedPickerEl.value;
             speed = speedPickerEl.value / 100;
         }
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     document.getElementById("increment-button").addEventListener("click", () => {
-        rendered = false;
         speedPickerEl.value = 0;
         speedText.textContent = 0;
         speed = 0.01;
         setTimeout(() => speed = 0, 0);
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     const cubeFontSizeEl = document.getElementById("cube-font-size");
     cubeFontSizeEl.addEventListener("change", () => {
-        rendered = false;
         fontSize = Math.min(Math.max(parseInt(cubeFontSizeEl.value) || fontSizeDefault, 1), 50);
         cubeFontSizeEl.value = fontSize;
         ctx.font = `${fontSize}px monospace`;
         resizeCanvas();
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     const characterPickerEl = document.getElementById("cube-character");
     characterPickerEl.addEventListener("input", () => {
-        rendered = false;
         character = characterPickerEl.value.trim() || characterDefault;
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     document.getElementById("toggle-direction-button").addEventListener("click", () => {
-        rendered = false;
         toggleDirection = !toggleDirection;
-        rendered = true;
+        if (gifVersion) {
+            gifVersion.remove();
+        }
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
     });
 
     document.getElementById("reset-button").addEventListener("click", () => {
+        gif = new GIF({
+            workers: 2, // Number of web workers to use for encoding
+            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+            width: canvasWidth,
+            height: canvasHeight
+        });
+        renderedGif = false;
+        fullRotation = false;
         frames = 0;
-        rendered = false;
         character = characterDefault;
         characterPickerEl.value = characterDefault;
         cubeFontSizeEl.value = fontSizeDefault;
@@ -277,18 +389,15 @@
         toggleDirection = false;
         disco = false;
         faceColors = [...faceColorsDefault];
-        let el = document.getElementById("gif-version");
-        if (el) {
-            el.remove();
+        if (gifVersion) {
+            gifVersion.remove();
         }
         document.getElementById("gif-message").innerText = "";
         updateCSSColors();
         resizeCanvas();
-        rendered = true;
     });
 
     document.addEventListener('keydown', (event) => {
-        rendered = false;
         if (document.activeElement !== characterPickerEl) {
             switch (event.keyCode) {
                 case 27: // esc - reset
@@ -339,7 +448,6 @@
             character = event.key.trim().charAt(0) || characterDefault;
             characterPickerEl.value = character;
         }
-        rendered = true;
     });
 
     function getRandomIntInclusive(min, max) {
@@ -437,7 +545,9 @@
                     console.error('Invalid vertex:', p);
                     return [0, 0, 0];
                 }
-                return rotate(...p);
+                const rotation = rotate(...p);
+
+                return rotation;
             });
             if (!v.every(vec => Array.isArray(vec) && vec.length === 3)) {
                 console.error('Invalid rotated vertices:', v);
@@ -470,42 +580,35 @@
             }
         }
 
-        angleA += speed === 0.01 ? 0.008 : speed - 0.01;
-        angleB += speed === 0.01 ? 0.009 : speed;
+        // Update angles and track cumulative rotation
+        const angleAIncrement = speed === 0.01 ? 0.008 : speed - 0.01;
+        const angleBIncrement = speed === 0.01 ? 0.009 : speed;
+        angleA += angleAIncrement;
+        angleB += angleBIncrement;
+        cumulativeAngleA += Math.abs(angleAIncrement); // Use absolute value to count total rotation regardless of direction
+        cumulativeAngleB += Math.abs(angleBIncrement);
+
+        // Check for full rotation (e.g., on angleA)
+        if (cumulativeAngleA >= 2 * Math.PI && !fullRotation) {
+            fullRotation = true;
+        }
+
+        if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+            if (fullRotation === false) {
+                gif.addFrame(ctx, {copy: true, delay: 1000/60});
+                document.getElementById("gif-message").innerText = "Renderering GIF...";
+            } else if (fullRotation === true && renderedGif === false) {
+                gif.render();
+                renderedGif = true;
+            }
+        }
+
         requestAnimationFrame(renderFrame);
     }
 
-    updateCSSColors();
-    renderFrame();
-    konamiCodeListener(function(flag) {
-        if (flag) {
-            disco = !disco;
-        }
-    });
-    rendered = true;
-
-    async function convertDivToGif(divId, frameCount, frameDelay) {
-        frameCount = Math.floor(frameCount);
-
-        const targetDiv = document.getElementById(divId);
-        if (!targetDiv) {
-            document.getElementById("gif-message").innerText = "GIF renderering error: element not found";
-            return;
-        }
-
-        const gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-        });
-
-        for (let i = 0; i < frameCount; i++) {
-            document.getElementById("gif-message").innerText = "GIF creating canvas frames: " + Math.floor(((i+1)/frameCount)*100) + "%";
-            // Capture the div content for each frame
-            gif.addFrame(targetDiv, { delay: frameDelay });
-        }
-
+    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
         gif.on('finished', function(blob) {
-            document.getElementById("gif-message").innerText = "GIF renderering finished";
+            document.getElementById("gif-message").innerText = "GIF renderering complete";
             // Display the generated GIF
             const img = document.createElement('img');
             img.src = URL.createObjectURL(blob);
@@ -519,30 +622,12 @@
             // a.click();
             document.getElementById("reset-button").disabled = false;
         });
-
-        try {
-            gif.render();
-            document.getElementById("gif-message").innerText = "GIF renderering";
-        } catch(error) {
-            document.getElementById("gif-message").innerText = "Error: " + error.toString();
-            document.getElementById("reset-button").disabled = false;
-        }
     }
-
-    // Example usage: Convert a div with ID into a GIF with 100ms delay per frame
-    document.getElementById("render-gif").addEventListener("click", () => {
-        if (rendered) {
-            document.getElementById("reset-button").disabled = true;
-            document.getElementById("gif-message").innerText = "Rendering GIF";
-            let el = document.getElementById("gif-version");
-            if (el) {
-                el.remove();
-            }
-            const fps = 60;
-            const frameDelay = 17; //1000 / fps;
-            const speed = speedPickerEl.value / 100;
-            const frameCount = 2.6*Math.PI/speed;
-            convertDivToGif('canvas', frameCount, frameDelay);
+    updateCSSColors();
+    renderFrame();
+    konamiCodeListener(function(flag) {
+        if (flag) {
+            disco = !disco;
         }
     });
 </script>
