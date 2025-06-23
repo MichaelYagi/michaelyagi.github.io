@@ -71,8 +71,8 @@
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     const speedText = document.getElementById("cube-speed-text");
-    const gifVersion = document.getElementById("gif-version");
 
+    let init = false;
     let angleA = 0;
     let angleB = 0;
     let cumulativeAngleA = 0;
@@ -81,8 +81,8 @@
     let fullRotation = false;
     let height = heightDefault;
     let width = height * 1.4;
-    let canvasHeight = 240;
-    let canvasWidth = 252;
+    let gifWidth = 240;
+    let gifHeight = 252;
     let speed = speedDefault / 100;
     let character = characterDefault;
     let saturation = saturationDefault;
@@ -93,19 +93,11 @@
     let fontSize = fontSizeDefault;
     let frames = 0;
     let gif = null;
-    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
-    }
 
     // Initialize canvas size
     function resizeCanvas() {
-        canvas.width = width * fontSize * 0.6; // Approximate character width
-        canvas.height = height * fontSize * ratio;
+        document.getElementById("canvas").width = width * fontSize * 0.6; // Approximate character width
+        document.getElementById("canvas").height = height * fontSize * ratio;
         ctx.font = `${fontSize}px monospace`;
         ctx.textBaseline = 'top';
     }
@@ -172,15 +164,11 @@
         }
         saturation = Math.min(saturationValue || 1, 100);
         updateFaceColors();
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -194,15 +182,11 @@
         }
         lightness = Math.min(lightnessValue || 1, 99);
         updateFaceColors();
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -226,15 +210,11 @@
     document.getElementById("randomize-font-color-button").addEventListener("click", () => {
         faceColors = Array(6).fill().map(() => getBrightRandomHexColorHSL());
         updateCSSColors();
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -243,15 +223,11 @@
     speedPickerEl.addEventListener("input", () => {
         speedText.textContent = speedPickerEl.value;
         speed = parseInt(speedPickerEl.value) / 100;
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -262,15 +238,11 @@
             speedText.textContent = speedPickerEl.value;
             speed = speedPickerEl.value / 100;
         }
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -281,15 +253,11 @@
             speedText.textContent = speedPickerEl.value;
             speed = speedPickerEl.value / 100;
         }
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -299,15 +267,11 @@
         speedText.textContent = 0;
         speed = 0.01;
         setTimeout(() => speed = 0, 0);
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -318,15 +282,11 @@
         cubeFontSizeEl.value = fontSize;
         ctx.font = `${fontSize}px monospace`;
         resizeCanvas();
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
@@ -334,41 +294,27 @@
     const characterPickerEl = document.getElementById("cube-character");
     characterPickerEl.addEventListener("input", () => {
         character = characterPickerEl.value.trim() || characterDefault;
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
 
     document.getElementById("toggle-direction-button").addEventListener("click", () => {
         toggleDirection = !toggleDirection;
-        if (gifVersion) {
-            gifVersion.remove();
-        }
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
     });
 
     document.getElementById("reset-button").addEventListener("click", () => {
-        gif = new GIF({
-            workers: 2, // Number of web workers to use for encoding
-            quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-            width: canvasWidth,
-            height: canvasHeight
-        });
         renderedGif = false;
         fullRotation = false;
         frames = 0;
@@ -389,9 +335,11 @@
         toggleDirection = false;
         disco = false;
         faceColors = [...faceColorsDefault];
-        if (gifVersion) {
-            gifVersion.remove();
-        }
+        if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        angleA = 0;
+        angleB = 0;
+        cumulativeAngleA = 0;
+        cumulativeAngleB = 0;
         document.getElementById("gif-message").innerText = "";
         updateCSSColors();
         resizeCanvas();
@@ -501,7 +449,7 @@
         }
 
         ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, document.getElementById("canvas").width, document.getElementById("canvas").height);
 
         const z = new Float32Array(width * height).fill(0);
         const b = new Array(width * height).fill(' ');
@@ -594,35 +542,45 @@
         }
 
         if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+            if (init === false) {
+                gif = new GIF({
+                    workers: 2, // Number of web workers to use for encoding
+                    quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+                    width: document.getElementById("canvas").width,
+                    height: document.getElementById("canvas").height
+                });
+                init = true;
+            }
+
             if (fullRotation === false) {
                 gif.addFrame(ctx, {copy: true, delay: 1000/60});
                 document.getElementById("gif-message").innerText = "Renderering GIF...";
             } else if (fullRotation === true && renderedGif === false) {
+                init = false;
                 gif.render();
                 renderedGif = true;
+
+                gif.on('finished', function(blob) {
+                    document.getElementById("gif-message").innerText = "GIF renderering complete";
+                    // Display the generated GIF
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(blob);
+                    img.setAttribute("id", "gif-version");
+                    document.body.appendChild(img);
+
+                    // Or offer for download
+                    // const a = document.createElement('a');
+                    // a.href = URL.createObjectURL(blob);
+                    // a.download = 'div_animation.gif';
+                    // a.click();
+                    document.getElementById("reset-button").disabled = false;
+                });
             }
         }
 
         requestAnimationFrame(renderFrame);
     }
 
-    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
-        gif.on('finished', function(blob) {
-            document.getElementById("gif-message").innerText = "GIF renderering complete";
-            // Display the generated GIF
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(blob);
-            img.setAttribute("id", "gif-version");
-            document.body.appendChild(img);
-
-            // Or offer for download
-            // const a = document.createElement('a');
-            // a.href = URL.createObjectURL(blob);
-            // a.download = 'div_animation.gif';
-            // a.click();
-            document.getElementById("reset-button").disabled = false;
-        });
-    }
     updateCSSColors();
     renderFrame();
     konamiCodeListener(function(flag) {
