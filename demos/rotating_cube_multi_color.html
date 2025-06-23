@@ -392,10 +392,11 @@
                     document.getElementById("increment-button").click();
                     break;
             }
-        } else {
-            character = event.key.trim().charAt(0) || characterDefault;
-            characterPickerEl.value = character;
-        }
+        } 
+        // else {
+        //     character = event.key.trim().charAt(0) || characterDefault;
+        //     characterPickerEl.value = character;
+        // }
     });
 
     function getRandomIntInclusive(min, max) {
@@ -546,6 +547,7 @@
 
         if (window.location.protocol === "http:" || window.location.protocol === "https:") {
             if (init === false) {
+                document.getElementById("gif-message").innerText = "Initiating GIF...";
                 gif = new GIF({
                     workers: 2, // Number of web workers to use for encoding
                     quality: 10, // GIF quality (lower is smaller file size, but worse quality)
