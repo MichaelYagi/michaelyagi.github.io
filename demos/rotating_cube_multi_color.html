@@ -448,8 +448,11 @@
             return;
         }
 
+        gifHeight = document.getElementById("canvas").height;
+        gifWidth = document.getElementById("canvas").width;
+
         ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, document.getElementById("canvas").width, document.getElementById("canvas").height);
+        ctx.fillRect(0, 0, gifWidth, gifHeight);
 
         const z = new Float32Array(width * height).fill(0);
         const b = new Array(width * height).fill(' ');
@@ -546,8 +549,8 @@
                 gif = new GIF({
                     workers: 2, // Number of web workers to use for encoding
                     quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-                    width: document.getElementById("canvas").width,
-                    height: document.getElementById("canvas").height
+                    width: gifWidth,
+                    height: gifHeight
                 });
                 init = true;
             }
@@ -566,6 +569,8 @@
                     const img = document.createElement('img');
                     img.src = URL.createObjectURL(blob);
                     img.setAttribute("id", "gif-version");
+                    img.width = gifWidth;
+                    img.height = gifWidth;
                     document.body.appendChild(img);
 
                     // Or offer for download
