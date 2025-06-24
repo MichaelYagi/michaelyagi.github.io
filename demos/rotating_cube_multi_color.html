@@ -25,6 +25,17 @@
         .face4 { color: #008000; }
         .face5 { color: #1E90FF; }
         .face6 { color: #6A5ACD; }
+        #gif-version {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            box-sizing: border-box;
+        }
+        #gif-container {
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +63,7 @@
     <div><!--<button id="render-gif" style="display: none;">Render GIF</button>--><span id="gif-message"></span></div>
 </div>
 <canvas id="canvas"></canvas>
+<div id="gif-container"></div>
 
 <script>
     // if (window.location.protocol === "http:" || window.location.protocol === "https:") {
@@ -69,7 +81,7 @@
     const faceColorsDefault = ['#FF0000', '#FFAA00', '#FFFF00', '#00FF00', '#00AAFF', '#5500FF'];
 
     const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    let ctx = canvas.getContext("2d");
     const speedText = document.getElementById("cube-speed-text");
 
     let init = false;
@@ -96,8 +108,10 @@
 
     // Initialize canvas size
     function resizeCanvas() {
-        document.getElementById("canvas").width = width * fontSize * 0.6; // Approximate character width
-        document.getElementById("canvas").height = height * fontSize * ratio;
+        const maxWidth = window.innerWidth * 0.9;
+        const maxHeight = window.innerHeight * 0.9;
+        document.getElementById("canvas").width = Math.min(width * fontSize * 0.6, maxWidth);
+        document.getElementById("canvas").height = Math.min(height * fontSize * ratio, maxHeight);
         ctx.font = `${fontSize}px monospace`;
         ctx.textBaseline = 'top';
     }
@@ -281,7 +295,6 @@
         fontSize = Math.min(Math.max(parseInt(cubeFontSizeEl.value) || fontSizeDefault, 1), 50);
         cubeFontSizeEl.value = fontSize;
         ctx.font = `${fontSize}px monospace`;
-        resizeCanvas();
         angleA = 0;
         angleB = 0;
         cumulativeAngleA = 0;
@@ -289,6 +302,9 @@
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         renderedGif = false;
         fullRotation = false;
+        resizeCanvas();
+        gifHeight = document.getElementById("canvas").offsetHeight;
+        gifWidth = document.getElementById("canvas").offsetWidth;
     });
 
     const characterPickerEl = document.getElementById("cube-character");
@@ -449,8 +465,8 @@
             return;
         }
 
-        gifHeight = document.getElementById("canvas").height;
-        gifWidth = document.getElementById("canvas").width;
+        gifHeight = document.getElementById("canvas").offsetHeight;
+        gifWidth = document.getElementById("canvas").offsetWidth;
 
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, gifWidth, gifHeight);
@@ -546,43 +562,45 @@
         }
 
         if (window.location.protocol === "http:" || window.location.protocol === "https:") {
-            if (init === false) {
-                document.getElementById("gif-message").innerText = "Initiating GIF...";
-                gif = new GIF({
-                    workers: 2, // Number of web workers to use for encoding
-                    quality: 10, // GIF quality (lower is smaller file size, but worse quality)
-                    width: gifWidth,
-                    height: gifHeight
-                });
-                init = true;
-            }
+            setTimeout(function () {
+                if (init === false) {
+                    document.getElementById("gif-message").innerText = "Initiating GIF...";
+                    // resizeCanvas();
+                    gifHeight = document.getElementById("canvas").offsetHeight;
+                    gifWidth = document.getElementById("canvas").offsetWidth;
 
-            if (fullRotation === false) {
-                gif.addFrame(ctx, {copy: true, delay: 1000/60});
-                document.getElementById("gif-message").innerText = "Renderering GIF...";
-            } else if (fullRotation === true && renderedGif === false) {
-                init = false;
-                gif.render();
-                renderedGif = true;
+                    document.getElementById("gif-container").style.width = document.getElementById("canvas").offsetWidth + "px";
+                    document.getElementById("gif-container").style.height = document.getElementById("canvas").offsetHeight + "px";
 
-                gif.on('finished', function(blob) {
-                    document.getElementById("gif-message").innerText = "GIF renderering complete";
-                    // Display the generated GIF
-                    const img = document.createElement('img');
-                    img.src = URL.createObjectURL(blob);
-                    img.setAttribute("id", "gif-version");
-                    img.width = gifWidth;
-                    img.height = gifWidth;
-                    document.body.appendChild(img);
+                    gif = new GIF({
+                        workers: 2, // Number of web workers to use for encoding
+                        quality: 10, // GIF quality (lower is smaller file size, but worse quality)
+                        width: gifWidth,
+                        height: gifHeight
+                    });
+                    init = true;
+                }
 
-                    // Or offer for download
-                    // const a = document.createElement('a');
-                    // a.href = URL.createObjectURL(blob);
-                    // a.download = 'div_animation.gif';
-                    // a.click();
-                    document.getElementById("reset-button").disabled = false;
-                });
-            }
+                if (fullRotation === false) {
+                    gif.addFrame(ctx, {copy: true, delay: 1000/60});
+                    document.getElementById("gif-message").innerText = "Renderering GIF...";
+                } else if (fullRotation === true && renderedGif === false) {
+                    init = false;
+                    gif.render();
+                    renderedGif = true;
+                    gif.on('finished', function(blob) {
+                        document.getElementById("gif-message").innerText = "GIF rendering complete";
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(blob);
+                        img.setAttribute("id", "gif-version");
+                        // img.width = document.getElementById("canvas").offsetWidth;
+                        // img.height = document.getElementById("canvas").offsetHeight;
+                        
+                        document.getElementById("gif-container").appendChild(img); // Or document.body if no container
+                        document.getElementById("reset-button").disabled = false;
+                    });
+                }
+            }, 0);
         }
 
         requestAnimationFrame(renderFrame);
