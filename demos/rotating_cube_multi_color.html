@@ -67,6 +67,7 @@
     <div><!--<button id="render-gif" style="display: none;">Render GIF</button>--><span id="gif-message"></span></div>
 </div>
 <canvas id="canvas"></canvas>
+<div id="gif-text" style="display: none;">GIF</div>
 <div id="gif-container"></div>
 
 <script>
@@ -194,6 +195,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -214,6 +216,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -244,6 +247,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -259,6 +263,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -276,6 +281,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -293,6 +299,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -309,6 +316,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -325,6 +333,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         resizeCanvas();
@@ -342,6 +351,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -355,6 +365,7 @@
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         renderedGif = false;
         fullRotation = false;
         counter = 0;
@@ -388,6 +399,7 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         document.getElementById("gif-message").innerText = "";
+        document.getElementById("gif-text").style.display = "none";
         updateCSSColors();
         resizeCanvas();
     });
@@ -615,6 +627,7 @@
                     document.getElementById("gif-message").innerText = "Initialized GIF rendering";
 
                     gif.on('finished', function(blob) {
+                        document.getElementById("gif-text").style.display = "block";
                         document.getElementById("gif-message").innerText = "GIF rendering complete";
                         const img = document.createElement('img');
                         img.src = URL.createObjectURL(blob);
