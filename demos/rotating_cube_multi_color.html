@@ -80,6 +80,7 @@
     const lightnessDefault = 50;
     const characterDefault = '+';
     const faceColorsDefault = ['#FF0000', '#FFAA00', '#FFFF00', '#00FF00', '#00AAFF', '#5500FF'];
+    disableForm(true);
 
     const canvas = document.getElementById("canvas");
     let ctx = canvas.getContext("2d");
@@ -171,14 +172,26 @@
         return hslToHex(Math.floor(Math.random() * hueDefault), saturation, lightness);
     }
 
+    function disableForm(disable) {
+        var inputs = document.getElementsByTagName("input");
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].disabled = disable;
+        }
+        var selects = document.getElementsByTagName("select");
+        for (var i = 0; i < selects.length; i++) {
+            selects[i].disabled = disable;
+        }
+        var textareas = document.getElementsByTagName("textarea");
+        for (var i = 0; i < textareas.length; i++) {
+            textareas[i].disabled = disable;
+        }
+        var buttons = document.getElementsByTagName("button");
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = disable;
+        }
+    }
+
     // Event listeners
-    // document.getElementById("render-gif").addEventListener("change", e => {
-    //     if (document.getElementById("render-gif").checked) {
-    //         renderGif = true;
-    //     } else {
-    //         renderGif = false;
-    //     }
-    // });
 
     document.getElementById("cube-saturation").addEventListener("change", e => {
         let saturationValue = parseInt(e.target.value);
@@ -199,6 +212,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     document.getElementById("cube-lightness").addEventListener("change", e => {
@@ -220,6 +234,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     function updateFaceColors() {
@@ -251,6 +266,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     const speedPickerEl = document.getElementById("cube-speed");
@@ -267,6 +283,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     document.getElementById("decrease-button").addEventListener("click", () => {
@@ -285,6 +302,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     document.getElementById("increase-button").addEventListener("click", () => {
@@ -303,6 +321,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     document.getElementById("increment-button").addEventListener("click", () => {
@@ -320,6 +339,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     const cubeFontSizeEl = document.getElementById("cube-font-size");
@@ -340,6 +360,7 @@
         gifHeight = document.getElementById("canvas").offsetHeight;
         gifWidth = document.getElementById("canvas").offsetWidth;
         counter = 0;
+        disableForm(true);
     });
 
     const characterPickerEl = document.getElementById("cube-character");
@@ -355,6 +376,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     document.getElementById("toggle-direction-button").addEventListener("click", () => {
@@ -369,6 +391,7 @@
         renderedGif = false;
         fullRotation = false;
         counter = 0;
+        disableForm(true);
     });
 
     document.getElementById("reset-button").addEventListener("click", () => {
@@ -400,6 +423,7 @@
         cumulativeAngleB = 0;
         document.getElementById("gif-message").innerText = "";
         document.getElementById("gif-text").style.display = "none";
+        disableForm(true);
         updateCSSColors();
         resizeCanvas();
     });
@@ -601,7 +625,7 @@
         cumulativeAngleB += Math.abs(angleBIncrement);
 
         // Check for full rotation (e.g., on angleA)
-        if (cumulativeAngleA >= 3 * Math.PI && !fullRotation) {
+        if (cumulativeAngleA >= 4.5 * Math.PI && !fullRotation) {
             fullRotation = true;
         }
 
@@ -627,6 +651,7 @@
                     document.getElementById("gif-message").innerText = "Initialized GIF rendering";
 
                     gif.on('finished', function(blob) {
+                        disableForm(false);
                         document.getElementById("gif-text").style.display = "block";
                         document.getElementById("gif-message").innerText = "GIF rendering complete";
                         const img = document.createElement('img');
