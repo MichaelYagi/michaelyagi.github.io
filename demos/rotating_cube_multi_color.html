@@ -60,16 +60,16 @@
     <div><button id="randomize-font-color-button">Random Face Colors</button></div>
     <div><button id="toggle-direction-button">Toggle Direction</button></div>
     <div><button id="reset-button">Reset</button></div>
+    <!-- <div>
+        <input type="checkbox" id="render-gif">
+        <label for="render-gif">Render GIF</label>
+    </div> -->
     <div><!--<button id="render-gif" style="display: none;">Render GIF</button>--><span id="gif-message"></span></div>
 </div>
 <canvas id="canvas"></canvas>
 <div id="gif-container"></div>
 
 <script>
-    // if (window.location.protocol === "http:" || window.location.protocol === "https:") {
-    //     document.getElementById("render-gif").style.display = "block";
-    // }
-
     const speedDefault = 4;
     const heightDefault = 30;
     const fontSizeDefault = 10;
@@ -105,6 +105,8 @@
     let fontSize = fontSizeDefault;
     let frames = 0;
     let gif = null;
+    let renderGif = false;
+    let counter = 0;
 
     // Initialize canvas size
     function resizeCanvas() {
@@ -169,6 +171,14 @@
     }
 
     // Event listeners
+    // document.getElementById("render-gif").addEventListener("change", e => {
+    //     if (document.getElementById("render-gif").checked) {
+    //         renderGif = true;
+    //     } else {
+    //         renderGif = false;
+    //     }
+    // });
+
     document.getElementById("cube-saturation").addEventListener("change", e => {
         let saturationValue = parseInt(e.target.value);
         if (saturationValue < 0) {
@@ -183,8 +193,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     document.getElementById("cube-lightness").addEventListener("change", e => {
@@ -201,8 +213,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     function updateFaceColors() {
@@ -229,8 +243,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     const speedPickerEl = document.getElementById("cube-speed");
@@ -242,8 +258,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     document.getElementById("decrease-button").addEventListener("click", () => {
@@ -257,8 +275,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     document.getElementById("increase-button").addEventListener("click", () => {
@@ -272,8 +292,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     document.getElementById("increment-button").addEventListener("click", () => {
@@ -286,8 +308,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     const cubeFontSizeEl = document.getElementById("cube-font-size");
@@ -300,11 +324,13 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
         resizeCanvas();
         gifHeight = document.getElementById("canvas").offsetHeight;
         gifWidth = document.getElementById("canvas").offsetWidth;
+        counter = 0;
     });
 
     const characterPickerEl = document.getElementById("cube-character");
@@ -315,8 +341,10 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     document.getElementById("toggle-direction-button").addEventListener("click", () => {
@@ -326,13 +354,16 @@
         cumulativeAngleA = 0;
         cumulativeAngleB = 0;
         if (document.getElementById("gif-version")) {document.getElementById("gif-version").remove();}
+        document.getElementById("gif-message").innerText = "";
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
     });
 
     document.getElementById("reset-button").addEventListener("click", () => {
         renderedGif = false;
         fullRotation = false;
+        counter = 0;
         frames = 0;
         character = characterDefault;
         characterPickerEl.value = characterDefault;
@@ -460,6 +491,7 @@
     }
 
     function renderFrame() {
+        counter++;
         if (speed === 0) {
             requestAnimationFrame(renderFrame);
             return;
@@ -576,18 +608,12 @@
                         workers: 2, // Number of web workers to use for encoding
                         quality: 10, // GIF quality (lower is smaller file size, but worse quality)
                         width: gifWidth,
-                        height: gifHeight
+                        height: gifHeight,
+                        transparent: '#00FF00'
                     });
-                    init = true;
-                }
 
-                if (fullRotation === false) {
-                    gif.addFrame(ctx, {copy: true, delay: 1000/60});
-                    document.getElementById("gif-message").innerText = "Renderering GIF...";
-                } else if (fullRotation === true && renderedGif === false) {
-                    init = false;
-                    gif.render();
-                    renderedGif = true;
+                    document.getElementById("gif-message").innerText = "Initialized GIF rendering";
+
                     gif.on('finished', function(blob) {
                         document.getElementById("gif-message").innerText = "GIF rendering complete";
                         const img = document.createElement('img');
@@ -599,6 +625,24 @@
                         document.getElementById("gif-container").appendChild(img); // Or document.body if no container
                         document.getElementById("reset-button").disabled = false;
                     });
+
+                    gif.on('start', function() {
+                        document.getElementById("gif-message").innerText = "Start renderering GIF...";
+                    });
+
+                    gif.on('progress', function(p) {
+                        document.getElementById("gif-message").innerText = "Renderering GIF: " + Math.round(p * 100)+'%';
+                    });
+
+                    init = true;
+                }
+
+                if (fullRotation === false) {
+                    gif.addFrame(ctx, {copy: true, delay: 1000/60});
+                } else if (fullRotation === true && renderedGif === false) {
+                    init = false;
+                    gif.render();
+                    renderedGif = true;
                 }
             }, 0);
         }
