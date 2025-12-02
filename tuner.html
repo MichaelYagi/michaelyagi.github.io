@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tuner + Tone Generator</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 32px; }
+        h1 { margin-bottom: 12px; }
+        .box { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-bottom: 20px; }
+        label { font-weight: 600; }
+        select, input, button { padding: 6px 8px; }
+        .metric { font-size: 2rem; }
+        .sub { color: #666; }
+        .needle { width: 320px; height: 10px; background: #eee; border-radius: 6px; position: relative; margin-top: 8px; }
+        .needle > div { position: absolute; top: -6px; width: 2px; height: 22px; background: #333; left: 50%; transition: left 80ms linear; }
+        .status { color: #444; font-size: 0.95rem; margin-top: 8px; }
+        .dimmed { opacity: 0.4; }
+    </style>
+</head>
+<body>
+<h1>🎵 Tuner & Tone Generator</h1>
+
+<!-- Tone Generator -->
+<div class="box">
+    <h3>Reference tone generator</h3>
+    <label for="noteDial">Note dial:</label>
+    <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
+    <div id="dialNote">Note: --</div>
+    <div id="dialFreq">Freq: -- Hz</div>
+    <label for="waveform" style="margin-right:6px;">Waveform:</label>
+    <select id="waveform">
+        <option value="sine">Sine</option>
+        <option value="triangle">Triangle</option>
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+    </select>
+    <button id="playTone" style="margin-left:8px;">Play</button>
+    <button id="stopTone">Stop</button>
+</div>
+
+<!-- Tuner -->
+<div class="box" id="tunerBox">
+    <div class="metric" id="note">--</div>
+    <div id="freq" class="sub">-- Hz</div>
+    <div id="cents" class="sub">-- cents</div>
+    <div class="needle"><div id="needleIndicator"></div></div>
+    <div class="status" id="status">Mic: initializing...</div>
+    <div class="status" id="pauseNote" style="display:none;">Tuner paused while reference tone is playing.</div>
+</div>
+
+<script>
+    // UI refs
+    const noteElem = document.getElementById("note");
+    const freqElem = document.getElementById("freq");
+    const centsElem = document.getElementById("cents");
+    const needleIndicator = document.getElementById("needleIndicator");
+    const statusElem = document.getElementById("status");
+    const tunerBox = document.getElementById("tunerBox");
+    const pauseNote = document.getElementById("pauseNote");
+
+    const NOTE_STRINGS = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+
+    // Audio + analyser
+    let audioCtx = null;
+    let analyser = null;
+    let yinBuffer = null;
+
+    // Tuner control
+    let tunerEnabled = true;
+    function setTunerActive(active) {
+        tunerEnabled = active;
+        tunerBox.classList.toggle("dimmed", !active);
+        pauseNote.style.display = active ? "none" : "block";
+    }
+
+    // Pitch mapping
+    function freqToNoteData(freq) {
+        const A4 = 440;
+        const n = 12 * Math.log2(freq / A4);
+        const nearest = Math.round(n);
+        const idx = nearest + 57; // C0 offset
+        const octave = Math.floor(idx / 12);
+        const name = NOTE_STRINGS[((idx % 12) + 12) % 12];
+        const target = A4 * Math.pow(2, nearest / 12);
+        const cents = 1200 * Math.log2(freq / target);
+        return { name, octave, cents };
+    }
+
+    // YIN (compact)
+    function yinPitch(buf, sampleRate, threshold = 0.18, minFreq = 50, maxFreq = 1200) {
+        const N = buf.length;
+        const tauMin = Math.max(2, Math.floor(sampleRate / maxFreq));
+        const tauMax = Math.min(N - 3, Math.floor(sampleRate / minFreq));
+        if (tauMax <= tauMin) return null;
+
+        const d = new Float32Array(tauMax + 1);
+        for (let tau = 1; tau <= tauMax; tau++) {
+            let sum = 0;
+            for (let i = 0; i < N - tau; i++) {
+                const diff = buf[i] - buf[i + tau];
+                sum += diff * diff;
+            }
+            d[tau] = sum;
+        }
+
+        const cmnd = new Float32Array(tauMax + 1);
+        cmnd[0] = 1;
+        let running = 0;
+        for (let tau = 1; tau <= tauMax; tau++) {
+            running += d[tau];
+            cmnd[tau] = d[tau] / (running / tau);
+        }
+
+        let tau = -1;
+        for (let t = tauMin; t <= tauMax; t++) {
+            if (cmnd[t] < threshold) {
+                tau = t;
+                while (t + 1 <= tauMax && cmnd[t + 1] < cmnd[t]) { t++; tau = t; }
+                break;
+            }
+        }
+        if (tau === -1) return null;
+
+        const tauL = Math.max(1, tau - 1);
+        const tauR = Math.min(tauMax, tau + 1);
+        const denom = cmnd[tauR] + cmnd[tauL] - 2 * cmnd[tau];
+        const delta = denom !== 0 ? 0.5 * (cmnd[tauL] - cmnd[tauR]) / denom : 0;
+        const refinedTau = tau + delta;
+
+        const freq = sampleRate / refinedTau;
+        return (freq >= minFreq && freq <= maxFreq) ? freq : null;
+    }
+
+    // Tuner loop
+    function startLoop() {
+        function update() {
+            if (tunerEnabled && analyser) {
+                analyser.getFloatTimeDomainData(yinBuffer);
+                const f = yinPitch(yinBuffer, audioCtx.sampleRate);
+                if (f && isFinite(f)) {
+                    const { name, octave, cents } = freqToNoteData(f);
+                    noteElem.textContent = `${name}${octave}`;
+                    freqElem.textContent = `${f.toFixed(2)} Hz`;
+                    centsElem.textContent = `${cents > 0 ? "+" : ""}${cents.toFixed(1)} cents`;
+                    const clamped = Math.max(-100, Math.min(100, cents));
+                    const offsetPx = (clamped / 200) * 320;
+                    needleIndicator.style.left = `calc(50% + ${offsetPx}px)`;
+                } else {
+                    noteElem.textContent = "--";
+                    freqElem.textContent = "-- Hz";
+                    centsElem.textContent = "-- cents";
+                    needleIndicator.style.left = "50%";
+                }
+            }
+            requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    // Init audio
+    async function init() {
+        try {
+            statusElem.textContent = "Mic: requesting access...";
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+            });
+
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 8192;
+            analyser.minDecibels = -100;
+            analyser.maxDecibels = -10;
+            analyser.smoothingTimeConstant = 0.0;
+
+            const source = audioCtx.createMediaStreamSource(stream);
+            source.connect(analyser);
+
+            yinBuffer = new Float32Array(8192);
+
+            statusElem.textContent = "Mic: ready";
+            startLoop();
+            updateDialDisplay();
+        } catch (e) {
+            statusElem.textContent = "Mic: permission denied or unavailable";
+            console.error(e);
+        }
+    }
+
+    // Tone generator
+    let toneOscillator = null;
+    let toneGain = null;
+
+    function setPlayButtonState(enabled) {
+        document.getElementById("playTone").disabled = !enabled;
+    }
+
+    function dialToNote(index) {
+        const A4 = 440;
+        const semitoneOffset = index - 30;
+        const f = A4 * Math.pow(2, semitoneOffset / 12);
+        const n = 12 * Math.log2(f / A4);
+        const nearest = Math.round(n);
+        const noteIndex = nearest + 57;
+        const octave = Math.floor(noteIndex / 12);
+        const name = NOTE_STRINGS[((noteIndex % 12) + 12) % 12];
+        return { name, octave, f };
+    }
+
+    function updateDialDisplay() {
+        const idx = parseInt(document.getElementById("noteDial").value, 10);
+        const { name, octave, f } = dialToNote(idx);
+        document.getElementById("dialNote").textContent = `Note: ${name}${octave}`;
+        document.getElementById("dialFreq").textContent = `Freq: ${f.toFixed(2)} Hz`;
+
+        // 🔊 If tone is playing, update frequency live
+        if (toneOscillator) {
+            toneOscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
+        }
+    }
+
+    function updateWaveform() {
+        const wave = document.getElementById("waveform").value;
+        if (toneOscillator) {
+            toneOscillator.type = wave; // 🔊 change waveform live
+        }
+    }
+
+    function playTone(freq, type = "sine") {
+        if (toneOscillator) return;
+
+        toneOscillator = audioCtx.createOscillator();
+        toneGain = audioCtx.createGain();
+
+        toneOscillator.type = type;
+        toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        toneOscillator.connect(toneGain).connect(audioCtx.destination);
+        toneOscillator.start();
+
+        setPlayButtonState(false);
+        setTunerActive(false);
+
+        toneOscillator.onended = () => {
+            toneOscillator = null;
+            toneGain = null;
+            setPlayButtonState(true);
+            setTunerActive(true);
+        };
+    }
+
+    function stopTone() {
+        if (toneOscillator) {
+            toneOscillator.stop();
+            toneOscillator.disconnect();
+            if (toneGain) toneGain.disconnect();
+            toneOscillator = null;
+            toneGain = null;
+        }
+        setPlayButtonState(true);
+        setTunerActive(true);
+    }
+
+    // Events
+    document.getElementById("noteDial").addEventListener("input", updateDialDisplay);
+    document.getElementById("waveform").addEventListener("change", updateWaveform);
+
+    document.getElementById("playTone").addEventListener("click", () => {
+        const idx = parseInt(document.getElementById("noteDial").value, 10);
+        const { f } = dialToNote(idx);
+        const wave = document.getElementById("waveform").value;
+        playTone(f, wave);
+    });
+
+    document.getElementById("stopTone").addEventListener("click", stopTone);
+
+    // Initialize dial display
+    updateDialDisplay();
+    init();
+</script>
+</body>
+</html>
