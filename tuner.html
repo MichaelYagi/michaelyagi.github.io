@@ -7,6 +7,7 @@
     <style>
         body { font-family: system-ui, sans-serif; margin: 32px; }
         h1 { margin-bottom: 12px; }
+        h3 { margin-top: 0; }
         .box { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-bottom: 20px; }
         label { font-weight: 600; }
         .metric { font-size: 2rem; }
@@ -119,10 +120,12 @@
 
 <!-- Presets -->
 <div class="box" id="presetsBox" style="display:none;">
-    <h3>Presets</h3>
+    <h3 style="margin-top: 0;">Presets</h3>
     <div>
         <button id="savePreset">Save Current Preset</button>
         <select id="presetSelect"></select>
+    </div>
+    <div>
         <button id="loadPreset">Load Preset</button>
         <button id="deletePreset">Delete Preset</button>
     </div>
