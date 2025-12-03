@@ -595,8 +595,7 @@
     }
 
     // Events
-    metronomeBox.addEventListener("click", registerTap);
-    metronomeBox.addEventListener("touchstart", registerTap);
+    metronomeBox.addEventListener("pointerdown", registerTap);
 
     document.getElementById("startMetronome").addEventListener("click", () => {
         stopTone();
