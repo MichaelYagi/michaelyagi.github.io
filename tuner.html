@@ -5,7 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Metronome, Tuner + Tone Generator</title>
     <style>
-        body { font-family: system-ui, sans-serif; margin: 32px; }
+        /* Reset body margins and prevent horizontal scroll */
+        html, body {
+            margin: 0;              /* remove default white margin */
+            padding: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;     /* stop sideways scrolling */
+        }
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 0;          /* no external margin */
+            padding-top: 20px;
+            background-color: #111; /* try charcoal black */
+            color: #eee;
+        }
         h1 { margin-bottom: 12px; }
         h3 { margin-top: 0; }
         .box { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-bottom: 20px; }
@@ -78,11 +92,10 @@
             color: #eee;
             border: 2px solid #333;
             border-radius: 12px;
-            padding: 16px;
-            width: 100%;          /* take full width of parent */
-            max-width: 400px;     /* cap size on larger screens */
-            margin: 0 auto 20px auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            width: 100%;            /* fill available width */
+            max-width: 400px;       /* cap size on larger screens */
+            margin: 0 auto 20px;    /* center horizontally */
+            box-sizing: border-box; /* include padding in width */
         }
         .box h3 {
             text-align: center;
