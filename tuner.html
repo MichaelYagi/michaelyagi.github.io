@@ -105,8 +105,8 @@
         .box input[type=number],
         .box input[type=text],
         .box select {
-            background: #000;
-            color: #0ff;
+            background: #0b1d3a;
+            color: #ffcc00;
             border: none;
             font-size: 1rem;
             text-align: center;
@@ -138,6 +138,13 @@
     <div>
         <label for="subdivisions">Subdivisions:</label>
         <input id="subdivisions" type="number" min="1" value="1" style="width:60px;">
+        <label for="clickSound">Click Sound:</label>
+        <select id="clickSound">
+            <option value="square">Square</option>
+            <option value="sine">Sine</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+        </select>
     </div>
     <div id="metronomeStatus" class="status">
         <span id="metronomeText">Stopped</span>
@@ -200,7 +207,7 @@
 <!-- About -->
 <div class="box" id="aboutBox">
     <h3>About</h3>
-    <p>Metronome! Send feedback to myagi.developer @ gmail.com</p>
+    <p>Yay! It's a metronome! Send feedback to myagi.developer[@]gmail.com</p>
 </div>
 
 <script>
@@ -572,15 +579,18 @@
     let tapTimeout = null;
 
     function playClick(strong = true) {
-        if (tappingActive) return; // 🔧 skip audio/visual while tapping
+        if (tappingActive) return;
 
         if (!audioCtx) audioCtx = new AudioContext();
         const now = audioCtx.currentTime;
 
+        // read sound choice directly from dropdown
+        const soundChoice = document.getElementById("clickSound")?.value || "square";
+
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
 
-        osc.type = "square";
+        osc.type = soundChoice;
         osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
         gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
 
@@ -595,7 +605,7 @@
     }
 
     function registerTap(e) {
-        const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo"]);
+        const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo","clickSound"]);
         if (ignoredIds.has(e.target.id)) return;
         e.preventDefault();
 
@@ -724,8 +734,9 @@
         const subdivisions = document.getElementById("subdivisions").value;
         const noteDialVal = document.getElementById("noteDial").value;
         const waveformVal = document.getElementById("waveform").value;
+        const clickSoundVal = document.getElementById("clickSound").value; // NEW
 
-        const preset = { bpm, subdivisions, noteDialVal, waveformVal };
+        const preset = { bpm, subdivisions, noteDialVal, waveformVal, clickSoundVal };
         const name = prompt("Preset name:");
         if (!name) return;
 
@@ -745,6 +756,9 @@
         document.getElementById("subdivisions").value = preset.subdivisions;
         document.getElementById("noteDial").value = preset.noteDialVal;
         document.getElementById("waveform").value = preset.waveformVal;
+        if (preset.clickSoundVal) {
+            document.getElementById("clickSound").value = preset.clickSoundVal; // NEW
+        }
 
         updateDialDisplay();
         updateWaveform();
