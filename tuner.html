@@ -79,13 +79,6 @@
 <!-- Tone Generator -->
 <div class="box" id="toneBox">
     <h3>Tone generator</h3>
-    <div style="display:flex;align-items:center;gap:8px;">
-        <button id="decrementNote">◀</button>
-        <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
-        <button id="incrementNote">▶</button>
-    </div>
-    <div id="dialNote">Note: --</div>
-    <div id="dialFreq">Freq: -- Hz</div>
     <label for="waveform" style="margin-right:6px;">Waveform:</label>
     <select id="waveform">
         <option value="square">Square</option>
@@ -95,6 +88,13 @@
     </select>
     <button id="playTone" style="margin-left:8px;">Play</button>
     <button id="stopTone">Stop</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+        <button id="decrementNote">◀</button>
+        <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
+        <button id="incrementNote">▶</button>
+    </div>
+    <div id="dialNote">Note: --</div>
+    <div id="dialFreq">Freq: -- Hz</div>
     <div>
         <canvas id="toneWave" style="width: 300px; height: 50px;"></canvas>
     </div>
