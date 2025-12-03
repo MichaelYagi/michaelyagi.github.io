@@ -227,6 +227,8 @@
     const incrementNote = document.getElementById("incrementNote");
     const noteDial = document.getElementById("noteDial");
     const tempo = document.getElementById("tempo");
+    const subdivisions = document.getElementById("subdivisions");
+    const clickSound = document.getElementById("clickSound");
     const startMetronomeButton = document.getElementById("startMetronome");
     const stopMetronomeButton = document.getElementById("stopMetronome");
 
@@ -243,10 +245,9 @@
     const toneWaveCanvas = document.getElementById("toneWave");
     const ctx = toneWaveCanvas.getContext("2d");
     let waveAnimation = null;
-    let waveStartTime = null;
     let waveFreq = 440; // current tone frequency
 
-    function setButtonState(id, enabled) {
+    function setElementState(id, enabled) {
         document.getElementById(id).disabled = !enabled;
     }
 
@@ -261,21 +262,23 @@
         toneEnabled = active;
         toneBox.classList.toggle("dimmed", !active);
 
-        playToneButton.disabled = active ? false : true;
-        stopToneButton.disabled = active ? false : true;
-        waveform.disabled = active ? false : true;
-        decrementNote.disabled = active ? false : true;
-        incrementNote.disabled = active ? false : true;
-        noteDial.disabled = active ? false : true;
+        playToneButton.disabled = !active;
+        stopToneButton.disabled = !active;
+        waveform.disabled = !active;
+        decrementNote.disabled = !active;
+        incrementNote.disabled = !active;
+        noteDial.disabled = !active;
     }
 
     function setMetronomeActive(active) {
         metronomeBoxEnabled = active;
         metronomeBox.classList.toggle("dimmed", !active);
 
-        tempo.disabled = active ? false : true;
-        startMetronomeButton.disabled = active ? false : true;
-        stopMetronomeButton.disabled = active ? false : true;
+        tempo.disabled = !active;
+        startMetronomeButton.disabled = !active;
+        stopMetronomeButton.disabled = !active;
+        subdivisions.disabled = !active;
+        clickSound.disabled = !active;
     }
 
     // Pitch mapping
@@ -289,30 +292,6 @@
         const target = A4 * Math.pow(2, nearest / 12);
         const cents = 1200 * Math.log2(freq / target);
         return { name, octave, cents };
-    }
-
-    function drawSineWave(phase) {
-        const w = toneWaveCanvas.width;
-        const h = toneWaveCanvas.height;
-        ctx.clearRect(0, 0, w, h);
-
-        ctx.beginPath();
-        ctx.moveTo(0, h/2);
-
-        const amplitude = h/3;
-
-        // 🔧 cycles across canvas proportional to frequency
-        const cyclesAcross = waveFreq / 100; // adjust divisor to scale nicely
-        const k = (2 * Math.PI * cyclesAcross) / w;
-
-        for (let x = 0; x <= w; x++) {
-            const y = h/2 + amplitude * Math.sin(k * x + phase);
-            ctx.lineTo(x, y);
-        }
-
-        ctx.strokeStyle = "#0077ff";
-        ctx.lineWidth = 2;
-        ctx.stroke();
     }
 
     // YIN (compact)
@@ -633,8 +612,13 @@
     }
 
     function startMetronome() {
-        const bpm = parseInt(tempo.value, 10);
-        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10);
+        let tempoValue = tempo.value;
+        if (tempoValue <= 0) {
+            tempoValue = "120";
+            tempo.value = tempoValue;
+        }
+        const bpm = parseInt(tempoValue, 10);
+        const subdivisions = parseInt(getSubdivisions(), 10);
         const beatMs = 60000 / bpm;
         const subMs = beatMs / subdivisions;
 
@@ -658,7 +642,7 @@
 
         document.getElementById("metronomeText").textContent =
             `Playing at ${bpm} BPM (${subdivisions} subdivisions)`;
-        setButtonState("startMetronome", false);
+        setElementState("startMetronome", false);
         updatePauseMessages();
     }
 
@@ -671,42 +655,28 @@
         document.getElementById("metronomeText").textContent = "Stopped";
         document.getElementById("metronomeDot").style.opacity = 0;
         document.getElementById("subdivisionDot").style.opacity = 0;
-        setButtonState("startMetronome", true);
+        setElementState("startMetronome", true);
         updatePauseMessages();
     }
 
-    function scheduleBeats(time) {
-        const subs = parseInt(document.getElementById("subdivisions").value, 10) || 1;
-
-        // main beat
-        playClick(true);
-
-        // subdivisions
-        if (subs > 1) {
-            const interval = 60 / (tempo.value * subs); // seconds per subdivision
-            for (let i = 1; i < subs; i++) {
-                const subTime = time + i * interval;
-                playSubdivision(subTime);
-            }
+    function getTempo() {
+        const tempoField = document.getElementById("tempo");
+        let bpm = parseInt(tempoField.value, 10);
+        if (!bpm || bpm < 1) {
+            bpm = 120; // default
+            tempoField.value = bpm;
         }
+        return bpm;
     }
 
-    function playSubdivision(time) {
-        if (!audioCtx) audioCtx = new AudioContext();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = "square";
-        osc.frequency.setValueAtTime(1500, time);
-        gain.gain.setValueAtTime(0.1, time);
-
-        osc.connect(gain).connect(audioCtx.destination);
-        osc.start(time);
-        osc.stop(time + 0.05);
-
-        const dot = document.getElementById("subdivisionDot");
-        dot.style.opacity = "1";
-        setTimeout(() => { dot.style.opacity = 0; }, 50);
+    function getSubdivisions() {
+        const subsField = document.getElementById("subdivisions");
+        let subs = parseInt(subsField.value, 10);
+        if (!subs || subs < 1) {
+            subs = 1; // default
+            subsField.value = subs;
+        }
+        return subs;
     }
 
     function updatePauseMessages() {
@@ -730,8 +700,8 @@
     }
 
     function savePreset() {
-        const bpm = document.getElementById("tempo").value;
-        const subdivisions = document.getElementById("subdivisions").value;
+        const bpm = getTempo();
+        const subdivisions = getSubdivisions();
         const noteDialVal = document.getElementById("noteDial").value;
         const waveformVal = document.getElementById("waveform").value;
         const clickSoundVal = document.getElementById("clickSound").value; // NEW
@@ -805,7 +775,7 @@
     document.getElementById("deletePreset").addEventListener("click", deletePreset);
 
     metronomeBox.addEventListener("pointerdown", (e) => {
-        if (metronomeInterval || tapTimes.length < 2 || (metronomeBoxEnabled && toneEnabled)) {
+        if (metronomeInterval || (metronomeBoxEnabled && tapTimes.length < 2) || (metronomeBoxEnabled && toneEnabled)) {
             stopTone();
             setTunerActive(false);
             setToneActive(false);
@@ -817,21 +787,29 @@
         stopTone();
         setTunerActive(false);
         setToneActive(false);
+        setMetronomeActive(true);
         startMetronome();
     });
     document.getElementById("stopMetronome").addEventListener("click", () => {
         stopMetronome();
         setTunerActive(true);
         setToneActive(true);
+        setMetronomeActive(false);
     });
     document.getElementById("tempo").addEventListener("input", () => {
         if (metronomeInterval) {
+            setTunerActive(false);
+            setToneActive(false);
+            setMetronomeActive(true);
             startMetronome(); // restart with new BPM
         }
     });
     document.getElementById("subdivisions").addEventListener("change", () => {
         if (metronomeInterval) {
             // If the metronome is already running, restart immediately with new subdivision
+            setTunerActive(false);
+            setToneActive(false);
+            setMetronomeActive(true);
             startMetronome();
         }
     });
@@ -968,7 +946,7 @@
         } else if (e.code === "ArrowUp") { // Increase tempo
              if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
                 const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
+                let bpm = getTempo();
                 bpm = Math.min(240, bpm + 1); // cap at 240
                 tempoInput.value = bpm;
                 document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
@@ -979,7 +957,7 @@
         } else if (e.code === "ArrowDown") { // Decrease tempo
              if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
                 const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
+                let bpm = getTempo();
                 bpm = Math.max(30, bpm - 1); // floor at 30 // cap at 240
                 tempoInput.value = bpm;
                 document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
@@ -990,7 +968,7 @@
         } else if (e.code === "KeyW") { // Increase tempo
              if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
                 const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
+                let bpm = getTempo();
                 bpm = Math.min(240, bpm + 1); // cap at 240
                 tempoInput.value = bpm;
                 document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
@@ -999,7 +977,7 @@
         } else if (e.code === "KeyS") { // Decrease tempo
             if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
                 const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
+                let bpm = getTempo();
                 bpm = Math.max(30, bpm - 1); // floor at 30 // cap at 240
                 tempoInput.value = bpm;
                 document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
