@@ -16,7 +16,7 @@
         .needle > div { position: absolute; top: -6px; width: 2px; height: 22px; background: #333; left: 50%; transition: left 80ms linear; }
         .status { color: #444; font-size: 0.95rem; margin-top: 8px; }
         .dimmed { opacity: 0.4; }
-        #noteDial { width: 100% }
+        #noteDial { width: 100%; box-sizing: border-box; }
         /* Blinking red dot */
         #metronomeDot {
             display: inline-block;
@@ -79,7 +79,8 @@
             border: 2px solid #333;
             border-radius: 12px;
             padding: 16px;
-            width: 400px;   /* increased from 340px */
+            width: 100%;          /* take full width of parent */
+            max-width: 400px;     /* cap size on larger screens */
             margin: 0 auto 20px auto;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
