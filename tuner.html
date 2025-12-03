@@ -29,6 +29,18 @@
             vertical-align: middle;
             transition: opacity 0.1s ease;
         }
+        #subdivisionDot {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 6px;
+            margin-bottom: 5px;
+            border-radius: 50%;
+            background-color: blue; /* distinct color */
+            opacity: 0;
+            vertical-align: middle;
+            transition: opacity 0.1s ease;
+        }
         /* Animated wave */
         #toneWave {
             /* border: 1px solid #ddd; */
@@ -49,9 +61,19 @@
     <input id="tempo" type="number" min="30" max="240" value="120" style="width:80px;">
     <button id="startMetronome">Start</button>
     <button id="stopMetronome">Stop</button>
+    <div>
+        <label for="subdivisions">Subdivisions:</label>
+        <select id="subdivisions">
+            <option value="1">Quarter notes (1)</option>
+            <option value="2">Eighth notes (2)</option>
+            <option value="3">Triplets (3)</option>
+            <option value="4">Sixteenth notes (4)</option>
+        </select>
+    </div>
     <div id="metronomeStatus" class="status">
         <span id="metronomeText">Stopped</span>
         <span id="metronomeDot"></span>
+        <span id="subdivisionDot"></span>
     </div>
 </div>
 
@@ -128,6 +150,10 @@
     let waveAnimation = null;
     let waveStartTime = null;
     let waveFreq = 440; // current tone frequency
+
+    function setButtonState(id, enabled) {
+        document.getElementById(id).disabled = !enabled;
+    }
 
     // Tuner control
     function setTunerActive(active) {
@@ -452,28 +478,31 @@
 
     // Metronome
     let metronomeInterval = null;
+    let subdivisionInterval = null;
 
-    function playClick() {
+    function playClick(strong = true) {
         if (!audioCtx) audioCtx = new AudioContext();
-
         const now = audioCtx.currentTime;
 
-        // schedule the click
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
+
         osc.type = "square";
-        osc.frequency.setValueAtTime(1000, now);
-        gain.gain.setValueAtTime(0.2, now);
+        osc.frequency.setValueAtTime(strong ? 1000 : 1500, now); // higher pitch for subdivision
+        gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
+
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(now);
         osc.stop(now + 0.05);
 
-        // schedule the blink in sync
-        const dot = document.getElementById("metronomeDot");
-        if (dot) {
+        if (strong) {
+            const dot = document.getElementById("metronomeDot");
             dot.style.opacity = 1;
-            // fade out exactly after the click duration
             setTimeout(() => { dot.style.opacity = 0; }, 50);
+        } else {
+            const subDot = document.getElementById("subdivisionDot");
+            subDot.style.opacity = 1;
+            setTimeout(() => { subDot.style.opacity = 0; }, 50);
         }
     }
 
@@ -481,7 +510,7 @@
 
     function registerTap(e) {
         // Ignore taps on Start/Stop buttons
-        if (e.target.id === "startMetronome" || e.target.id === "stopMetronome") {
+        if (e.target.id === "startMetronome" || e.target.id === "stopMetronome" || e.target.id === "subdivisions") {
             return;
         }
 
@@ -510,30 +539,37 @@
     }
 
     function startMetronome() {
-        const bpm = parseInt(document.getElementById("tempo").value, 10);
-        const intervalMs = 60000 / bpm;
+        const bpm = parseInt(tempo.value, 10);
+        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10);
+        const beatMs = 60000 / bpm;
+        const subMs = beatMs / subdivisions;
 
-        if (metronomeInterval) clearInterval(metronomeInterval);
+        stopMetronome(); // clear existing
 
-        // drive both click + blink from the same interval
-        metronomeInterval = setInterval(() => {
-            playClick();
-        }, intervalMs);
+        // main beat
+        metronomeInterval = setInterval(() => playClick(true), beatMs);
 
-        document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
-        setPlayMetronomeButtonState(false);
+        // subdivisions (don’t change BPM, just layer inside beat)
+        if (subdivisions > 1) {
+            subdivisionInterval = setInterval(() => playClick(false), subMs);
+        }
+
+        document.getElementById("metronomeText").textContent =
+            `Playing at ${bpm} BPM (${subdivisions} subdivisions)`;
+        setButtonState("startMetronome", false);
         updatePauseMessages();
     }
 
     function stopMetronome() {
-        if (metronomeInterval) {
-            clearInterval(metronomeInterval);
-            metronomeInterval = null;
-        }
+        if (metronomeInterval) clearInterval(metronomeInterval);
+        if (subdivisionInterval) clearInterval(subdivisionInterval);
+        metronomeInterval = null;
+        subdivisionInterval = null;
+
         document.getElementById("metronomeText").textContent = "Stopped";
-        const dot = document.getElementById("metronomeDot");
-        if (dot) dot.style.opacity = 0;
-        setPlayMetronomeButtonState(true);
+        document.getElementById("metronomeDot").style.opacity = 0;
+        document.getElementById("subdivisionDot").style.opacity = 0;
+        setButtonState("startMetronome", true);
         updatePauseMessages();
     }
 
@@ -568,6 +604,12 @@
     document.getElementById("tempo").addEventListener("input", () => {
         if (metronomeInterval) {
             startMetronome(); // restart with new BPM
+        }
+    });
+    document.getElementById("subdivisions").addEventListener("change", () => {
+        if (metronomeInterval) {
+            // If the metronome is already running, restart immediately with new subdivision
+            startMetronome();
         }
     });
 
