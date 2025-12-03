@@ -29,11 +29,13 @@
             vertical-align: middle;
             transition: opacity 0.1s ease;
         }
-
         /* Animated wave */
         #toneWave {
             /* border: 1px solid #ddd; */
             margin-top: 12px;
+        }
+        #metronomeBox {
+            user-select: none; /* prevent text highlight */
         }
     </style>
 </head>
@@ -475,6 +477,38 @@
         }
     }
 
+    let tapTimes = [];
+
+    function registerTap(e) {
+        // Ignore taps on Start/Stop buttons
+        if (e.target.id === "startMetronome" || e.target.id === "stopMetronome") {
+            return;
+        }
+
+        if (metronomeBoxEnabled) {
+            const now = performance.now();
+            tapTimes.push(now);
+
+            // keep only the last 8 taps
+            if (tapTimes.length > 8) tapTimes.shift();
+
+            if (tapTimes.length >= 2) {
+                const intervals = [];
+                for (let i = 1; i < tapTimes.length; i++) {
+                intervals.push(tapTimes[i] - tapTimes[i - 1]);
+                }
+                const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                const bpm = Math.round(60000 / avgInterval);
+
+                // update tempo field + metronome
+                tempo.value = bpm;
+                document.getElementById("metronomeText").textContent = `Tapped tempo: ${bpm} BPM`;
+
+                startMetronome(); // restart with new BPM
+            }
+        }
+    }
+
     function startMetronome() {
         const bpm = parseInt(document.getElementById("tempo").value, 10);
         const intervalMs = 60000 / bpm;
@@ -517,6 +551,9 @@
     }
 
     // Events
+    metronomeBox.addEventListener("click", registerTap);
+    metronomeBox.addEventListener("touchstart", registerTap);
+
     document.getElementById("startMetronome").addEventListener("click", () => {
         stopTone();
         setTunerActive(false);
