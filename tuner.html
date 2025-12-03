@@ -20,11 +20,25 @@
 <body>
 <h1>🎵 Tuner & Tone Generator</h1>
 
+<!-- Tuner -->
+<div class="box" id="tunerBox">
+    <h3>Tuner</h3>
+    <div class="metric" id="note">--</div>
+    <div id="freq" class="sub">-- Hz</div>
+    <div id="cents" class="sub">-- cents</div>
+    <div class="needle"><div id="needleIndicator"></div></div>
+    <div class="status" id="status">Mic: initializing...</div>
+    <div class="status" id="pauseNote" style="display:none;">Tuner paused while tone is playing.</div>
+</div>
+
 <!-- Tone Generator -->
 <div class="box">
-    <h3>Reference tone generator</h3>
-    <label for="noteDial">Note dial:</label>
-    <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
+    <h3>Tone generator</h3>
+    <div style="display:flex;align-items:center;gap:8px;">
+        <button id="decrementNote">◀</button>
+        <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
+        <button id="incrementNote">▶</button>
+    </div>
     <div id="dialNote">Note: --</div>
     <div id="dialFreq">Freq: -- Hz</div>
     <label for="waveform" style="margin-right:6px;">Waveform:</label>
@@ -36,16 +50,6 @@
     </select>
     <button id="playTone" style="margin-left:8px;">Play</button>
     <button id="stopTone">Stop</button>
-</div>
-
-<!-- Tuner -->
-<div class="box" id="tunerBox">
-    <div class="metric" id="note">--</div>
-    <div id="freq" class="sub">-- Hz</div>
-    <div id="cents" class="sub">-- cents</div>
-    <div class="needle"><div id="needleIndicator"></div></div>
-    <div class="status" id="status">Mic: initializing...</div>
-    <div class="status" id="pauseNote" style="display:none;">Tuner paused while reference tone is playing.</div>
 </div>
 
 <script>
@@ -261,7 +265,18 @@
         setTunerActive(true);
     }
 
+    function changeDial(delta) {
+        const dial = document.getElementById("noteDial");
+        let val = parseInt(dial.value, 10);
+        val = Math.max(parseInt(dial.min), Math.min(parseInt(dial.max), val + delta));
+        dial.value = val;
+        updateDialDisplay(); // reuse your existing function
+    }
+
     // Events
+    document.getElementById("decrementNote").addEventListener("click", () => changeDial(-1));
+    document.getElementById("incrementNote").addEventListener("click", () => changeDial(1));
+
     document.getElementById("noteDial").addEventListener("input", updateDialDisplay);
     document.getElementById("waveform").addEventListener("change", updateWaveform);
 
@@ -270,6 +285,68 @@
         const { f } = dialToNote(idx);
         const wave = document.getElementById("waveform").value;
         playTone(f, wave);
+    });
+
+    // Spacebar toggles play/stop
+    document.addEventListener("keydown", (e) => {
+        if (e.code === "Space") {
+            e.preventDefault(); // prevent page scroll
+            if (toneOscillator) {
+                stopTone();
+            } else {
+                const idx = parseInt(document.getElementById("noteDial").value, 10);
+                const { f } = dialToNote(idx);
+                const wave = document.getElementById("waveform").value;
+                playTone(f, wave);
+            }
+        } else if (e.code === "ArrowRight") {
+            changeDial(1);
+        } else if (e.code === "ArrowLeft") {
+            changeDial(-1);
+        } else if (e.code === "KeyD") {
+            changeDial(1);
+        } else if (e.code === "KeyA") {
+            changeDial(-1);
+        } else if (e.code === "ArrowUp") {
+            const waveformSelect = document.getElementById("waveform");
+            const options = Array.from(waveformSelect.options);
+            let idx = waveformSelect.selectedIndex;
+            idx = (idx - 1 + options.length) % options.length;
+            waveformSelect.selectedIndex = idx;
+            updateWaveform(); // reuse your existing function
+        } else if (e.code === "ArrowDown") {
+            const waveformSelect = document.getElementById("waveform");
+            const options = Array.from(waveformSelect.options);
+            let idx = waveformSelect.selectedIndex;
+            idx = (idx + 1) % options.length;
+            waveformSelect.selectedIndex = idx;
+            updateWaveform();
+        } else if (e.code === "KeyW") {
+            const waveformSelect = document.getElementById("waveform");
+            const options = Array.from(waveformSelect.options);
+            let idx = waveformSelect.selectedIndex;
+            idx = (idx - 1 + options.length) % options.length;
+            waveformSelect.selectedIndex = idx;
+            updateWaveform(); // reuse your existing function
+        } else if (e.code === "KeyS") {
+            const waveformSelect = document.getElementById("waveform");
+            const options = Array.from(waveformSelect.options);
+            let idx = waveformSelect.selectedIndex;
+            idx = (idx + 1) % options.length;
+            waveformSelect.selectedIndex = idx;
+            updateWaveform();
+        } else if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+            const dial = document.getElementById("noteDial");
+            // A4 is the center reference (index 30 in your mapping)
+            dial.value = 30;
+            updateDialDisplay();
+
+            // If tone is playing, reset its frequency immediately
+            const { f } = dialToNote(30);
+            if (toneOscillator) {
+                toneOscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
+            }
+        }
     });
 
     document.getElementById("stopTone").addEventListener("click", stopTone);
