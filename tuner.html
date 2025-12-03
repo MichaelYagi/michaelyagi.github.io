@@ -121,11 +121,32 @@
     let tunerEnabled = true;
     let metronomeBoxEnabled = true;
 
+    // Tone wave canvas
     const toneWaveCanvas = document.getElementById("toneWave");
     const ctx = toneWaveCanvas.getContext("2d");
     let waveAnimation = null;
-    let waveStartTime = null;
-    let waveFreq = 440; // current tone frequency
+    let wavePhase = 0;
+    let waveFreq = 440;
+
+    // Helpers
+    function setButtonState(id, enabled) {
+        document.getElementById(id).disabled = !enabled;
+    }
+
+    function changeDial(delta) {
+        let val = parseInt(noteDial.value, 10);
+        val = Math.max(parseInt(noteDial.min), Math.min(parseInt(noteDial.max), val + delta));
+        noteDial.value = val;
+        updateDialDisplay();
+    }
+
+    function pulseDot(duration = 100) {
+        const dot = document.getElementById("metronomeDot");
+        if (dot) {
+        dot.style.opacity = 1;
+        setTimeout(() => { dot.style.opacity = 0; }, duration);
+        }
+    }
 
     // Tuner control
     function setTunerActive(active) {
@@ -137,22 +158,20 @@
     function setToneActive(active) {
         toneEnabled = active;
         toneBox.classList.toggle("dimmed", !active);
-
-        playToneButton.disabled = active ? false : true;
-        stopToneButton.disabled = active ? false : true;
-        waveform.disabled = active ? false : true;
-        decrementNote.disabled = active ? false : true;
-        incrementNote.disabled = active ? false : true;
-        noteDial.disabled = active ? false : true;
+        playToneButton.disabled = !active;
+        stopToneButton.disabled = !active;
+        waveform.disabled = !active;
+        decrementNote.disabled = !active;
+        incrementNote.disabled = !active;
+        noteDial.disabled = !active;
     }
 
     function setMetronomeActive(active) {
         metronomeBoxEnabled = active;
         metronomeBox.classList.toggle("dimmed", !active);
-
-        tempo.disabled = active ? false : true;
-        startMetronomeButton.disabled = active ? false : true;
-        stopMetronomeButton.disabled = active ? false : true;
+        tempo.disabled = !active;
+        startMetronomeButton.disabled = !active;
+        stopMetronomeButton.disabled = !active;
     }
 
     // Pitch mapping
@@ -160,7 +179,7 @@
         const A4 = 440;
         const n = 12 * Math.log2(freq / A4);
         const nearest = Math.round(n);
-        const idx = nearest + 57; // C0 offset
+        const idx = nearest + 57;
         const octave = Math.floor(idx / 12);
         const name = NOTE_STRINGS[((idx % 12) + 12) % 12];
         const target = A4 * Math.pow(2, nearest / 12);
@@ -168,6 +187,7 @@
         return { name, octave, cents };
     }
 
+    // Sine wave drawing
     function drawSineWave(phase) {
         const w = toneWaveCanvas.width;
         const h = toneWaveCanvas.height;
@@ -177,14 +197,12 @@
         ctx.moveTo(0, h/2);
 
         const amplitude = h/3;
-
-        // 🔧 cycles across canvas proportional to frequency
-        const cyclesAcross = waveFreq / 100; // adjust divisor to scale nicely
+        const cyclesAcross = waveFreq / 100; // proportional to frequency
         const k = (2 * Math.PI * cyclesAcross) / w;
 
         for (let x = 0; x <= w; x++) {
-            const y = h/2 + amplitude * Math.sin(k * x + phase);
-            ctx.lineTo(x, y);
+        const y = h/2 + amplitude * Math.sin(k * x + phase);
+        ctx.lineTo(x, y);
         }
 
         ctx.strokeStyle = "#0077ff";
@@ -192,7 +210,23 @@
         ctx.stroke();
     }
 
-    // YIN (compact)
+    function startWaveAnimation(freq) {
+        waveFreq = freq;
+        wavePhase = 0;
+        function animate() {
+        wavePhase += 0.05; // constant animation speed
+        drawSineWave(wavePhase);
+        waveAnimation = requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    function stopWaveAnimation() {
+        if (waveAnimation) cancelAnimationFrame(waveAnimation);
+        ctx.clearRect(0, 0, toneWaveCanvas.width, toneWaveCanvas.height);
+    }
+
+    // YIN pitch detection
     function yinPitch(buf, sampleRate, threshold = 0.18, minFreq = 50, maxFreq = 1200) {
         const N = buf.length;
         const tauMin = Math.max(2, Math.floor(sampleRate / maxFreq));
@@ -201,29 +235,29 @@
 
         const d = new Float32Array(tauMax + 1);
         for (let tau = 1; tau <= tauMax; tau++) {
-            let sum = 0;
-            for (let i = 0; i < N - tau; i++) {
-                const diff = buf[i] - buf[i + tau];
-                sum += diff * diff;
-            }
-            d[tau] = sum;
+        let sum = 0;
+        for (let i = 0; i < N - tau; i++) {
+            const diff = buf[i] - buf[i + tau];
+            sum += diff * diff;
+        }
+        d[tau] = sum;
         }
 
         const cmnd = new Float32Array(tauMax + 1);
         cmnd[0] = 1;
         let running = 0;
         for (let tau = 1; tau <= tauMax; tau++) {
-            running += d[tau];
-            cmnd[tau] = d[tau] / (running / tau);
+        running += d[tau];
+        cmnd[tau] = d[tau] / (running / tau);
         }
 
         let tau = -1;
         for (let t = tauMin; t <= tauMax; t++) {
-            if (cmnd[t] < threshold) {
-                tau = t;
-                while (t + 1 <= tauMax && cmnd[t + 1] < cmnd[t]) { t++; tau = t; }
-                break;
-            }
+        if (cmnd[t] < threshold) {
+            tau = t;
+            while (t + 1 <= tauMax && cmnd[t + 1] < cmnd[t]) { t++; tau = t; }
+            break;
+        }
         }
         if (tau === -1) return null;
 
@@ -238,68 +272,27 @@
     }
 
     // Tuner loop
-    function drawSineWave(phase) {
-        const w = toneWaveCanvas.width;
-        const h = toneWaveCanvas.height;
-        ctx.clearRect(0, 0, w, h);
-
-        ctx.beginPath();
-        ctx.moveTo(0, h/2);
-
-        const amplitude = h/3;
-
-        // 🔧 cycles across canvas proportional to frequency
-        const cyclesAcross = waveFreq / 100; // adjust divisor to scale nicely
-        const k = (2 * Math.PI * cyclesAcross) / w;
-
-        for (let x = 0; x <= w; x++) {
-            const y = h/2 + amplitude * Math.sin(k * x + phase);
-            ctx.lineTo(x, y);
-        }
-
-        ctx.strokeStyle = "#0077ff";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
-
-    function startWaveAnimation(freq) {
-        waveFreq = freq;
-        wavePhase = 0;
-
-        function animate() {
-            wavePhase += 0.05; // constant animation speed
-            drawSineWave(wavePhase);
-            waveAnimation = requestAnimationFrame(animate);
-        }
-        animate();
-    }
-
-    function stopWaveAnimation() {
-        if (waveAnimation) cancelAnimationFrame(waveAnimation);
-        ctx.clearRect(0, 0, toneWaveCanvas.width, toneWaveCanvas.height);
-    }
-
     function startLoop() {
         function update() {
-            if (tunerEnabled && analyser) {
-                analyser.getFloatTimeDomainData(yinBuffer);
-                const f = yinPitch(yinBuffer, audioCtx.sampleRate);
-                if (f && isFinite(f)) {
-                    const { name, octave, cents } = freqToNoteData(f);
-                    noteElem.textContent = `${name}${octave}`;
-                    freqElem.textContent = `${f.toFixed(2)} Hz`;
-                    centsElem.textContent = `${cents > 0 ? "+" : ""}${cents.toFixed(1)} cents`;
-                    const clamped = Math.max(-100, Math.min(100, cents));
-                    const offsetPx = (clamped / 200) * 320;
-                    needleIndicator.style.left = `calc(50% + ${offsetPx}px)`;
-                } else {
-                    noteElem.textContent = "--";
-                    freqElem.textContent = "-- Hz";
-                    centsElem.textContent = "-- cents";
-                    needleIndicator.style.left = "50%";
-                }
+        if (tunerEnabled && analyser) {
+            analyser.getFloatTimeDomainData(yinBuffer);
+            const f = yinPitch(yinBuffer, audioCtx.sampleRate);
+            if (f && isFinite(f)) {
+            const { name, octave, cents } = freqToNoteData(f);
+            noteElem.textContent = `${name}${octave}`;
+            freqElem.textContent = `${f.toFixed(2)} Hz`;
+            centsElem.textContent = `${cents > 0 ? "+" : ""}${cents.toFixed(1)} cents`;
+            const clamped = Math.max(-100, Math.min(100, cents));
+            const offsetPx = (clamped / 200) * 320;
+            needleIndicator.style.left = `calc(50% + ${offsetPx}px)`;
+            } else {
+            noteElem.textContent = "--";
+            freqElem.textContent = "-- Hz";
+            centsElem.textContent = "-- cents";
+            needleIndicator.style.left = "50%";
             }
-            requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
         }
         requestAnimationFrame(update);
     }
@@ -307,43 +300,35 @@
     // Init audio
     async function init() {
         try {
-            statusElem.textContent = "Mic: requesting access...";
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-            });
+        statusElem.textContent = "Mic: requesting access...";
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+        });
 
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 8192;
-            analyser.minDecibels = -100;
-            analyser.maxDecibels = -10;
-            analyser.smoothingTimeConstant = 0.0;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 8192;
+        analyser.minDecibels = -100;
+        analyser.maxDecibels = -10;
+        analyser.smoothingTimeConstant = 0.0;
 
-            const source = audioCtx.createMediaStreamSource(stream);
-            source.connect(analyser);
+        const source = audioCtx.createMediaStreamSource(stream);
+        source.connect(analyser);
 
-            yinBuffer = new Float32Array(8192);
+        yinBuffer = new Float32Array(8192);
 
-            statusElem.textContent = "Mic: ready";
-            startLoop();
-            updateDialDisplay();
+        statusElem.textContent = "Mic: ready";
+        startLoop();
+        updateDialDisplay();
         } catch (e) {
-            statusElem.textContent = "Mic: permission denied or unavailable";
-            console.error(e);
+        statusElem.textContent = "Mic: permission denied or unavailable";
+        console.error(e);
         }
     }
 
     // Tone generator
     let toneOscillator = null;
     let toneGain = null;
-
-    function setPlayButtonState(enabled) {
-        document.getElementById("playTone").disabled = !enabled;
-    }
-
-    function setPlayMetronomeButtonState(enabled) {
-        document.getElementById("startMetronome").disabled = !enabled;
-    }
 
     function dialToNote(index) {
         const A4 = 440;
@@ -358,21 +343,21 @@
     }
 
     function updateDialDisplay() {
-        const idx = parseInt(document.getElementById("noteDial").value, 10);
+        const idx = parseInt(noteDial.value, 10);
         const { name, octave, f } = dialToNote(idx);
         document.getElementById("dialNote").textContent = `Note: ${name}${octave}`;
         document.getElementById("dialFreq").textContent = `Freq: ${f.toFixed(2)} Hz`;
 
         if (toneOscillator) {
-            toneOscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
-            waveFreq = f; // 🔧 update wavelength live
+        toneOscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
+        waveFreq = f; // update wavelength live
         }
     }
 
     function updateWaveform() {
-        const wave = document.getElementById("waveform").value;
+        const wave = waveform.value;
         if (toneOscillator) {
-            toneOscillator.type = wave; // 🔊 change waveform live
+        toneOscillator.type = wave;
         }
     }
 
@@ -389,18 +374,18 @@
         toneOscillator.connect(toneGain).connect(audioCtx.destination);
         toneOscillator.start();
 
-        setPlayButtonState(false);
+        setButtonState("playTone", false);
         setTunerActive(false);
 
         startWaveAnimation(freq);
 
         toneOscillator.onended = () => {
-            toneOscillator = null;
-            toneGain = null;
-            setPlayButtonState(true);
-            setTunerActive(true);
-            stopWaveAnimation();
-            updatePauseMessages();
+        toneOscillator = null;
+        toneGain = null;
+        setButtonState("playTone", true);
+        setTunerActive(true);
+        stopWaveAnimation();
+        updatePauseMessages();
         };
 
         updatePauseMessages();
@@ -408,27 +393,16 @@
 
     function stopTone() {
         if (toneOscillator) {
-            toneOscillator.stop();
-            toneOscillator.disconnect();
-            if (toneGain) toneGain.disconnect();
-            toneOscillator = null;
-            toneGain = null;
+        toneOscillator.stop();
+        toneOscillator.disconnect();
+        if (toneGain) toneGain.disconnect();
+        toneOscillator = null;
+        toneGain = null;
         }
-
-        setPlayButtonState(true);
+        setButtonState("playTone", true);
         setTunerActive(true);
-
         stopWaveAnimation();
-
         updatePauseMessages();
-    }
-
-    function changeDial(delta) {
-        const dial = document.getElementById("noteDial");
-        let val = parseInt(dial.value, 10);
-        val = Math.max(parseInt(dial.min), Math.min(parseInt(dial.max), val + delta));
-        dial.value = val;
-        updateDialDisplay(); // reuse your existing function
     }
 
     // Metronome
@@ -436,10 +410,8 @@
 
     function playClick() {
         if (!audioCtx) audioCtx = new AudioContext();
-
         const now = audioCtx.currentTime;
 
-        // 🔊 schedule the click
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "square";
@@ -449,247 +421,95 @@
         osc.start(now);
         osc.stop(now + 0.05);
 
-        // 🔴 schedule the blink in sync
-        const dot = document.getElementById("metronomeDot");
-        if (dot) {
-            dot.style.opacity = 1;
-            // fade out exactly after the click duration
-            setTimeout(() => { dot.style.opacity = 0; }, 50);
-        }
+        pulseDot(50);
     }
 
     function startMetronome() {
-        const bpm = parseInt(document.getElementById("tempo").value, 10);
+        const bpm = parseInt(tempo.value, 10);
         const intervalMs = 60000 / bpm;
-
         if (metronomeInterval) clearInterval(metronomeInterval);
-
-        // drive both click + blink from the same interval
-        metronomeInterval = setInterval(() => {
-            playClick();
-        }, intervalMs);
-
+        metronomeInterval = setInterval(playClick, intervalMs);
         document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
-        setPlayMetronomeButtonState(false);
+        setButtonState("startMetronome", false);
         updatePauseMessages();
     }
 
     function stopMetronome() {
         if (metronomeInterval) {
-            clearInterval(metronomeInterval);
-            metronomeInterval = null;
+        clearInterval(metronomeInterval);
+        metronomeInterval = null;
         }
         document.getElementById("metronomeText").textContent = "Stopped";
-        const dot = document.getElementById("metronomeDot");
-        if (dot) dot.style.opacity = 0;
-        setPlayMetronomeButtonState(true);
+        document.getElementById("metronomeDot").style.opacity = 0;
+        setButtonState("startMetronome", true);
         updatePauseMessages();
     }
 
     function updatePauseMessages() {
         if (toneOscillator) {
-            pauseNote.style.display = "block";
-            pauseMetronome.style.display = "none";
+        pauseNote.style.display = "block";
+        pauseMetronome.style.display = "none";
         } else if (metronomeInterval) {
-            pauseMetronome.style.display = "block";
-            pauseNote.style.display = "none";
+        pauseMetronome.style.display = "block";
+        pauseNote.style.display = "none";
         } else {
-            pauseNote.style.display = "none";
-            pauseMetronome.style.display = "none";
+        pauseNote.style.display = "none";
+        pauseMetronome.style.display = "none";
         }
     }
 
     // Events
-    document.getElementById("startMetronome").addEventListener("click", () => {
+    startMetronomeButton.addEventListener("click", () => {
         stopTone();
         setTunerActive(false);
         setToneActive(false);
         startMetronome();
     });
-    document.getElementById("stopMetronome").addEventListener("click", () => {
+    stopMetronomeButton.addEventListener("click", () => {
         stopMetronome();
         setTunerActive(true);
         setToneActive(true);
     });
-    document.getElementById("tempo").addEventListener("input", () => {
-        if (metronomeInterval) {
-            startMetronome(); // restart with new BPM
-        }
+    tempo.addEventListener("input", () => {
+        if (metronomeInterval) startMetronome();
     });
 
-    document.getElementById("decrementNote").addEventListener("click", () => {
+    decrementNote.addEventListener("click", () => {
         setTunerActive(false);
         setMetronomeActive(false);
         changeDial(-1);
     });
-    document.getElementById("incrementNote").addEventListener("click", () => {
+    incrementNote.addEventListener("click", () => {
         setTunerActive(false);
         setMetronomeActive(false);
         changeDial(1);
     });
-
-    document.getElementById("noteDial").addEventListener("input", () => {
+    noteDial.addEventListener("input", () => {
         setTunerActive(false);
         setMetronomeActive(false);
         updateDialDisplay();
     });
-    document.getElementById("waveform").addEventListener("change", () => {
+    waveform.addEventListener("change", () => {
         setTunerActive(false);
         setMetronomeActive(false);
         updateWaveform();
     });
-    document.getElementById("playTone").addEventListener("click", () => {
+    playToneButton.addEventListener("click", () => {
         setTunerActive(false);
         setMetronomeActive(false);
-        const idx = parseInt(document.getElementById("noteDial").value, 10);
+        const idx = parseInt(noteDial.value, 10);
         const { f } = dialToNote(idx);
-        const wave = document.getElementById("waveform").value;
-        playTone(f, wave);
+        playTone(f, waveform.value);
         updatePauseMessages();
     });
-    document.getElementById("stopTone").addEventListener("click", () => {
+    stopToneButton.addEventListener("click", () => {
         setTunerActive(true);
         setMetronomeActive(true);
         stopTone();
         updatePauseMessages();
     });
 
-    document.addEventListener("keydown", (e) => {
-        if (e.code === "Space") { // Start/stop metronome or tone generator
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                if (toneOscillator) {
-                    setTunerActive(true);
-                    setMetronomeActive(true);
-                    stopTone();
-                    updatePauseMessages();
-                } else {
-                    setTunerActive(false);
-                    setMetronomeActive(false);
-                    const idx = parseInt(document.getElementById("noteDial").value, 10);
-                    const { f } = dialToNote(idx);
-                    const wave = document.getElementById("waveform").value;
-                    playTone(f, wave);
-                    updatePauseMessages();
-                }
-            } else if (metronomeBoxEnabled) {
-                if (metronomeInterval) {
-                    stopMetronome();
-                    setTunerActive(true);
-                    setToneActive(true);
-                    setPlayMetronomeButtonState(true);
-                } else {
-                    stopTone();
-                    setTunerActive(false);
-                    setToneActive(false);
-                    startMetronome();
-                    setPlayMetronomeButtonState(false);
-                }
-            }
-        } else if (e.code === "ArrowRight") { // Higher tone
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                changeDial(1);
-            }
-        } else if (e.code === "ArrowLeft") { // Lower tone
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                changeDial(-1);
-            }
-        } else if (e.code === "KeyD") { // Higher tone
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                changeDial(1);
-            }
-        } else if (e.code === "KeyA") { // Lower tone
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                changeDial(-1);
-            }
-        } else if (e.code === "KeyE") { // Change waveform
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                const waveformSelect = document.getElementById("waveform");
-                const options = Array.from(waveformSelect.options);
-                let idx = waveformSelect.selectedIndex;
-                idx = (idx - 1 + options.length) % options.length;
-                waveformSelect.selectedIndex = idx;
-                updateWaveform(); // reuse your existing function
-            }
-        } else if (e.code === "KeyQ") { // Change waveform
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                const waveformSelect = document.getElementById("waveform");
-                const options = Array.from(waveformSelect.options);
-                let idx = waveformSelect.selectedIndex;
-                idx = (idx + 1) % options.length;
-                waveformSelect.selectedIndex = idx;
-                updateWaveform();
-            }
-        } else if (e.code === "ShiftLeft" || e.code === "ShiftRight") { // Reset tone to A4
-            if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
-                const dial = document.getElementById("noteDial");
-                // A4 is the center reference (index 30 in your mapping)
-                dial.value = 30;
-                updateDialDisplay();
-
-                // If tone is playing, reset its frequency immediately
-                const { f } = dialToNote(30);
-                if (toneOscillator) {
-                    toneOscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
-                }
-            } else if (metronomeBoxEnabled) {
-                const bpm = 120;
-                const intervalMs = 60000 / bpm;
-
-                if (metronomeInterval) clearInterval(metronomeInterval); 
-
-                // drive both click + blink from the same interval
-                metronomeInterval = setInterval(() => {
-                    playClick();
-                }, intervalMs);
-
-                document.getElementById("tempo").value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
-                updatePauseMessages();
-            }
-        } else if (e.code === "ArrowUp") { // Increase tempo
-             if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
-                const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
-                bpm = Math.min(240, bpm + 1); // cap at 240
-                tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
-                if (metronomeInterval) {
-                    startMetronome(); // restart with new BPM
-                }
-            }
-        } else if (e.code === "ArrowDown") { // Decrease tempo
-             if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
-                const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
-                bpm = Math.max(30, bpm - 1); // floor at 30 // cap at 240
-                tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
-                if (metronomeInterval) {
-                    startMetronome(); // restart with new BPM
-                }
-            }
-        } else if (e.code === "KeyW") { // Increase tempo
-             if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
-                const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
-                bpm = Math.min(240, bpm + 1); // cap at 240
-                tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
-                startMetronome();
-            }
-        } else if (e.code === "KeyS") { // Decrease tempo
-            if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
-                const tempoInput = document.getElementById("tempo");
-                let bpm = parseInt(tempoInput.value, 10);
-                bpm = Math.max(30, bpm - 1); // floor at 30 // cap at 240
-                tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
-                startMetronome();
-            }
-        }
-    });
-
-    // Initialize dial display
+    // Initialize
     updateDialDisplay();
     init();
 </script>
