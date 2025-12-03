@@ -312,6 +312,7 @@
     }
 
     // YIN pitch - get the pitch from audio signal
+    // http://github.com/patriceguyot/Yin/blob/master/yin.py
     function yinPitch(buf, sampleRate, threshold = 0.18, minFreq = 50, maxFreq = 1200) {
         const N = buf.length;
         const tauMin = Math.max(2, Math.floor(sampleRate / maxFreq));
@@ -443,6 +444,7 @@
     // Init audio
     async function init() {
         try {
+            // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
             statusElem.textContent = "Mic: requesting access...";
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
