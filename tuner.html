@@ -506,7 +506,6 @@
     }
 
     let tapTimes = [];
-    let lastTapStamp = 0;
 
     function registerTap(e) {
         const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo"]);
@@ -531,7 +530,6 @@
             startMetronome();
         }
     }
-
 
     function startMetronome() {
         const bpm = parseInt(tempo.value, 10);
@@ -590,7 +588,14 @@
     }
 
     // Events
-    metronomeBox.addEventListener("pointerdown", registerTap);
+    metronomeBox.addEventListener("pointerdown", (e) => {
+        if (metronomeInterval || tapTimes.length < 2 || (metronomeBoxEnabled && toneEnabled)) {
+            stopTone();
+            setTunerActive(false);
+            setToneActive(false);
+            registerTap(e);
+        }
+    });
 
     document.getElementById("startMetronome").addEventListener("click", () => {
         stopTone();
