@@ -311,7 +311,7 @@
         return { name, octave, cents };
     }
 
-    // YIN (compact)
+    // YIN pitch - get the pitch from audio signal
     function yinPitch(buf, sampleRate, threshold = 0.18, minFreq = 50, maxFreq = 1200) {
         const N = buf.length;
         const tauMin = Math.max(2, Math.floor(sampleRate / maxFreq));
@@ -367,7 +367,7 @@
 
         const amplitude = h/3;
 
-        // 🔧 cycles across canvas proportional to frequency
+        // cycles across canvas proportional to frequency
         const cyclesAcross = waveFreq / 100; // adjust divisor to scale nicely
         const k = (2 * Math.PI * cyclesAcross) / w;
 
@@ -383,7 +383,7 @@
 
     function startWaveAnimation(freq) {
         waveFreq = freq;
-        wavePhase = 0;
+        let wavePhase = 0;
 
         function animate() {
             wavePhase += 0.05; // constant animation speed
@@ -501,14 +501,14 @@
 
         if (toneOscillator) {
             toneOscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
-            waveFreq = f; // 🔧 update wavelength live
+            waveFreq = f; // update wavelength live
         }
     }
 
     function updateWaveform() {
         const wave = document.getElementById("waveform").value;
         if (toneOscillator) {
-            toneOscillator.type = wave; // 🔊 change waveform live
+            toneOscillator.type = wave; // change waveform live
         }
     }
 
