@@ -48,6 +48,11 @@
         #metronomeBox {
             user-select: none; /* prevent text highlight */
         }
+        #presetsBox select, #presetsBox button {
+            padding: 2px 4px;
+            font-size: 0.85rem;
+            height: 22px;
+        }
     </style>
 </head>
 <body>
@@ -110,6 +115,17 @@
     <div class="status" id="status">Mic: initializing...</div>
     <div class="status" id="pauseNote" style="display:none;">Tuner paused while tone is playing.</div>
     <div class="status" id="pauseMetronome" style="display:none;">Tuner paused while metronomene is on.</div>
+</div>
+
+<!-- Presets -->
+<div class="box" id="presetsBox" style="display:none;">
+    <h3>Presets</h3>
+    <div>
+        <button id="savePreset">Save Current Preset</button>
+        <select id="presetSelect"></select>
+        <button id="loadPreset">Load Preset</button>
+        <button id="deletePreset">Delete Preset</button>
+    </div>
 </div>
 
 <script>
@@ -587,7 +603,87 @@
         }
     }
 
+    // Presets
+    function initPresets() {
+        if (typeof(Storage) === "undefined") {
+            // localStorage not available
+            return;
+        }
+        document.getElementById("presetsBox").style.display = "block";
+        refreshPresetList();
+    }
+
+    function savePreset() {
+        const bpm = document.getElementById("tempo").value;
+        const subdivisions = document.getElementById("subdivisions").value;
+        const noteDialVal = document.getElementById("noteDial").value;
+        const waveformVal = document.getElementById("waveform").value;
+
+        const preset = { bpm, subdivisions, noteDialVal, waveformVal };
+        const name = prompt("Preset name:");
+        if (!name) return;
+
+        localStorage.setItem("preset_" + name, JSON.stringify(preset));
+        refreshPresetList();
+    }
+
+    function loadPreset() {
+        const select = document.getElementById("presetSelect");
+        const key = select.value;
+        if (!key) return;
+
+        const preset = JSON.parse(localStorage.getItem(key));
+        if (!preset) return;
+
+        document.getElementById("tempo").value = preset.bpm;
+        document.getElementById("subdivisions").value = preset.subdivisions;
+        document.getElementById("noteDial").value = preset.noteDialVal;
+        document.getElementById("waveform").value = preset.waveformVal;
+
+        updateDialDisplay();
+        updateWaveform();
+    }
+
+    function deletePreset() {
+        const select = document.getElementById("presetSelect");
+        const key = select.value;
+        if (!key) return;
+
+        localStorage.removeItem(key);
+        refreshPresetList();
+    }
+
+    function refreshPresetList() {
+        const select = document.getElementById("presetSelect");
+        select.innerHTML = "";
+
+        let hasPresets = false;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith("preset_")) {
+                const opt = document.createElement("option");
+                opt.value = key;
+                opt.textContent = key.replace("preset_", "");
+                select.appendChild(opt);
+                hasPresets = true;
+            }
+        }
+
+        // 🔧 Show/hide dropdown + load/delete buttons depending on content
+        select.style.display = hasPresets ? "inline-block" : "none";
+        document.getElementById("loadPreset").style.display = hasPresets ? "inline-block" : "none";
+        document.getElementById("deletePreset").style.display = hasPresets ? "inline-block" : "none";
+    }
+
+    // Initialize presets box on page load
+    initPresets();
+
     // Events
+    // Presets
+    document.getElementById("savePreset").addEventListener("click", savePreset);
+    document.getElementById("loadPreset").addEventListener("click", loadPreset);
+    document.getElementById("deletePreset").addEventListener("click", deletePreset);
+
     metronomeBox.addEventListener("pointerdown", (e) => {
         if (metronomeInterval || tapTimes.length < 2 || (metronomeBoxEnabled && toneEnabled)) {
             stopTone();
