@@ -566,6 +566,17 @@
                     playTone(f, wave);
                     updatePauseMessages();
                 }
+            } else if (metronomeBoxEnabled) {
+                if (metronomeInterval) {
+                    stopMetronome();
+                    setTunerActive(true);
+                    setToneActive(true);
+                } else {
+                    stopTone();
+                    setTunerActive(false);
+                    setToneActive(false);
+                    startMetronome();
+                }
             }
         } else if (e.code === "ArrowRight") { // Higher tone
             if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
