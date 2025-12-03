@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tuner + Tone Generator</title>
+    <title>Metronome, Tuner + Tone Generator</title>
     <style>
         body { font-family: system-ui, sans-serif; margin: 32px; }
         h1 { margin-bottom: 12px; }
@@ -12,10 +12,11 @@
         label { font-weight: 600; }
         .metric { font-size: 2rem; }
         .sub { color: #666; }
-        .needle { width: 320px; height: 10px; background: #eee; border-radius: 6px; position: relative; margin-top: 8px; }
+        .needle { width: 100%; height: 10px; background: #eee; border-radius: 6px; position: relative; margin-top: 8px; }
         .needle > div { position: absolute; top: -6px; width: 2px; height: 22px; background: #333; left: 50%; transition: left 80ms linear; }
         .status { color: #444; font-size: 0.95rem; margin-top: 8px; }
         .dimmed { opacity: 0.4; }
+        #noteDial { width: 100% }
         /* Blinking red dot */
         #metronomeDot {
             display: inline-block;
@@ -45,6 +46,7 @@
         #toneWave {
             /* border: 1px solid #ddd; */
             margin-top: 12px;
+            width: 100%;
         }
         #metronomeBox {
             user-select: none; /* prevent text highlight */
@@ -57,6 +59,7 @@
         .sliderWrapper {
             position: relative;
             display: inline-block;
+            width: 100%;
         }
         .sliderNotch {
             position: absolute;
@@ -68,10 +71,48 @@
             transform: translate(-50%, -50%);
             pointer-events: none;    /* don’t block slider interaction */
         }
+
+        /* --- Korg-style overrides --- */
+        .box {
+            background: #111;
+            color: #eee;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            width: 400px;   /* increased from 340px */
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .box h3 {
+            text-align: center;
+            color: #ff6600;
+            margin-bottom: 12px;
+        }
+        .box input[type=number],
+        .box input[type=text],
+        .box select {
+            background: #000;
+            color: #0ff;
+            border: none;
+            font-size: 1rem;
+            text-align: center;
+            border-radius: 4px;
+            padding: 2px 4px;
+        }
+        .box button {
+            background: #222;
+            color: #eee;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .box button:hover { background: #333; }
     </style>
 </head>
 <body>
-<h1>🎵 Metronome, Tuner & Tone Generator</h1>
+<!--<h1>🎵 Metronome, Tuner & Tone Generator</h1>-->
 
 <!-- Metronome -->
 <div class="box" id="metronomeBox">
@@ -113,7 +154,7 @@
         <button id="decrementNote">◀</button>
 
         <div class="sliderWrapper" style="position:relative;display:inline-block;">
-            <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
+            <input id="noteDial" type="range" min="0" max="60" value="30">
             <!-- notch marker -->
             <div class="sliderNotch"></div>
         </div>
@@ -123,7 +164,7 @@
     <div id="dialNote">Note: --</div>
     <div id="dialFreq">Freq: -- Hz</div>
     <div>
-        <canvas id="toneWave" style="width: 300px; height: 50px;"></canvas>
+        <canvas id="toneWave" style="height: 50px;"></canvas>
     </div>
 </div>
 
@@ -135,21 +176,23 @@
     <div id="cents" class="sub">-- cents</div>
     <div class="needle"><div id="needleIndicator"></div></div>
     <div class="status" id="status">Mic: initializing...</div>
-    <div class="status" id="pauseNote" style="display:none;">Tuner paused while tone is playing.</div>
-    <div class="status" id="pauseMetronome" style="display:none;">Tuner paused while metronomene is on.</div>
 </div>
 
 <!-- Presets -->
 <div class="box" id="presetsBox" style="display:none;">
-    <h3 style="margin-top: 0;">Presets</h3>
+    <h3>Presets</h3>
     <div>
         <button id="savePreset">Save Current Preset</button>
         <select id="presetSelect"></select>
-    </div>
-    <div>
         <button id="loadPreset">Load Preset</button>
         <button id="deletePreset">Delete Preset</button>
     </div>
+</div>
+
+<!-- About -->
+<div class="box" id="aboutBox">
+    <h3>About</h3>
+    <p>Metronome! Send feedback to myagi.developer @ gmail.com</p>
 </div>
 
 <script>
@@ -162,8 +205,6 @@
     const toneBox = document.getElementById("toneBox");
     const metronomeBox = document.getElementById("metronomeBox");
     const tunerBox = document.getElementById("tunerBox");
-    const pauseNote = document.getElementById("pauseNote");
-    const pauseMetronome = document.getElementById("pauseMetronome");
     const playToneButton = document.getElementById("playTone");
     const stopToneButton = document.getElementById("stopTone");
     const waveform = document.getElementById("waveform");
@@ -618,14 +659,11 @@
 
     function updatePauseMessages() {
         if (toneOscillator) {
-            pauseNote.style.display = "block";
-            pauseMetronome.style.display = "none";
+            statusElem.textContent = "Tuner paused while tone is playing.";
         } else if (metronomeInterval) {
-            pauseMetronome.style.display = "block";
-            pauseNote.style.display = "none";
+            statusElem.textContent = "Tuner paused while metronome is on.";
         } else {
-            pauseNote.style.display = "none";
-            pauseMetronome.style.display = "none";
+            statusElem.textContent = "Mic: ready";
         }
     }
 
@@ -695,7 +733,7 @@
             }
         }
 
-        // 🔧 Show/hide dropdown + load/delete buttons depending on content
+        // Show/hide dropdown + load/delete buttons depending on content
         select.style.display = hasPresets ? "inline-block" : "none";
         document.getElementById("loadPreset").style.display = hasPresets ? "inline-block" : "none";
         document.getElementById("deletePreset").style.display = hasPresets ? "inline-block" : "none";
