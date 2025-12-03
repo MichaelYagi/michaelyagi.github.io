@@ -497,8 +497,13 @@
     // Metronome
     let metronomeInterval = null;
     let subdivisionInterval = null;
+    let tapTimes = [];
+    let tappingActive = false;
+    let tapTimeout = null;
 
     function playClick(strong = true) {
+        if (tappingActive) return; // 🔧 skip audio/visual while tapping
+
         if (!audioCtx) audioCtx = new AudioContext();
         const now = audioCtx.currentTime;
 
@@ -506,25 +511,18 @@
         const gain = audioCtx.createGain();
 
         osc.type = "square";
-        osc.frequency.setValueAtTime(strong ? 1000 : 1500, now); // higher pitch for subdivision
+        osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
         gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
 
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(now);
         osc.stop(now + 0.05);
 
-        if (strong) {
-            const dot = document.getElementById("metronomeDot");
-            dot.style.opacity = "1";
-            setTimeout(() => { dot.style.opacity = "0"; }, 50);
-        } else {
-            const subDot = document.getElementById("subdivisionDot");
-            subDot.style.opacity = "1";
-            setTimeout(() => { subDot.style.opacity = "0"; }, 50);
-        }
+        const dot = strong ? document.getElementById("metronomeDot")
+            : document.getElementById("subdivisionDot");
+        dot.style.opacity = 1;
+        setTimeout(() => { dot.style.opacity = 0; }, 50);
     }
-
-    let tapTimes = [];
 
     function registerTap(e) {
         const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo"]);
@@ -535,19 +533,23 @@
         tapTimes.push(now);
         if (tapTimes.length > 8) tapTimes.shift();
 
+        // mark tapping active (mute ticks)
+        tappingActive = true;
+
         if (tapTimes.length >= 2) {
             const lastInterval = tapTimes[tapTimes.length - 1] - tapTimes[tapTimes.length - 2];
             const bpm = Math.round(60000 / lastInterval);
 
             tempo.value = bpm;
             document.getElementById("metronomeText").textContent = `Tapped tempo: ${bpm} BPM`;
-
-            // fire a beat immediately so you hear/see it right away
-            playClick(true);
-
-            // restart metronome at new BPM
-            startMetronome();
+            startMetronome(); // keep scheduler running at new BPM
         }
+
+        // reset timeout: if no tap for 1s, unmute ticks
+        clearTimeout(tapTimeout);
+        tapTimeout = setTimeout(() => {
+            tappingActive = false;
+        }, 1000);
     }
 
     function startMetronome() {
