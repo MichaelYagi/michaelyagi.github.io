@@ -54,6 +54,20 @@
             font-size: 0.85rem;
             height: 22px;
         }
+        .sliderWrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .sliderNotch {
+            position: absolute;
+            top: 100%;
+            left: 50%;              /* middle of the slider */
+            width: 2px;
+            height: 5px;
+            background: #333;        /* notch color */
+            transform: translate(-50%, -50%);
+            pointer-events: none;    /* don’t block slider interaction */
+        }
     </style>
 </head>
 <body>
@@ -95,9 +109,15 @@
     </select>
     <button id="playTone" style="margin-left:8px;">Play</button>
     <button id="stopTone">Stop</button>
-    <div style="display:flex;align-items:center;gap:8px;">
+    <div style="display:flex;align-items:center;gap:8px;position:relative;">
         <button id="decrementNote">◀</button>
-        <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
+
+        <div class="sliderWrapper" style="position:relative;display:inline-block;">
+            <input id="noteDial" type="range" min="0" max="60" value="30" style="width:300px;">
+            <!-- notch marker -->
+            <div class="sliderNotch"></div>
+        </div>
+
         <button id="incrementNote">▶</button>
     </div>
     <div id="dialNote">Note: --</div>
