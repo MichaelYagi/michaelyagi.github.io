@@ -544,15 +544,23 @@
         const beatMs = 60000 / bpm;
         const subMs = beatMs / subdivisions;
 
-        stopMetronome(); // clear existing
+        // clear existing intervals
+        stopMetronome();
 
-        // main beat
-        metronomeInterval = setInterval(() => playClick(true), beatMs);
+        // main beat drives scheduling; subdivisions are timed off each beat
+        metronomeInterval = setInterval(() => {
+            // main beat (strong)
+            playClick(true);
 
-        // subdivisions (don’t change BPM, just layer inside beat)
-        if (subdivisions > 1) {
-            subdivisionInterval = setInterval(() => playClick(false), subMs);
-        }
+            // schedule subdivisions relative to this beat (no separate interval)
+            if (subdivisions > 1) {
+                for (let i = 1; i < subdivisions; i++) {
+                    setTimeout(() => {
+                    playClick(false);
+                    }, i * subMs);
+                }
+            }
+        }, beatMs);
 
         document.getElementById("metronomeText").textContent =
             `Playing at ${bpm} BPM (${subdivisions} subdivisions)`;
@@ -562,7 +570,7 @@
 
     function stopMetronome() {
         if (metronomeInterval) clearInterval(metronomeInterval);
-        if (subdivisionInterval) clearInterval(subdivisionInterval);
+        if (subdivisionInterval) clearInterval(subdivisionInterval); // safe no-op now
         metronomeInterval = null;
         subdivisionInterval = null;
 
