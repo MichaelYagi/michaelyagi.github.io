@@ -507,34 +507,35 @@
     }
 
     let tapTimes = [];
+    let lastTapStamp = 0;
 
     function registerTap(e) {
-        // Ignore taps on Start/Stop buttons
-        if (e.target.id === "startMetronome" || e.target.id === "stopMetronome" || e.target.id === "subdivisions") {
-            return;
-        }
+        const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo"]);
+        if (ignoredIds.has(e.target.id)) return;
+        e.preventDefault();
 
-        if (metronomeBoxEnabled) {
-            const now = performance.now();
-            tapTimes.push(now);
+        const now = performance.now();
+        tapTimes.push(now);
+        if (tapTimes.length > 8) tapTimes.shift();
 
-            // keep only the last 8 taps
-            if (tapTimes.length > 8) tapTimes.shift();
+        if (tapTimes.length >= 2) {
+            // ✅ use only the last interval for immediate BPM
+            const lastInterval = tapTimes[tapTimes.length - 1] - tapTimes[tapTimes.length - 2];
+            let bpm = Math.round(60000 / lastInterval);
 
-            if (tapTimes.length >= 2) {
+            // optional: smooth with average if more than 3 taps
+            if (tapTimes.length > 3) {
                 const intervals = [];
                 for (let i = 1; i < tapTimes.length; i++) {
-                intervals.push(tapTimes[i] - tapTimes[i - 1]);
+                    intervals.push(tapTimes[i] - tapTimes[i - 1]);
                 }
                 const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-                const bpm = Math.round(60000 / avgInterval);
-
-                // update tempo field + metronome
-                tempo.value = bpm;
-                document.getElementById("metronomeText").textContent = `Tapped tempo: ${bpm} BPM`;
-
-                startMetronome(); // restart with new BPM
+                bpm = Math.round(60000 / avgInterval);
             }
+
+            tempo.value = bpm;
+            document.getElementById("metronomeText").textContent = `Tapped tempo: ${bpm} BPM`;
+            startMetronome();
         }
     }
 
