@@ -137,13 +137,7 @@
     <button id="stopMetronome">Stop</button>
     <div>
         <label for="subdivisions">Subdivisions:</label>
-        <select id="subdivisions">
-            <option value="1">Quarter notes (1)</option>
-            <option value="2">Eighth notes (2)</option>
-            <option value="3">Triplets (3)</option>
-            <option value="4">Sixteenth notes (4)</option>
-            <option value="5">Quintuplets (5)</option>
-        </select>
+        <input id="subdivisions" type="number" min="1" value="1" style="width:60px;">
     </div>
     <div id="metronomeStatus" class="status">
         <span id="metronomeText">Stopped</span>
@@ -669,6 +663,40 @@
         document.getElementById("subdivisionDot").style.opacity = 0;
         setButtonState("startMetronome", true);
         updatePauseMessages();
+    }
+
+    function scheduleBeats(time) {
+        const subs = parseInt(document.getElementById("subdivisions").value, 10) || 1;
+
+        // main beat
+        playClick(true);
+
+        // subdivisions
+        if (subs > 1) {
+            const interval = 60 / (tempo.value * subs); // seconds per subdivision
+            for (let i = 1; i < subs; i++) {
+                const subTime = time + i * interval;
+                playSubdivision(subTime);
+            }
+        }
+    }
+
+    function playSubdivision(time) {
+        if (!audioCtx) audioCtx = new AudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = "square";
+        osc.frequency.setValueAtTime(1500, time);
+        gain.gain.setValueAtTime(0.1, time);
+
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(time);
+        osc.stop(time + 0.05);
+
+        const dot = document.getElementById("subdivisionDot");
+        dot.style.opacity = "1";
+        setTimeout(() => { dot.style.opacity = 0; }, 50);
     }
 
     function updatePauseMessages() {
