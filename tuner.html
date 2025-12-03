@@ -339,6 +339,10 @@
         document.getElementById("playTone").disabled = !enabled;
     }
 
+    function setPlayMetronomeButtonState(enabled) {
+        document.getElementById("startMetronome").disabled = !enabled;
+    }
+
     function dialToNote(index) {
         const A4 = 440;
         const semitoneOffset = index - 30;
@@ -467,6 +471,7 @@
         }, intervalMs);
 
         document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
+        setPlayMetronomeButtonState(false);
         updatePauseMessages();
     }
 
@@ -478,6 +483,7 @@
         document.getElementById("metronomeText").textContent = "Stopped";
         const dot = document.getElementById("metronomeDot");
         if (dot) dot.style.opacity = 0;
+        setPlayMetronomeButtonState(true);
         updatePauseMessages();
     }
 
@@ -571,11 +577,13 @@
                     stopMetronome();
                     setTunerActive(true);
                     setToneActive(true);
+                    setPlayMetronomeButtonState(true);
                 } else {
                     stopTone();
                     setTunerActive(false);
                     setToneActive(false);
                     startMetronome();
+                    setPlayMetronomeButtonState(false);
                 }
             }
         } else if (e.code === "ArrowRight") { // Higher tone
@@ -624,6 +632,20 @@
                 if (toneOscillator) {
                     toneOscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
                 }
+            } else if (metronomeBoxEnabled) {
+                const bpm = 120;
+                const intervalMs = 60000 / bpm;
+
+                if (metronomeInterval) clearInterval(metronomeInterval); 
+
+                // drive both click + blink from the same interval
+                metronomeInterval = setInterval(() => {
+                    playClick();
+                }, intervalMs);
+
+                document.getElementById("tempo").value = bpm;
+                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
+                updatePauseMessages();
             }
         } else if (e.code === "ArrowUp") { // Increase tempo
              if (metronomeInterval && (toneEnabled === false || (metronomeBoxEnabled && toneEnabled))) {
