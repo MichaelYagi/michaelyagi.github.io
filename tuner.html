@@ -425,7 +425,7 @@
         let wavePhase = 0;
 
         function animate() {
-            wavePhase += 0.05; // constant animation speed
+            wavePhase += waveFreq / 2000; // constant animation speed
             drawSineWave(wavePhase);
             waveAnimation = requestAnimationFrame(animate);
         }
