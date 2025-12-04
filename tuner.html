@@ -601,7 +601,6 @@
         if (!audioCtx) audioCtx = new AudioContext();
         const now = audioCtx.currentTime;
 
-        // read sound choice directly from dropdown
         const soundChoice = document.getElementById("clickSound")?.value || "square";
 
         const osc = audioCtx.createOscillator();
@@ -617,8 +616,18 @@
 
         const dot = strong ? document.getElementById("metronomeDot")
             : document.getElementById("subdivisionDot");
-        dot.style.opacity = 1;
-        setTimeout(() => { dot.style.opacity = 0; }, 50);
+        dot.style.opacity = "1";
+
+        // Adaptive blink duration
+        const bpm = parseInt(document.getElementById("tempo").value, 10) || 120;
+        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 1;
+        const beatMs = 60000 / bpm;
+        const subdivisionMs = beatMs / subdivisions;
+
+        // Blink for ~30% of subdivision length, capped between 50–300 ms
+        const blinkDuration = Math.max(50, Math.min(300, subdivisionMs * 0.3));
+
+        setTimeout(() => { dot.style.opacity = 0; }, blinkDuration);
     }
 
     function registerTap(e) {
