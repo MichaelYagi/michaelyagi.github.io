@@ -955,11 +955,15 @@
         return subs;
     }
 
-    function updatePauseMessages() {
-        if (toneOscillator) {
-            statusElem.textContent = "Tuner paused while tone is playing.";
+    async function updatePauseMessages() {
+        const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
+
+        if (permissionStatus.state === "prompt") {
+            statusElem.textContent = "Mic: permission denied or unavailable";
+        } else if (toneOscillator) {
+            statusElem.textContent = "Tuner paused while tone is playing";
         } else if (metronomeInterval) {
-            statusElem.textContent = "Tuner paused while metronome is on.";
+            statusElem.textContent = "Tuner paused while metronome is on";
         } else {
             statusElem.textContent = "Mic: ready";
         }
