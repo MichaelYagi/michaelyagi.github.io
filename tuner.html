@@ -183,9 +183,10 @@
         .box button:hover { background: #333; }
         #themeSwatches {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;   /* side by side */
             gap: 12px;
             margin-top: 12px;
+            flex-wrap: wrap;       /* allow wrapping if too many */
         }
 
         .theme-swatch {
@@ -207,6 +208,13 @@
             height: 30px;
             border-radius: 4px;
             border: 1px solid #444;
+        }
+
+        /* Custom theme row */
+        #customThemeRow {
+            display: flex;
+            flex-direction: column; /* stacked inputs */
+            margin-top: 16px;
         }
     </style>
     <!-- Google tag (gtag.js) -->
@@ -300,6 +308,8 @@
 <!-- Themes -->
 <div id="themePicker" class="box">
     <h3>Choose Theme</h3>
+
+    <!-- Predefined themes side by side -->
     <div id="themeSwatches">
         <div class="theme-swatch" data-theme="dark">
             <div class="swatch" style="background:#111;"></div>
@@ -316,19 +326,23 @@
             <div class="swatch" style="background:#b71c1c;"></div>
             <div class="swatch" style="background:#fff8e1;"></div>
         </div>
+    </div>
+
+    <!-- Custom theme row -->
+    <div id="customThemeRow">
         <div class="theme-swatch" data-theme="custom">
             <div class="swatch" style="background:#ccc;"></div>
             <div class="swatch" style="background:#999;"></div>
             <div class="swatch" style="background:#666;"></div>
         </div>
-    </div>
 
-    <div id="customThemeInputs" style="display:none; margin-top:12px;">
-        <label>Input Font: <input type="color" id="customInputFont"></label><br>
-        <label>Input Background: <input type="color" id="customInputBg"></label><br>
-        <label>Box Header: <input type="color" id="customBoxHeader"></label><br>
-        <label>Page Background: <input type="color" id="customPageBg"></label><br>
-        <label>Box Background: <input type="color" id="customBoxBg"></label><br>
+        <div id="customThemeInputs" style="display:none; margin-top:12px;">
+            <label>Input Font: <input type="color" id="customInputFont"></label><br>
+            <label>Input Background: <input type="color" id="customInputBg"></label><br>
+            <label>Box Header: <input type="color" id="customBoxHeader"></label><br>
+            <label>Page Background: <input type="color" id="customPageBg"></label><br>
+            <label>Box Background: <input type="color" id="customBoxBg"></label><br>
+        </div>
     </div>
 </div>
 
