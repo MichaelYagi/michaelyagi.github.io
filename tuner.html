@@ -234,12 +234,12 @@
     <p>Send feedback to myagi.developer[@]gmail.com</p>
     <p>Keyboard inputs:</p>
     <ul>
-        <li>Spacebar - turn on metronome or play tone</li>
+        <li>Spacebar - play tone</li>
+        <li>e/q - Change waveform</li>
         <li>Right/d - increase pitch</li>
         <li>Left/a - decrease pitch</li>
         <li>Up/w - Increase tempo</li>
         <li>Down/s - Decrease tempo</li>
-        <li>e/q - Change waveform</li>
         <li>Shift - Reset pitch to A4</li>
     </ul>
 </div>
@@ -931,6 +931,8 @@
 
     document.addEventListener("keydown", (e) => {
         if (e.code === "Space") {
+            e.preventDefault();
+
             if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
                 if (toneOscillator) {
                     stopTone();
