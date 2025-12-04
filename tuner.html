@@ -24,9 +24,7 @@
             --input-bg-color: #0b1d3a;
             --input-font-color: #ffcc00;
         }
-
-        /* Dark theme */
-        .theme-dark {
+        .theme-default {
             --page-bg-color: #111;
             --text-color: #eee;
             --accent-color: #ff6600;
@@ -35,27 +33,50 @@
             --input-bg-color: #0b1d3a;
             --input-font-color: #ffcc00;
         }
-
-        /* Light theme */
-        .theme-light {
-            --page-bg-color: #f9f9f9;
-            --text-color: #222;
-            --accent-color: #0077ff;
-            --box-bg-color: #eee;
-            --box-header-color: #0077ff;
-            --input-bg-color: #fff;
+        .theme-fuji {
+            --page-bg-color: #faf3e0;       /* soft washi paper cream */
+            --text-color: #1a1a1a;          /* sumi ink black */
+            --accent-color: #e63946;        /* vermilion red */
+            --box-bg-color: #264653;        /* indigo/navy box */
+            --box-header-color: #e63946;    /* vermilion header */
+            --input-bg-color: #f1e9d2;      /* pale cream input */
+            --input-font-color: #1a1a1a;    /* dark ink font */
+        }
+        .theme-sunset {
+            --page-bg-color: #fff3e0;       /* soft peach background */
+            --text-color: #3d2c2c;          /* deep brown text */
+            --accent-color: #e65100;        /* vibrant orange accent */
+            --box-bg-color: #fbc02d;        /* golden box */
+            --box-header-color: #6a1b9a;    /* rich purple header */
+            --input-bg-color: #ffe0b2;      /* warm peach input */
+            --input-font-color: #3d2c2c;    /* dark font */
+        }
+        .theme-korg-blue {
+            --page-bg-color: #0a0f1c;
+            --text-color: #e0e6ff;
+            --accent-color: #00aaff;
+            --box-bg-color: #111a33;
+            --box-header-color: #00aaff;
+            --input-bg-color: #0d223d;
+            --input-font-color: #66ccff;
+        }
+        .theme-korg-silver {
+            --page-bg-color: #d9d9d9;
+            --text-color: #111;
+            --accent-color: #ff6600;
+            --box-bg-color: #f0f0f0;
+            --box-header-color: #ff6600;
+            --input-bg-color: #cccccc;
             --input-font-color: #222;
         }
-
-        /* Classic theme */
-        .theme-classic {
-            --page-bg-color: #fff8e1;
-            --text-color: #333;
-            --accent-color: #b71c1c;
-            --box-bg-color: #fbe9e7;
-            --box-header-color: #b71c1c;
-            --input-bg-color: #fff8e1;
-            --input-font-color: #333;
+        .theme-korg-green {
+            --page-bg-color: #1a2b1a;
+            --text-color: #e6ffe6;
+            --accent-color: #ffcc00;
+            --box-bg-color: #2d402d;
+            --box-header-color: #ffcc00;
+            --input-bg-color: #334d33;
+            --input-font-color: #ccffcc;
         }
         /* Reset body margins and prevent horizontal scroll */
         html, body {
@@ -307,24 +328,39 @@
 
 <!-- Themes -->
 <div id="themePicker" class="box">
-    <h3>Choose Theme</h3>
+    <h3>Theme</h3>
 
     <!-- Predefined themes side by side -->
     <div id="themeSwatches">
-        <div class="theme-swatch" data-theme="dark">
-            <div class="swatch" style="background:#111;"></div>
+        <div class="theme-swatch" data-theme="default">
+            <div class="swatch" style="background:#111;"></div> <!-- page-bg-color -->
+            <div class="swatch" style="background:#111;"></div> <!-- box-bg-color -->
+            <div class="swatch" style="background:#ff6600;"></div> <!-- box-header-color -->
+        </div>
+        <div class="theme-swatch" data-theme="fuji">
+            <div class="swatch" style="background:#faf3e0;"></div>
+            <div class="swatch" style="background:#264653;"></div>
+            <div class="swatch" style="background:#e63946;"></div>
+        </div>
+        <div class="theme-swatch" data-theme="sunset">
+            <div class="swatch" style="background:#fff3e0;"></div>
+            <div class="swatch" style="background:#fbc02d;"></div>
+            <div class="swatch" style="background:#6a1b9a;"></div>
+        </div>
+        <div class="theme-swatch" data-theme="korg-blue">
+            <div class="swatch" style="background:#0a0f1c;"></div>
+            <div class="swatch" style="background:#111a33;"></div>
+            <div class="swatch" style="background:#00aaff;"></div>
+        </div>
+        <div class="theme-swatch" data-theme="korg-silver">
+            <div class="swatch" style="background:#d9d9d9;"></div>
+            <div class="swatch" style="background:#f0f0f0;"></div>
             <div class="swatch" style="background:#ff6600;"></div>
-            <div class="swatch" style="background:#0b1d3a;"></div>
         </div>
-        <div class="theme-swatch" data-theme="light">
-            <div class="swatch" style="background:#f9f9f9;"></div>
-            <div class="swatch" style="background:#0077ff;"></div>
-            <div class="swatch" style="background:#fff;"></div>
-        </div>
-        <div class="theme-swatch" data-theme="classic">
-            <div class="swatch" style="background:#fff8e1;"></div>
-            <div class="swatch" style="background:#b71c1c;"></div>
-            <div class="swatch" style="background:#fff8e1;"></div>
+        <div class="theme-swatch" data-theme="korg-green">
+            <div class="swatch" style="background:#1a2b1a;"></div>
+            <div class="swatch" style="background:#2d402d;"></div>
+            <div class="swatch" style="background:#ffcc00;"></div>
         </div>
     </div>
 
@@ -999,10 +1035,12 @@
             const theme = localStorage.getItem("theme");
             const custom = localStorage.getItem("customTheme");
             if (theme) {
-                applyTheme(theme, custom ? JSON.parse(custom) : null);
+                const parsed = custom ? JSON.parse(custom) : null;
+                applyTheme(theme, parsed);
                 highlightSwatch(theme);
                 if (theme === "custom") {
                     document.getElementById("customThemeInputs").style.display = "block";
+                    setCustomInputs(parsed);   // <-- populate color pickers
                 }
             }
         }
@@ -1043,6 +1081,20 @@
         });
     });
 
+    function getSavedCustomTheme() {
+        const custom = localStorage.getItem("customTheme");
+        return custom ? JSON.parse(custom) : null;
+    }
+
+    function setCustomInputs(custom) {
+        if (!custom) return;
+        document.getElementById("customInputFont").value = custom.inputFont;
+        document.getElementById("customInputBg").value = custom.inputBg;
+        document.getElementById("customBoxHeader").value = custom.boxHeader;
+        document.getElementById("customPageBg").value = custom.pageBg;
+        document.getElementById("customBoxBg").value = custom.boxBg;
+    }
+
     loadTheme();
 
     // Initialize presets box on page load
@@ -1053,6 +1105,27 @@
     document.getElementById("savePreset").addEventListener("click", savePreset);
     document.getElementById("loadPreset").addEventListener("click", loadPreset);
     document.getElementById("deletePreset").addEventListener("click", deletePreset);
+
+    // Custom themes
+    document.querySelectorAll(".theme-swatch").forEach(swatch => {
+        swatch.addEventListener("click", () => {
+            const theme = swatch.dataset.theme;
+            highlightSwatch(theme);
+
+            if (theme === "custom") {
+                document.getElementById("customThemeInputs").style.display = "block";
+                const custom = getSavedCustomTheme();
+                if (custom) {
+                    applyTheme("custom", custom);
+                    setCustomInputs(custom);   // <-- populate color pickers
+                }
+            } else {
+                document.getElementById("customThemeInputs").style.display = "none";
+                applyTheme(theme);
+                saveTheme(theme);
+            }
+        });
+    });
 
     metronomeBox.addEventListener("pointerdown", (e) => {
         // Ignore clicks on controls inside the metronome box
