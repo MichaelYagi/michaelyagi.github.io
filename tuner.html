@@ -847,21 +847,21 @@
     document.getElementById("deletePreset").addEventListener("click", deletePreset);
 
     metronomeBox.addEventListener("pointerdown", (e) => {
-        // Ignore interactions on controls inside metronome box
-        const isControl = e.target.closest("input, select, button");
-        if (isControl) return;
+        // Ignore clicks on controls inside the metronome box
+        if (e.target.closest("input, select, button")) return;
 
-        // If metronome is not running, allow tap-tempo without dimming other boxes
+        // Only allow tap-tempo if metronome box is the active mode
+        if (!metronomeBoxEnabled) return;
+
         if (!metronomeInterval) {
+            // Metronome stopped but box is active → tap-tempo allowed
             registerTap(e);
             return;
         }
 
-        // If metronome is running, stop tone (if any) and process tap-tempo
+        // Metronome running → stop tone and process tap
         stopTone();
         registerTap(e);
-
-        // UI states are managed centrally; dim only because it's actually running
         syncUIState();
     });
 
