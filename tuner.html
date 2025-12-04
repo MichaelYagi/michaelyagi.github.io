@@ -315,10 +315,14 @@
     // http://github.com/patriceguyot/Yin/blob/master/yin.py
     function yinPitch(buf, sampleRate, threshold = 0.18, minFreq = 50, maxFreq = 1200) {
         const N = buf.length;
+        // delay in samples - smallest lag allowed
         const tauMin = Math.max(2, Math.floor(sampleRate / maxFreq));
+        // largest lag allowed
         const tauMax = Math.min(N - 3, Math.floor(sampleRate / minFreq));
         if (tauMax <= tauMin) return null;
 
+        // For each lag tau, compute the squared difference between the signal and a delayed version of itself
+        // if the signal repeats every (tau) lag samples, the difference will be small
         const d = new Float32Array(tauMax + 1);
         for (let tau = 1; tau <= tauMax; tau++) {
             let sum = 0;
@@ -329,6 +333,12 @@
             d[tau] = sum;
         }
 
+        // Cumulative Mean Normalized Difference
+        // Normalizes the difference function so values are comparable across lags.
+        // cmnd[tau] tends toward 1 if no periodicity, and drops below threshold if strong periodicity.
+        // Key step - it makes the function robust to amplitude changes.
+        // After normalization - the CMND step - small values drop below the threshold, which flags them as candidate pitches.
+        // Else no periodicity detected - ignore
         const cmnd = new Float32Array(tauMax + 1);
         cmnd[0] = 1;
         let running = 0;
@@ -337,6 +347,8 @@
             cmnd[tau] = d[tau] / (running / tau);
         }
 
+        // Scan for the first tau where cmnd[t] drops below the threshold - this indicates a likely fundamental period
+        // the fundamental period corresponds to the time between successive cycles of the waveform
         let tau = -1;
         for (let t = tauMin; t <= tauMax; t++) {
             if (cmnd[t] < threshold) {
@@ -354,6 +366,7 @@
         const refinedTau = tau + delta;
 
         const freq = sampleRate / refinedTau;
+        // estimated fundamental frequency
         return (freq >= minFreq && freq <= maxFreq) ? freq : null;
     }
 
