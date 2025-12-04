@@ -658,28 +658,50 @@
         try {
             // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
             statusElem.textContent = "Mic: requesting access...";
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-            });
 
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 8192;
-            analyser.minDecibels = -100;
-            analyser.maxDecibels = -10;
-            analyser.smoothingTimeConstant = 0.0;
+            const stream = await checkMicrophonePermission();
 
-            const source = audioCtx.createMediaStreamSource(stream);
-            source.connect(analyser);
+            if (stream !== false) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 8192;
+                analyser.minDecibels = -100;
+                analyser.maxDecibels = -10;
+                analyser.smoothingTimeConstant = 0.0;
 
-            yinBuffer = new Float32Array(8192);
+                const source = audioCtx.createMediaStreamSource(stream);
+                source.connect(analyser);
 
-            statusElem.textContent = "Mic: ready";
-            startLoop();
-            updateDialDisplay();
+                yinBuffer = new Float32Array(8192);
+
+                statusElem.textContent = "Mic: ready";
+                startLoop();
+                updateDialDisplay();
+            } else {
+                statusElem.textContent = "Mic: permission denied or unavailable";
+            }
         } catch (e) {
             statusElem.textContent = "Mic: permission denied or unavailable";
             console.error(e);
+        }
+    }
+
+    async function checkMicrophonePermission() {
+        try {
+            const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
+            if (permissionStatus.state === 'granted') {
+                return await navigator.mediaDevices.getUserMedia({
+                    audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
+                });
+            } else if (permissionStatus.state === 'denied') {
+                return false;
+            } else if (permissionStatus.state === 'prompt') {
+                return await navigator.mediaDevices.getUserMedia({
+                    audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
+                });
+            }
+        } catch (error) {
+            return false;
         }
     }
 
@@ -729,6 +751,7 @@
     function playTone(freq, type = "sine") {
         if (toneOscillator) return;
 
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         toneOscillator = audioCtx.createOscillator();
         toneGain = audioCtx.createGain();
 
