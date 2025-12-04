@@ -23,6 +23,8 @@
             --box-header-color: #ff6600;
             --input-bg-color: #0b1d3a;
             --input-font-color: #ffcc00;
+            --status-color: #444; /* adaptive */
+            --sub-color: #666;    /* adaptive */
         }
         .theme-default {
             --page-bg-color: #111;
@@ -103,10 +105,16 @@
         }
         label { font-weight: 600; }
         .metric { font-size: 2rem; }
-        .sub { color: #666; }
+        .sub {
+            color: var(--sub-color);
+        }
         .needle { width: 100%; height: 10px; background: #eee; border-radius: 6px; position: relative; margin-top: 8px; }
         .needle > div { position: absolute; top: -6px; width: 2px; height: 22px; background: #333; left: 50%; transition: left 80ms linear; }
-        .status { color: #444; font-size: 0.95rem; margin-top: 8px; }
+        .status {
+            color: var(--status-color);
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
         .dimmed { opacity: 0.4; }
         #noteDial { width: 100%; box-sizing: border-box; }
         /* Blinking red dot */
@@ -1011,15 +1019,24 @@
     }
 
     function applyTheme(theme, custom = null) {
-        document.body.className = "";
-        if (theme === "custom" && custom) {
-            document.documentElement.style.setProperty("--input-font-color", custom.inputFont);
-            document.documentElement.style.setProperty("--input-bg-color", custom.inputBg);
-            document.documentElement.style.setProperty("--box-header-color", custom.boxHeader);
-            document.documentElement.style.setProperty("--page-bg-color", custom.pageBg);
-            document.documentElement.style.setProperty("--box-bg-color", custom.boxBg);
+        document.body.className = '';
+
+        if (theme === 'custom' && custom) {
+            document.documentElement.style.setProperty('--input-font-color', custom.inputFont);
+            document.documentElement.style.setProperty('--input-bg-color', custom.inputBg);
+            document.documentElement.style.setProperty('--box-header-color', custom.boxHeader);
+            document.documentElement.style.setProperty('--page-bg-color', custom.pageBg);
+            document.documentElement.style.setProperty('--box-bg-color', custom.boxBg);
+            adaptTextColors(custom.boxBg);
+            localStorage.setItem('theme','custom'); // <-- ensure theme is saved
         } else {
-            document.body.classList.add("theme-" + theme);
+            // Change to the theme passed
+            const classTheme = 'theme-' + theme;
+            document.body.classList.add(classTheme);
+            const element = document.querySelector('.'+classTheme);
+            const boxBg = getComputedStyle(element).getPropertyValue('--box-bg-color').trim();
+            adaptTextColors(boxBg);
+            localStorage.setItem('theme',theme); // <-- save active theme
         }
     }
 
@@ -1052,34 +1069,64 @@
         });
     }
 
-    document.querySelectorAll(".theme-swatch").forEach(swatch => {
-        swatch.addEventListener("click", () => {
-            const theme = swatch.dataset.theme;
-            highlightSwatch(theme);
-            if (theme === "custom") {
-                document.getElementById("customThemeInputs").style.display = "block";
-            } else {
-                document.getElementById("customThemeInputs").style.display = "none";
-                applyTheme(theme);
-                saveTheme(theme);
-            }
-        });
-    });
+    function normalizeHex(hex) {
+        hex = hex.replace('#','').trim();
+        if (hex.length === 3) {
+            // Expand shorthand (#111 → #111111)
+            hex = hex.split('').map(c => c + c).join('');
+        }
+        return '#' + hex;
+    }
 
-    ["customInputFont","customInputBg","customBoxHeader","customPageBg","customBoxBg"].forEach(id => {
-        document.getElementById(id).addEventListener("input", () => {
-            const custom = {
-                inputFont: document.getElementById("customInputFont").value,
-                inputBg: document.getElementById("customInputBg").value,
-                boxHeader: document.getElementById("customBoxHeader").value,
-                pageBg: document.getElementById("customPageBg").value,
-                boxBg: document.getElementById("customBoxBg").value
-            };
-            applyTheme("custom", custom);
-            saveTheme("custom", custom);
-            highlightSwatch("custom");
-        });
-    });
+    function getBrightness(color) {
+        color = color.trim().toLowerCase();
+
+        // Handle rgb/rgba
+        if (color.startsWith('rgb')) {
+            const parts = color.match(/\d+/g);
+            if (!parts || parts.length < 3) return 128;
+            const [r,g,b] = parts.map(Number);
+            return (r*299 + g*587 + b*114) / 1000;
+        }
+
+        // Handle hex
+        if (color.startsWith('#')) {
+            const hex = normalizeHex(color);
+            const r = parseInt(hex.substr(1,2),16);
+            const g = parseInt(hex.substr(3,2),16);
+            const b = parseInt(hex.substr(5,2),16);
+            return (r*299 + g*587 + b*114) / 1000;
+        }
+
+        return 128; // safe fallback
+    }
+
+    function adaptTextColors(boxBg) {
+        const brightness = getBrightness(boxBg);
+
+        // If parsing failed, try resolving from CSS variable directly
+        if (brightness === null) {
+            const resolved = getComputedStyle(document.documentElement)
+                .getPropertyValue('--box-bg-color').trim();
+            const fallbackBrightness = getBrightness(resolved);
+            // If still null, bail to a safe default
+            const b = fallbackBrightness ?? 128;
+            setAdaptiveStatusColors(b);
+            return;
+        }
+        setAdaptiveStatusColors(brightness);
+    }
+
+    function setAdaptiveStatusColors(brightness) {
+        // Two-tier contrast; tweak thresholds as needed
+        if (brightness < 128) {
+            document.documentElement.style.setProperty('--status-color', '#cccccc');
+            document.documentElement.style.setProperty('--sub-color', '#aaaaaa');
+        } else {
+            document.documentElement.style.setProperty('--status-color', '#444444');
+            document.documentElement.style.setProperty('--sub-color', '#666666');
+        }
+    }
 
     function getSavedCustomTheme() {
         const custom = localStorage.getItem("customTheme");
@@ -1113,17 +1160,32 @@
             highlightSwatch(theme);
 
             if (theme === "custom") {
-                document.getElementById("customThemeInputs").style.display = "block";
                 const custom = getSavedCustomTheme();
                 if (custom) {
                     applyTheme("custom", custom);
-                    setCustomInputs(custom);   // <-- populate color pickers
+                    setCustomInputs(custom); // <-- populate pickers
                 }
+                document.getElementById("customThemeInputs").style.display = "block";
             } else {
                 document.getElementById("customThemeInputs").style.display = "none";
                 applyTheme(theme);
                 saveTheme(theme);
             }
+        });
+    });
+
+    ["customInputFont","customInputBg","customBoxHeader","customPageBg","customBoxBg"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => {
+            const custom = {
+                inputFont: document.getElementById("customInputFont").value,
+                inputBg: document.getElementById("customInputBg").value,
+                boxHeader: document.getElementById("customBoxHeader").value,
+                pageBg: document.getElementById("customPageBg").value,
+                boxBg: document.getElementById("customBoxBg").value
+            };
+            applyTheme("custom", custom);
+            saveTheme("custom", custom);
+            highlightSwatch("custom");
         });
     });
 
