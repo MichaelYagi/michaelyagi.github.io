@@ -1028,7 +1028,7 @@
             document.documentElement.style.setProperty('--page-bg-color', custom.pageBg);
             document.documentElement.style.setProperty('--box-bg-color', custom.boxBg);
             adaptTextColors(custom.boxBg);
-            localStorage.setItem('theme','custom'); // <-- ensure theme is saved
+            localStorage.setItem('theme','custom'); // ensure theme is saved
         } else {
             // Change to the theme passed
             const classTheme = 'theme-' + theme;
@@ -1036,7 +1036,7 @@
             const element = document.querySelector('.'+classTheme);
             const boxBg = getComputedStyle(element).getPropertyValue('--box-bg-color').trim();
             adaptTextColors(boxBg);
-            localStorage.setItem('theme',theme); // <-- save active theme
+            localStorage.setItem('theme',theme); // save active theme
         }
     }
 
@@ -1057,7 +1057,7 @@
                 highlightSwatch(theme);
                 if (theme === "custom") {
                     document.getElementById("customThemeInputs").style.display = "block";
-                    setCustomInputs(parsed);   // <-- populate color pickers
+                    setCustomInputs(parsed);   // populate color pickers
                 }
             }
         }
