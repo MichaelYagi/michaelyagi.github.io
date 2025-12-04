@@ -376,6 +376,25 @@
         return (freq >= minFreq && freq <= maxFreq) ? freq : null;
     }
 
+    function syncUIState() {
+        const tonePlaying = !!toneOscillator;
+        const metronomePlaying = !!metronomeInterval;
+
+        if (tonePlaying) {
+            setToneActive(true);
+            setMetronomeActive(false);
+            setTunerActive(false);
+        } else if (metronomePlaying) {
+            setMetronomeActive(true);
+            setToneActive(false);
+            setTunerActive(false);
+        } else {
+            setToneActive(true);
+            setMetronomeActive(true);
+            setTunerActive(true);
+        }
+    }
+
     // Tuner loop
     function drawSineWave(phase) {
         const w = toneWaveCanvas.width;
@@ -550,6 +569,7 @@
         setTunerActive(false);
 
         startWaveAnimation(freq);
+        syncUIState();
 
         toneOscillator.onended = () => {
             toneOscillator = null;
@@ -576,7 +596,7 @@
         setTunerActive(true);
 
         stopWaveAnimation();
-
+        syncUIState();
         updatePauseMessages();
     }
 
@@ -594,6 +614,7 @@
     let tapTimes = [];
     let tappingActive = false;
     let tapTimeout = null;
+    let metronomeRunning = false;
 
     function playClick(strong = true) {
         if (tappingActive) return;
@@ -690,6 +711,8 @@
         document.getElementById("metronomeText").textContent =
             `Playing at ${bpm} BPM (${subdivisions} subdivisions)`;
         setElementState("startMetronome", false);
+        metronomeRunning = true;
+        syncUIState();
         updatePauseMessages();
     }
 
@@ -703,6 +726,8 @@
         document.getElementById("metronomeDot").style.opacity = 0;
         document.getElementById("subdivisionDot").style.opacity = 0;
         setElementState("startMetronome", true);
+        metronomeRunning = false;
+        syncUIState();
         updatePauseMessages();
     }
 
@@ -822,111 +847,93 @@
     document.getElementById("deletePreset").addEventListener("click", deletePreset);
 
     metronomeBox.addEventListener("pointerdown", (e) => {
-        if (metronomeInterval || (metronomeBoxEnabled && tapTimes.length < 2) || (metronomeBoxEnabled && toneEnabled)) {
-            stopTone();
-            setTunerActive(false);
-            setToneActive(false);
+        // Ignore interactions on controls inside metronome box
+        const isControl = e.target.closest("input, select, button");
+        if (isControl) return;
+
+        // If metronome is not running, allow tap-tempo without dimming other boxes
+        if (!metronomeInterval) {
             registerTap(e);
+            return;
         }
+
+        // If metronome is running, stop tone (if any) and process tap-tempo
+        stopTone();
+        registerTap(e);
+
+        // UI states are managed centrally; dim only because it's actually running
+        syncUIState();
     });
 
     document.getElementById("startMetronome").addEventListener("click", () => {
         stopTone();
-        setTunerActive(false);
-        setToneActive(false);
-        setMetronomeActive(true);
         startMetronome();
+        syncUIState();
     });
     document.getElementById("stopMetronome").addEventListener("click", () => {
-        setTunerActive(true);
-        setToneActive(true);
         stopMetronome();
+        syncUIState();
     });
     document.getElementById("tempo").addEventListener("input", () => {
         if (metronomeInterval) {
-            setTunerActive(false);
-            setToneActive(false);
-            setMetronomeActive(true);
             startMetronome(); // restart with new BPM
         }
     });
     document.getElementById("subdivisions").addEventListener("change", () => {
         if (metronomeInterval) {
-            // If the metronome is already running, restart immediately with new subdivision
-            setTunerActive(false);
-            setToneActive(false);
-            setMetronomeActive(true);
             startMetronome();
         }
     });
-
     document.getElementById("decrementNote").addEventListener("click", () => {
-        setTunerActive(false);
-        setMetronomeActive(false);
         changeDial(-1);
     });
     document.getElementById("incrementNote").addEventListener("click", () => {
-        setTunerActive(false);
-        setMetronomeActive(false);
         changeDial(1);
     });
 
     document.getElementById("noteDial").addEventListener("input", () => {
-        setTunerActive(false);
-        setMetronomeActive(false);
         updateDialDisplay();
     });
     document.getElementById("waveform").addEventListener("change", () => {
-        setTunerActive(false);
-        setMetronomeActive(false);
         updateWaveform();
     });
     document.getElementById("playTone").addEventListener("click", () => {
-        setTunerActive(false);
-        setMetronomeActive(false);
         const idx = parseInt(document.getElementById("noteDial").value, 10);
         const { f } = dialToNote(idx);
         const wave = document.getElementById("waveform").value;
         playTone(f, wave);
+        syncUIState();
         updatePauseMessages();
     });
     document.getElementById("stopTone").addEventListener("click", () => {
-        setTunerActive(true);
-        setMetronomeActive(true);
         stopTone();
+        syncUIState();
         updatePauseMessages();
     });
 
     document.addEventListener("keydown", (e) => {
-        if (e.code === "Space") { // Start/stop metronome or tone generator
+        if (e.code === "Space") {
             if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
                 if (toneOscillator) {
-                    setTunerActive(true);
-                    setMetronomeActive(true);
                     stopTone();
-                    updatePauseMessages();
                 } else {
-                    setTunerActive(false);
-                    setMetronomeActive(false);
                     const idx = parseInt(document.getElementById("noteDial").value, 10);
                     const { f } = dialToNote(idx);
                     const wave = document.getElementById("waveform").value;
                     playTone(f, wave);
-                    updatePauseMessages();
                 }
+                syncUIState();
+                updatePauseMessages();
             } else if (metronomeBoxEnabled) {
                 if (metronomeInterval) {
                     stopMetronome();
-                    setTunerActive(true);
-                    setToneActive(true);
                     setPlayMetronomeButtonState(true);
                 } else {
                     stopTone();
-                    setTunerActive(false);
-                    setToneActive(false);
                     startMetronome();
                     setPlayMetronomeButtonState(false);
                 }
+                syncUIState();
             }
         } else if (e.code === "ArrowRight") { // Higher tone
             if (metronomeBoxEnabled === false || (metronomeBoxEnabled && toneEnabled)) {
