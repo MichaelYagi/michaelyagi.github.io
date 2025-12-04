@@ -838,10 +838,9 @@
         startMetronome();
     });
     document.getElementById("stopMetronome").addEventListener("click", () => {
-        stopMetronome();
         setTunerActive(true);
         setToneActive(true);
-        setMetronomeActive(false);
+        stopMetronome();
     });
     document.getElementById("tempo").addEventListener("input", () => {
         if (metronomeInterval) {
