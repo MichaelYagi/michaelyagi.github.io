@@ -31,7 +31,12 @@
         }
         h1 { margin-bottom: 12px; }
         h3 { margin-top: 0; }
-        .box { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-bottom: 20px; }
+        .box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
         label { font-weight: 600; }
         .metric { font-size: 2rem; }
         .sub { color: #666; }
@@ -87,7 +92,7 @@
         .sliderNotch {
             position: absolute;
             top: 100%;
-            left: 51%;              /* middle of the slider */
+            left: 50.5%;              /* middle of the slider */
             width: 2px;
             height: 5px;
             background: #333;        /* notch color */
@@ -101,15 +106,16 @@
             color: #eee;
             border: 2px solid #333;
             border-radius: 12px;
-            width: 100%;            /* fill available width */
-            max-width: 400px;       /* cap size on larger screens */
-            margin: 0 auto 20px;    /* center horizontally */
-            box-sizing: border-box; /* include padding in width */
+            width: 100%;             /* fill available width */
+            max-width: 500px;        /* larger cap on bigger screens */
+            margin: 0 auto 24px;     /* center horizontally with more spacing */
+            padding: 20px;           /* add inner breathing room */
+            box-sizing: border-box;  /* include padding in width */
         }
         .box h3 {
             text-align: center;
             color: #ff6600;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
         .box input[type=number],
         .box input[type=text],
