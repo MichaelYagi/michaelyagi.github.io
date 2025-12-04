@@ -664,12 +664,19 @@
         tappingActive = true;
 
         if (tapTimes.length >= 2) {
+            // Only update BPM if there are at least 2 taps
             const lastInterval = tapTimes[tapTimes.length - 1] - tapTimes[tapTimes.length - 2];
             const bpm = Math.round(60000 / lastInterval);
 
-            tempo.value = bpm;
-            document.getElementById("metronomeText").textContent = `Tapped tempo: ${bpm} BPM`;
-            startMetronome(); // keep scheduler running at new BPM
+            if (bpm >= 30 && bpm <= 240) {
+                tempo.value = bpm;
+                document.getElementById("metronomeText").textContent = `Tapped tempo: ${bpm} BPM`;
+
+                // If metronome is already running, restart with new BPM
+                if (metronomeInterval) {
+                    startMetronome();
+                }
+            }
         }
 
         // reset timeout: if no tap for 1s, unmute ticks
@@ -850,19 +857,19 @@
         // Ignore clicks on controls inside the metronome box
         if (e.target.closest("input, select, button")) return;
 
-        // Only allow tap-tempo if metronome box is the active mode
+        // Only allow tap-tempo if metronome mode is active
         if (!metronomeBoxEnabled) return;
 
-        if (!metronomeInterval) {
-            // Metronome stopped but box is active → tap-tempo allowed
+        if (metronomeInterval) {
+            // Metronome is running → allow tap to adjust tempo
+            stopTone();
             registerTap(e);
-            return;
+            syncUIState(); // dim other boxes because metronome is actually playing
+        } else {
+            // Metronome is not running → allow tap-tempo, but do NOT dim other boxes
+            registerTap(e);
+            // no syncUIState() here
         }
-
-        // Metronome running → stop tone and process tap
-        stopTone();
-        registerTap(e);
-        syncUIState();
     });
 
     document.getElementById("startMetronome").addEventListener("click", () => {
