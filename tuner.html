@@ -14,6 +14,49 @@
     <meta property="og:url" content="https://michaelyagi.github.io/tuner.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
+        /* --- Theme Variables --- */
+        :root {
+            --page-bg-color: #111;
+            --text-color: #eee;
+            --accent-color: #ff6600;
+            --box-bg-color: #111;
+            --box-header-color: #ff6600;
+            --input-bg-color: #0b1d3a;
+            --input-font-color: #ffcc00;
+        }
+
+        /* Dark theme */
+        .theme-dark {
+            --page-bg-color: #111;
+            --text-color: #eee;
+            --accent-color: #ff6600;
+            --box-bg-color: #111;
+            --box-header-color: #ff6600;
+            --input-bg-color: #0b1d3a;
+            --input-font-color: #ffcc00;
+        }
+
+        /* Light theme */
+        .theme-light {
+            --page-bg-color: #f9f9f9;
+            --text-color: #222;
+            --accent-color: #0077ff;
+            --box-bg-color: #eee;
+            --box-header-color: #0077ff;
+            --input-bg-color: #fff;
+            --input-font-color: #222;
+        }
+
+        /* Classic theme */
+        .theme-classic {
+            --page-bg-color: #fff8e1;
+            --text-color: #333;
+            --accent-color: #b71c1c;
+            --box-bg-color: #fbe9e7;
+            --box-header-color: #b71c1c;
+            --input-bg-color: #fff8e1;
+            --input-font-color: #333;
+        }
         /* Reset body margins and prevent horizontal scroll */
         html, body {
             margin: 0;              /* remove default white margin */
@@ -26,8 +69,8 @@
             font-family: system-ui, sans-serif;
             margin: 0;          /* no external margin */
             padding-top: 20px;
-            background-color: #111; /* try charcoal black */
-            color: #eee;
+            background-color: var(--page-bg-color);
+            color: var(--text-color);
         }
         h1 { margin-bottom: 12px; }
         h3 { margin-top: 0; }
@@ -102,8 +145,8 @@
 
         /* --- Korg-style overrides --- */
         .box {
-            background: #111;
-            color: #eee;
+            background: var(--box-bg-color);
+            color: var(--text-color);
             border: 2px solid #333;
             border-radius: 12px;
             width: 100%;             /* fill available width */
@@ -114,14 +157,14 @@
         }
         .box h3 {
             text-align: center;
-            color: #ff6600;
+            color: var(--box-header-color);
             margin-bottom: 16px;
         }
         .box input[type=number],
         .box input[type=text],
         .box select {
-            background: #0b1d3a;
-            color: #ffcc00;
+            background: var(--input-bg-color);
+            color: var(--input-font-color);
             border: none;
             font-size: 1rem;
             text-align: center;
@@ -138,6 +181,33 @@
             cursor: pointer;
         }
         .box button:hover { background: #333; }
+        #themeSwatches {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .theme-swatch {
+            display: flex;
+            gap: 6px;
+            padding: 6px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border 0.2s ease;
+        }
+
+        .theme-swatch.selected {
+            border-color: var(--accent-color);
+        }
+
+        .swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
     </style>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V9XXZTGS4W"></script>
@@ -224,6 +294,41 @@
         <select id="presetSelect"></select>
         <button id="loadPreset">Load Preset</button>
         <button id="deletePreset">Delete Preset</button>
+    </div>
+</div>
+
+<!-- Themes -->
+<div id="themePicker" class="box">
+    <h3>Choose Theme</h3>
+    <div id="themeSwatches">
+        <div class="theme-swatch" data-theme="dark">
+            <div class="swatch" style="background:#111;"></div>
+            <div class="swatch" style="background:#ff6600;"></div>
+            <div class="swatch" style="background:#0b1d3a;"></div>
+        </div>
+        <div class="theme-swatch" data-theme="light">
+            <div class="swatch" style="background:#f9f9f9;"></div>
+            <div class="swatch" style="background:#0077ff;"></div>
+            <div class="swatch" style="background:#fff;"></div>
+        </div>
+        <div class="theme-swatch" data-theme="classic">
+            <div class="swatch" style="background:#fff8e1;"></div>
+            <div class="swatch" style="background:#b71c1c;"></div>
+            <div class="swatch" style="background:#fff8e1;"></div>
+        </div>
+        <div class="theme-swatch" data-theme="custom">
+            <div class="swatch" style="background:#ccc;"></div>
+            <div class="swatch" style="background:#999;"></div>
+            <div class="swatch" style="background:#666;"></div>
+        </div>
+    </div>
+
+    <div id="customThemeInputs" style="display:none; margin-top:12px;">
+        <label>Input Font: <input type="color" id="customInputFont"></label><br>
+        <label>Input Background: <input type="color" id="customInputBg"></label><br>
+        <label>Box Header: <input type="color" id="customBoxHeader"></label><br>
+        <label>Page Background: <input type="color" id="customPageBg"></label><br>
+        <label>Box Background: <input type="color" id="customBoxBg"></label><br>
     </div>
 </div>
 
@@ -854,6 +959,77 @@
         document.getElementById("loadPreset").style.display = hasPresets ? "inline-block" : "none";
         document.getElementById("deletePreset").style.display = hasPresets ? "inline-block" : "none";
     }
+
+    function applyTheme(theme, custom = null) {
+        document.body.className = "";
+        if (theme === "custom" && custom) {
+            document.documentElement.style.setProperty("--input-font-color", custom.inputFont);
+            document.documentElement.style.setProperty("--input-bg-color", custom.inputBg);
+            document.documentElement.style.setProperty("--box-header-color", custom.boxHeader);
+            document.documentElement.style.setProperty("--page-bg-color", custom.pageBg);
+            document.documentElement.style.setProperty("--box-bg-color", custom.boxBg);
+        } else {
+            document.body.classList.add("theme-" + theme);
+        }
+    }
+
+    function saveTheme(theme, custom = null) {
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem("theme", theme);
+            if (custom) localStorage.setItem("customTheme", JSON.stringify(custom));
+        }
+    }
+
+    function loadTheme() {
+        if (typeof(Storage) !== "undefined") {
+            const theme = localStorage.getItem("theme");
+            const custom = localStorage.getItem("customTheme");
+            if (theme) {
+                applyTheme(theme, custom ? JSON.parse(custom) : null);
+                highlightSwatch(theme);
+                if (theme === "custom") {
+                    document.getElementById("customThemeInputs").style.display = "block";
+                }
+            }
+        }
+    }
+
+    function highlightSwatch(theme) {
+        document.querySelectorAll(".theme-swatch").forEach(s => {
+            s.classList.toggle("selected", s.dataset.theme === theme);
+        });
+    }
+
+    document.querySelectorAll(".theme-swatch").forEach(swatch => {
+        swatch.addEventListener("click", () => {
+            const theme = swatch.dataset.theme;
+            highlightSwatch(theme);
+            if (theme === "custom") {
+                document.getElementById("customThemeInputs").style.display = "block";
+            } else {
+                document.getElementById("customThemeInputs").style.display = "none";
+                applyTheme(theme);
+                saveTheme(theme);
+            }
+        });
+    });
+
+    ["customInputFont","customInputBg","customBoxHeader","customPageBg","customBoxBg"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => {
+            const custom = {
+                inputFont: document.getElementById("customInputFont").value,
+                inputBg: document.getElementById("customInputBg").value,
+                boxHeader: document.getElementById("customBoxHeader").value,
+                pageBg: document.getElementById("customPageBg").value,
+                boxBg: document.getElementById("customBoxBg").value
+            };
+            applyTheme("custom", custom);
+            saveTheme("custom", custom);
+            highlightSwatch("custom");
+        });
+    });
+
+    loadTheme();
 
     // Initialize presets box on page load
     initPresets();
