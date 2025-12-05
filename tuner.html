@@ -744,14 +744,27 @@
 
     // Init audio
     let micStream = null;
+    let micAllowed = false;
+
+    async function checkMicrophonePermission() {
+        try {
+            return await navigator.mediaDevices.getUserMedia({
+                audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
+            });
+        } catch (_) {
+            return false;
+        }
+    }
+
     async function init() {
         try {
             // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
             statusElem.textContent = "Mic: requesting access...";
 
-            const stream = await checkMicrophonePermission();
+            let stream = await checkMicrophonePermission();
 
             if (stream !== false) {
+                micAllowed = true;
                 document.getElementById("micToggle").style.display = "block";
                 micStream = stream;
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -781,22 +794,17 @@
         }
     }
 
-    async function checkMicrophonePermission() {
-        try {
-            const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
-            if (permissionStatus.state === 'granted') {
-                return await navigator.mediaDevices.getUserMedia({
-                    audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
-                });
-            } else if (permissionStatus.state === 'denied') {
-                return false;
-            } else if (permissionStatus.state === 'prompt') {
-                return await navigator.mediaDevices.getUserMedia({
-                    audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
-                });
-            }
-        } catch (error) {
-            return false;
+    async function updatePauseMessages() {
+        if (micMuted) {
+            statusElem.textContent = "Mic: muted";
+        } else if (toneOscillator && micAllowed) {
+            statusElem.textContent = "Tuner paused while tone is playing";
+        } else if (metronomeInterval && micAllowed) {
+            statusElem.textContent = "Tuner paused while metronome is on";
+        } else if (!micAllowed) {
+            statusElem.textContent = "Mic: permission denied or unavailable";
+        } else {
+            statusElem.textContent = "Mic: ready";
         }
     }
 
@@ -1048,20 +1056,6 @@
             subsField.value = subs;
         }
         return subs;
-    }
-
-    async function updatePauseMessages() {
-        // const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
-
-        if (toneOscillator) {
-            statusElem.textContent = "Tuner paused while tone is playing";
-        } else if (metronomeInterval) {
-            statusElem.textContent = "Tuner paused while metronome is on";
-//         } else if (permissionStatus.state === "prompt") {
-//             statusElem.textContent = "Mic: permission denied or unavailable";
-        } else {
-            statusElem.textContent = "Mic: ready";
-        }
     }
 
     // Presets
