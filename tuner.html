@@ -808,6 +808,10 @@
 
         micMuted = !micMuted;
 
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem("micMuted", micMuted ? "true" : "false");
+        }
+
         if (micMuted) {
             // Stop all audio tracks — releases mic at OS level
             micStream.getAudioTracks().forEach(track => track.stop());
@@ -911,6 +915,9 @@
 
             if (stream !== false) {
                 micAllowed = true;
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.setItem("micPermission", "granted");
+                }
                 document.getElementById("micToggle").style.display = "block";
                 micStream = stream;
 
@@ -936,11 +943,19 @@
                 updateDialDisplay();
                 document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
             } else {
+                micAllowed = false;
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.setItem("micPermission", "denied");
+                }
                 updatePauseMessages();
                 document.getElementById("micToggle").style.display = "none";
 
             }
         } catch (e) {
+            micAllowed = false;
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem("micPermission", "error");
+            }
             updatePauseMessages();
             document.getElementById("micToggle").style.display = "none";
             console.error(e);
@@ -1274,7 +1289,9 @@
         const name = prompt("Preset name:");
         if (!name) return;
 
-        localStorage.setItem("preset_" + name, JSON.stringify(preset));
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem("preset_" + name, JSON.stringify(preset));
+        }
         refreshPresetList();
     }
 
@@ -1283,21 +1300,23 @@
         const key = select.value;
         if (!key) return;
 
-        const preset = JSON.parse(localStorage.getItem(key));
-        if (!preset) return;
+        if (typeof(Storage) !== "undefined") {
+            const preset = JSON.parse(localStorage.getItem(key));
+            if (!preset) return;
 
-        document.getElementById("tempo").value = preset.bpm;
-        document.getElementById("metronomeText").textContent = `Stopped: ${preset.bpm} BPM`
-        document.getElementById("subdivisions").value = preset.subdivisions;
-        document.getElementById("polySubdivisions").value = preset.polySubdivisions;
-        document.getElementById("noteDial").value = preset.noteDialVal;
-        document.getElementById("waveform").value = preset.waveformVal;
-        if (preset.clickSoundVal) {
-            document.getElementById("clickSound").value = preset.clickSoundVal; // NEW
+            document.getElementById("tempo").value = preset.bpm;
+            document.getElementById("metronomeText").textContent = `Stopped: ${preset.bpm} BPM`
+            document.getElementById("subdivisions").value = preset.subdivisions;
+            document.getElementById("polySubdivisions").value = preset.polySubdivisions;
+            document.getElementById("noteDial").value = preset.noteDialVal;
+            document.getElementById("waveform").value = preset.waveformVal;
+            if (preset.clickSoundVal) {
+                document.getElementById("clickSound").value = preset.clickSoundVal; // NEW
+            }
+
+            updateDialDisplay();
+            updateWaveform();
         }
-
-        updateDialDisplay();
-        updateWaveform();
     }
 
     function deletePreset() {
@@ -1305,7 +1324,9 @@
         const key = select.value;
         if (!key) return;
 
-        localStorage.removeItem(key);
+        if (typeof(Storage) !== "undefined") {
+            localStorage.removeItem(key);
+        }
         refreshPresetList();
     }
 
@@ -1314,14 +1335,16 @@
         select.innerHTML = "";
 
         let hasPresets = false;
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith("preset_")) {
-                const opt = document.createElement("option");
-                opt.value = key;
-                opt.textContent = key.replace("preset_", "");
-                select.appendChild(opt);
-                hasPresets = true;
+        if (typeof(Storage) !== "undefined") {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("preset_")) {
+                    const opt = document.createElement("option");
+                    opt.value = key;
+                    opt.textContent = key.replace("preset_", "");
+                    select.appendChild(opt);
+                    hasPresets = true;
+                }
             }
         }
 
@@ -1342,7 +1365,9 @@
             document.documentElement.style.setProperty('--box-bg-color', custom.boxBg);
             document.documentElement.style.setProperty('--wave-color', custom.waveColor);
             adaptTextColors(custom.boxBg);
-            localStorage.setItem('theme','custom'); // ensure theme is saved
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('theme', 'custom'); // ensure theme is saved
+            }
         } else {
             // Change to the theme passed
             const classTheme = 'theme-' + theme;
@@ -1350,7 +1375,9 @@
             const element = document.querySelector('.'+classTheme);
             const boxBg = getComputedStyle(element).getPropertyValue('--box-bg-color').trim();
             adaptTextColors(boxBg);
-            localStorage.setItem('theme',theme); // save active theme
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('theme', theme); // save active theme
+            }
         }
     }
 
@@ -1443,8 +1470,12 @@
     }
 
     function getSavedCustomTheme() {
-        const custom = localStorage.getItem("customTheme");
-        return custom ? JSON.parse(custom) : null;
+        if (typeof(Storage) !== "undefined") {
+            const custom = localStorage.getItem("customTheme");
+            return custom ? JSON.parse(custom) : null;
+        } else  {
+            return null;
+        }
     }
 
     function setCustomInputs(custom) {
@@ -1463,6 +1494,23 @@
     initPresets();
 
     // Events
+    window.addEventListener("DOMContentLoaded", () => {
+        const savedPermission = localStorage.getItem("micPermission");
+        const savedMuted = localStorage.getItem("micMuted");
+
+        if (savedPermission === "granted") {
+            init(); // try to re‑init mic
+        } else if (savedPermission === "denied") {
+            statusElem.textContent = "Mic: permission denied previously";
+        }
+
+        if (savedMuted === "true") {
+            micMuted = true;
+            document.getElementById("micToggle").textContent = "Unmute Mic";
+            updatePauseMessages();
+        }
+    });
+    
     // Presets
     document.getElementById("savePreset").addEventListener("click", savePreset);
     document.getElementById("loadPreset").addEventListener("click", loadPreset);
