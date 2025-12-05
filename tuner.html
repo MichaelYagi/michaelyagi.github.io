@@ -939,6 +939,7 @@
     }
 
     function updateDialDisplay() {
+        // tone generator
         const idx = parseInt(document.getElementById("noteDial").value, 10);
         const { name, octave, f } = dialToNote(idx);
         document.getElementById("dialNote").textContent = `Note: ${name}${octave}`;
@@ -1038,7 +1039,7 @@
         // Differentiate tones:
         if (type === "poly") {
             // distinct pitch for polyrhythm
-            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.setValueAtTime(1600, now);
             gain.gain.setValueAtTime(0.15, now);
         } else {
             // keep existing main/subdivision tones
@@ -1054,7 +1055,7 @@
         let dot;
         if (type === "poly") {
             dot = document.getElementById("polyDot");
-            dot.style.backgroundColor = "green"; // distinct color
+            dot.style.backgroundColor = "green";
         } else {
             dot = strong ? document.getElementById("metronomeDot")
                 : document.getElementById("subdivisionDot");
@@ -1185,7 +1186,17 @@
         const subsField = document.getElementById("subdivisions");
         let subs = parseInt(subsField.value, 10);
         if (!subs || subs < 1) {
-            subs = 1; // default
+            subs = 0; // default
+            subsField.value = subs;
+        }
+        return subs;
+    }
+
+    function getPolydivisions() {
+        const subsField = document.getElementById("polySubdivisions");
+        let subs = parseInt(subsField.value, 10);
+        if (!subs || subs < 1) {
+            subs = 0; // default
             subsField.value = subs;
         }
         return subs;
@@ -1204,11 +1215,12 @@
     function savePreset() {
         const bpm = getTempo();
         const subdivisions = getSubdivisions();
+        const polySubdivisions = getPolydivisions();
         const noteDialVal = document.getElementById("noteDial").value;
         const waveformVal = document.getElementById("waveform").value;
         const clickSoundVal = document.getElementById("clickSound").value; // NEW
 
-        const preset = { bpm, subdivisions, noteDialVal, waveformVal, clickSoundVal };
+        const preset = { bpm, subdivisions, polySubdivisions, noteDialVal, waveformVal, clickSoundVal };
         const name = prompt("Preset name:");
         if (!name) return;
 
@@ -1225,7 +1237,9 @@
         if (!preset) return;
 
         document.getElementById("tempo").value = preset.bpm;
+        document.getElementById("metronomeText").textContent = `Stopped: ${preset.bpm} BPM`
         document.getElementById("subdivisions").value = preset.subdivisions;
+        document.getElementById("polySubdivisions").value = preset.polySubdivisions;
         document.getElementById("noteDial").value = preset.noteDialVal;
         document.getElementById("waveform").value = preset.waveformVal;
         if (preset.clickSoundVal) {
@@ -1475,6 +1489,11 @@
         }
     });
     document.getElementById("subdivisions").addEventListener("change", () => {
+        if (metronomeInterval) {
+            startMetronome();
+        }
+    });
+    document.getElementById("polySubdivisions").addEventListener("change", () => {
         if (metronomeInterval) {
             startMetronome();
         }
