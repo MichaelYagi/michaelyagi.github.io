@@ -337,7 +337,7 @@
 
     </div>
     <div id="metronomeStatus" class="status">
-        <span id="metronomeText">Stopped</span>
+        <span id="metronomeText"></span>
         <span id="metronomeDot"></span>
         <span id="subdivisionDot"></span>
     </div>
@@ -842,6 +842,7 @@
                 updatePauseMessages();
                 startLoop();
                 updateDialDisplay();
+                document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
             } else {
                 updatePauseMessages();
                 document.getElementById("micToggle").style.display = "none";
@@ -1088,9 +1089,9 @@
         metronomeInterval = null;
         subdivisionInterval = null;
 
-        document.getElementById("metronomeText").textContent = "Stopped";
-        document.getElementById("metronomeDot").style.opacity = 0;
-        document.getElementById("subdivisionDot").style.opacity = 0;
+        document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        document.getElementById("metronomeDot").style.opacity = "0";
+        document.getElementById("subdivisionDot").style.opacity = "0";
         setElementState("startMetronome", true);
         metronomeRunning = false;
         syncUIState();
@@ -1429,6 +1430,14 @@
     });
     document.getElementById("incrementNote").addEventListener("click", () => {
         changeDial(1);
+    });
+    document.getElementById("tempo").addEventListener("input", () => {
+        if (metronomeRunning) {
+            const subdivisions = parseInt(getSubdivisions(), 10);
+            document.getElementById("metronomeText").textContent = (subdivisions > 1) ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)` : `Playing at ${bpm} BPM`;
+        } else {
+            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        }
     });
     document.getElementById("noteDial").addEventListener("input", () => {
         updateDialDisplay();
