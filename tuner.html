@@ -1117,7 +1117,10 @@
         }
         const bpm = parseInt(tempoValue, 10);
         const subdivisions = getSubdivisions();
-        const polySubs = parseInt(document.getElementById("polySubdivisions").value, 10) || 0;
+        let polySubs = getPolySubdivisions();
+        if (subdivisions === polySubs) {
+            polySubs = 0;
+        }
 
         const beatMs = 60000 / bpm;
         const subMs = beatMs / subdivisions;
@@ -1192,7 +1195,7 @@
         return subs;
     }
 
-    function getPolydivisions() {
+    function getPolySubdivisions() {
         const subsField = document.getElementById("polySubdivisions");
         let subs = parseInt(subsField.value, 10);
         if (!subs || subs < 1) {
@@ -1215,7 +1218,7 @@
     function savePreset() {
         const bpm = getTempo();
         const subdivisions = getSubdivisions();
-        const polySubdivisions = getPolydivisions();
+        const polySubdivisions = getPolySubdivisions();
         const noteDialVal = document.getElementById("noteDial").value;
         const waveformVal = document.getElementById("waveform").value;
         const clickSoundVal = document.getElementById("clickSound").value; // NEW
