@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Open Source Metronome | Subdivisions, Tone Generator, Tuner, Presets</title>
-    <meta name="description" content="The best open source, ad-free premium metronome. Includes subdivisions, tone generator, tuner, and preset saving for musicians.">
-    <meta name="keywords" content="metronome, open source metronome, premium metronome, ad-free metronome, metronome with subdivisions, tone generator, tuner, presets, musician practice tool, classical music, violin, viola, cello, bass, wind instruments, brass, html, javascript">
+    <meta name="description" content="The best open source, ad-free premium metronome. Includes subdivisions, polyrhythms, tone generator, tuner, and preset saving for musicians.">
+    <meta name="keywords" content="metronome, open source metronome, premium metronome, ad-free metronome, metronome with subdivisions, polyrhythms, tone generator, tuner, presets, musician practice tool, classical music, violin, viola, cello, bass, wind instruments, brass, html, javascript">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Michael Yagi">
     <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
     <meta property="og:title" content="Premium Open Source Metronome">
-    <meta property="og:description" content="Ad-free metronome with subdivisions, tone generator, tuner, and presets.">
+    <meta property="og:description" content="Ad-free metronome with subdivisions, polyrhythms, tone generator, tuner, and presets.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://michaelyagi.github.io/tuner.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -148,6 +148,20 @@
             margin-bottom: 5px;
             border-radius: 50%;
             background-color: blue; /* distinct color */
+            border: 1px solid black;
+            opacity: 0;
+            vertical-align: middle;
+            transition: opacity 0.1s ease;
+        }
+
+        #polyDot {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 6px;
+            margin-bottom: 5px;
+            border-radius: 50%;
+            background-color: green; /* distinct color */
             border: 1px solid black;
             opacity: 0;
             vertical-align: middle;
@@ -334,7 +348,7 @@
     <div>
         <label for="subdivisions">Subdivisions:</label>
         <select id="subdivisions">
-            <option value="1">None</option>
+            <option value="0">None</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
@@ -342,13 +356,27 @@
             <option value="6">6</option>
             <option value="7">7</option>
             <option value="8">8</option>
+            <option value="9">9</option>
         </select>
-
+        <label for="polySubdivisions">Polyrhythm:</label>
+        <select id="polySubdivisions">
+            <option value="0">None</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+        </select>
     </div>
+
     <div id="metronomeStatus" class="status">
         <span id="metronomeText"></span>
         <span id="metronomeDot"></span>
         <span id="subdivisionDot"></span>
+        <span id="polyDot"></span>
     </div>
 </div>
 
@@ -986,7 +1014,7 @@
     let tapTimeout = null;
     let metronomeRunning = false;
 
-    function playClick(strong = true) {
+    function playClick(strong = true, type = "main") {
         if (tappingActive) return;
 
         if (!audioCtx) audioCtx = new AudioContext();
@@ -998,20 +1026,36 @@
         const gain = audioCtx.createGain();
 
         osc.type = soundChoice;
-        osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
-        gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
+
+        // Differentiate tones:
+        if (type === "poly") {
+            // distinct pitch for polyrhythm
+            osc.frequency.setValueAtTime(800, now);
+            gain.gain.setValueAtTime(0.15, now);
+        } else {
+            // keep existing main/subdivision tones
+            osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
+            gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
+        }
 
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(now);
         osc.stop(now + 0.05);
 
-        const dot = strong ? document.getElementById("metronomeDot")
-            : document.getElementById("subdivisionDot");
+        // choose dot color based on type
+        let dot;
+        if (type === "poly") {
+            dot = document.getElementById("polyDot");
+            dot.style.backgroundColor = "green"; // distinct color
+        } else {
+            dot = strong ? document.getElementById("metronomeDot")
+                : document.getElementById("subdivisionDot");
+        }
         dot.style.opacity = "1";
 
         // Adaptive blink duration
         const bpm = parseInt(document.getElementById("tempo").value, 10) || 120;
-        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 1;
+        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 0;
         const beatMs = 60000 / bpm;
         const subdivisionMs = beatMs / subdivisions;
 
@@ -1022,7 +1066,7 @@
     }
 
     function registerTap(e) {
-        const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo","clickSound"]);
+        const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo","clickSound","polySubdivisions"]);
         if (ignoredIds.has(e.target.id)) return;
         e.preventDefault();
 
@@ -1063,29 +1107,41 @@
             tempo.value = tempoValue;
         }
         const bpm = parseInt(tempoValue, 10);
-        const subdivisions = parseInt(getSubdivisions(), 10);
+        const subdivisions = getSubdivisions();
+        const polySubs = parseInt(document.getElementById("polySubdivisions").value, 10) || 0;
+
         const beatMs = 60000 / bpm;
         const subMs = beatMs / subdivisions;
+        const polyMs = polySubs > 1 ? beatMs / polySubs : null;
 
-        // clear existing intervals
         stopMetronome();
 
-        // main beat drives scheduling; subdivisions are timed off each beat
         metronomeInterval = setInterval(() => {
-            // main beat (strong)
+            // main beat
             playClick(true);
 
-            // schedule subdivisions relative to this beat (no separate interval)
+            // normal subdivisions
             if (subdivisions > 1) {
                 for (let i = 1; i < subdivisions; i++) {
-                    setTimeout(() => {
-                    playClick(false);
-                    }, i * subMs);
+                    setTimeout(() => playClick(false), i * subMs);
+                }
+            }
+
+            // polyrhythm pulses (stretch across the same beat)
+            if (polyMs) {
+                for (let i = 1; i < polySubs; i++) {
+                    setTimeout(() => playClick(false, "poly"), i * polyMs);
                 }
             }
         }, beatMs);
 
-        document.getElementById("metronomeText").textContent = (subdivisions > 1) ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)` : `Playing at ${bpm} BPM`;
+        document.getElementById("metronomeText").textContent =
+            polySubs > 1
+                ? `Playing ${bpm} BPM with ${subdivisions} subdivisions + ${polySubs}-pulse polyrhythm`
+                : (subdivisions > 1
+                    ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)`
+                    : `Playing at ${bpm} BPM`);
+
         setElementState("startMetronome", false);
         metronomeRunning = true;
         syncUIState();
