@@ -915,8 +915,9 @@
 
             if (stream !== false) {
                 micAllowed = true;
+                micMuted = false;
                 if (typeof(Storage) !== "undefined") {
-                    localStorage.setItem("micPermission", "granted");
+                    localStorage.setItem("micMuted", micMuted);
                 }
                 document.getElementById("micToggle").style.display = "block";
                 micStream = stream;
@@ -943,18 +944,20 @@
                 updateDialDisplay();
                 document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
             } else {
-                micAllowed = false;
+                micAllowed = true;
+                micMuted = true;
+                document.getElementById("micToggle").textContent = "Enable Mic";
+                document.getElementById("micToggle").style.display = "block";
                 if (typeof(Storage) !== "undefined") {
-                    localStorage.setItem("micPermission", "denied");
+                    localStorage.setItem("micMuted", micMuted);
                 }
                 updatePauseMessages();
-                document.getElementById("micToggle").style.display = "none";
-
             }
         } catch (e) {
             micAllowed = false;
+            micMuted = true;
             if (typeof(Storage) !== "undefined") {
-                localStorage.setItem("micPermission", "error");
+                localStorage.setItem("micMuted", micMuted);
             }
             updatePauseMessages();
             document.getElementById("micToggle").style.display = "none";
@@ -1495,22 +1498,19 @@
 
     // Events
     window.addEventListener("DOMContentLoaded", () => {
-        const savedPermission = localStorage.getItem("micPermission");
-        const savedMuted = localStorage.getItem("micMuted");
+        if (typeof(Storage) !== "undefined") {
+            const micMutedLS = localStorage.getItem("micMuted") === "true";
 
-        if (savedPermission === "granted") {
-            init(); // try to re‑init mic
-        } else if (savedPermission === "denied") {
-            statusElem.textContent = "Mic: permission denied previously";
-        }
-
-        if (savedMuted === "true") {
-            micMuted = true;
-            document.getElementById("micToggle").textContent = "Unmute Mic";
-            updatePauseMessages();
+            if (micMutedLS === true) {
+                micMuted = true;
+                updatePauseMessages();
+                document.getElementById("micToggle").textContent = "Disable Mic";
+                document.getElementById("micToggle").style.display = "block";
+                statusElem.textContent = "Disable Mic";
+            }
         }
     });
-    
+
     // Presets
     document.getElementById("savePreset").addEventListener("click", savePreset);
     document.getElementById("loadPreset").addEventListener("click", loadPreset);
