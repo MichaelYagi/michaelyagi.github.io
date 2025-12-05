@@ -691,7 +691,7 @@
 
         // Update button text
         document.getElementById("micToggle").textContent = micMuted ? "Unmute Mic" : "Mute Mic";
-        statusElem.textContent = micMuted ? "Mic: muted" : "Mic: ready";
+        updatePauseMessages();
 
         if (micMuted) {
             noteElem.textContent = "--";
@@ -779,22 +779,22 @@
 
                 yinBuffer = new Float32Array(8192);
 
-                statusElem.textContent = "Mic: ready";
+                updatePauseMessages();
                 startLoop();
                 updateDialDisplay();
             } else {
-                statusElem.textContent = "Mic: permission denied or unavailable";
+                updatePauseMessages();
                 document.getElementById("micToggle").style.display = "none";
 
             }
         } catch (e) {
-            statusElem.textContent = "Mic: permission denied or unavailable";
+            updatePauseMessages();
             document.getElementById("micToggle").style.display = "none";
             console.error(e);
         }
     }
 
-    async function updatePauseMessages() {
+    function updatePauseMessages() {
         if (micMuted) {
             statusElem.textContent = "Mic: muted";
         } else if (toneOscillator && micAllowed) {
