@@ -274,33 +274,38 @@
             cursor: pointer;
         }
         .box button:hover { background: #333; }
+
         #themeSwatches {
-            display: flex;
-            flex-direction: row;   /* side by side */
-            gap: 12px;
-            margin-top: 12px;
-            flex-wrap: wrap;       /* allow wrapping if too many */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 tiles per row */
+            gap: 12px;                              /* spacing between tiles */
+            margin-top: 16px;
         }
 
         .theme-swatch {
             display: flex;
-            gap: 6px;
-            padding: 6px;
+            justify-content: space-between;         /* keep gaps between color blocks */
+            align-items: center;
+            padding: 8px;                           /* smaller padding so they fit */
             border: 2px solid transparent;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: border 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .swatch {
+            flex: 1;
+            aspect-ratio: 1 / 1;                    /* force square shape */
+            margin: 0 4px;                          /* spacing between blocks */
+            border-radius: 6px;
+            border: 1px solid #444;
+            max-width: 60px;                        /* cap width so they fit inside 500px box */
         }
 
         .theme-swatch.selected {
             border-color: var(--accent-color);
-        }
-
-        .swatch {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            border: 1px solid #444;
         }
 
         .theme-swatch .page-bg {
@@ -320,8 +325,13 @@
             margin-top: 16px;
         }
 
+        .theme-swatch[data-theme="custom"] {
+            justify-content: unset;   /* remove spacing */
+            gap: 6px;                 /* small consistent gap between squares */
+        }
+
         .theme-text {
-            margin-top: 11px;
+            margin-top: 40px;
             margin-left: 10px;
         }
     </style>
@@ -490,11 +500,10 @@
 
     <!-- Custom theme row -->
     <div id="customThemeRow">
-        <div class="theme-swatch" data-theme="custom">
+        <div class="theme-swatch" data-theme="custom" title="Custom">
             <div class="swatch" style="background:#ccc;"></div>
             <div class="swatch" style="background:#999;"></div>
             <div class="swatch" style="background:#666;"></div>
-            <div class="sub theme-text">Custom</div>
         </div>
 
         <div id="customThemeInputs" class="form-rows" style="display: none;">
