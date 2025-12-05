@@ -124,6 +124,7 @@
         }
         .dimmed { opacity: 0.4; }
         #noteDial { width: 100%; box-sizing: border-box; }
+        #tempo { width: 100%; box-sizing: border-box; }
         /* Blinking red dot */
         #metronomeDot {
             display: inline-block;
@@ -178,6 +179,16 @@
             position: absolute;
             top: 100%;
             left: 50.5%;              /* middle of the slider */
+            width: 2px;
+            height: 5px;
+            background: var(--sub-color);      /* notch color */
+            transform: translate(-50%, -50%);
+            pointer-events: none;    /* don’t block slider interaction */
+        }
+        .tempoSliderNotch {
+            position: absolute;
+            top: 100%;
+            left: 43.5%;              /* middle of the slider */
             width: 2px;
             height: 5px;
             background: var(--sub-color);      /* notch color */
@@ -299,20 +310,31 @@
 <!-- Metronome -->
 <div class="box" id="metronomeBox">
     <h3>Metronome</h3>
-    <label for="tempo">Tempo (BPM):</label>
-    <input id="tempo" type="number" min="30" max="240" value="120" style="width:80px;">
-    <button id="startMetronome">Start</button>
+    <label for="clickSound">Click Sound:</label>
+    <select id="clickSound">
+        <option value="square">Square</option>
+        <option value="sine">Sine</option>
+        <option value="triangle">Triangle</option>
+        <option value="sawtooth">Sawtooth</option>
+    </select>
+    <button id="startMetronome" style="margin-left:8px;">Start</button>
     <button id="stopMetronome">Stop</button>
+    <div style="display:flex;align-items:center;gap:8px;position:relative;">
+        <button id="decrementTempo">◀</button>
+
+        <div class="sliderWrapper" style="position:relative;display:inline-block;">
+            <input id="tempo" type="range" min="30" max="240" value="120">
+            <!-- notch marker -->
+            <div class="tempoSliderNotch sub"></div>
+        </div>
+
+        <button id="incrementTempo">▶</button>
+    </div>
+
     <div>
         <label for="subdivisions">Subdivisions:</label>
         <input id="subdivisions" type="number" min="1" value="1" style="width:60px;">
-        <label for="clickSound">Click Sound:</label>
-        <select id="clickSound">
-            <option value="square">Square</option>
-            <option value="sine">Sine</option>
-            <option value="triangle">Triangle</option>
-            <option value="sawtooth">Sawtooth</option>
-        </select>
+
     </div>
     <div id="metronomeStatus" class="status">
         <span id="metronomeText">Stopped</span>
@@ -516,6 +538,8 @@
     const clickSound = document.getElementById("clickSound");
     const startMetronomeButton = document.getElementById("startMetronome");
     const stopMetronomeButton = document.getElementById("stopMetronome");
+    const tempoUp = document.getElementById("incrementTempo");
+    const tempoDown = document.getElementById("decrementTempo");
 
     const NOTE_STRINGS = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 
@@ -984,7 +1008,7 @@
         // Blink for ~30% of subdivision length, capped between 50–300 ms
         const blinkDuration = Math.max(50, Math.min(300, subdivisionMs * 0.3));
 
-        setTimeout(() => { dot.style.opacity = 0; }, blinkDuration);
+        setTimeout(() => { dot.style.opacity = "0"; }, blinkDuration);
     }
 
     function registerTap(e) {
@@ -1381,13 +1405,31 @@
             startMetronome();
         }
     });
+    tempo.addEventListener("input", () => {
+        if (metronomeInterval) {
+            startMetronome(); // restart with new BPM
+        }
+    });
+    tempoUp.addEventListener("click", () => {
+        tempo.value = Math.min(parseInt(tempo.value, 10) + 1, parseInt(tempo.max, 10));
+        if (metronomeInterval) {
+            startMetronome();
+        }
+    });
+    tempoDown.addEventListener("click", () => {
+        tempo.value = Math.max(parseInt(tempo.value, 10) - 1, parseInt(tempo.min, 10));
+        if (metronomeInterval) {
+            startMetronome();
+        }
+    });
+
+    // Tone generator
     document.getElementById("decrementNote").addEventListener("click", () => {
         changeDial(-1);
     });
     document.getElementById("incrementNote").addEventListener("click", () => {
         changeDial(1);
     });
-
     document.getElementById("noteDial").addEventListener("input", () => {
         updateDialDisplay();
     });
