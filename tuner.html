@@ -16,16 +16,16 @@
     <style>
         /* --- Theme Variables --- */
         :root {
-            --page-bg-color: #111;
-            --box-bg-color: #111;
-            --box-header-color: #ff6600;
-            --input-font-color: #ffcc00;
-            --input-bg-color: #0b1d3a;
-            --wave-color: #0077ff;
-            --text-color: #eee;
-            --accent-color: #ff6600;
-            --status-color: #666; /* adaptive */
-            --sub-color: #666;    /* adaptive */
+            --page-bg-color: #111;       /* Page Background Color */
+            --box-bg-color: #111;        /* Box Background Color */
+            --box-header-color: #ff6600; /* Box Header Font Color */
+            --input-font-color: #ffcc00; /* Input Font Color */
+            --input-bg-color: #0b1d3a;   /* Input Background Color */
+            --wave-color: #0077ff;       /* Tone Generator Wave Color */
+            --text-color: #eee;          /* General Font Color */
+            --accent-color: #ff6600;     /* Swatch Select Outline Color */
+            --status-color: #666;        /* adaptive */
+            --sub-color: #666;           /* adaptive */
         }
         .theme-default {
             --page-bg-color: #111;
@@ -49,43 +49,43 @@
         }
         .theme-tokidoki-stellina-star {
             --page-bg-color: #e63946;
-            --text-color: #f1faee;
-            --accent-color: #e65100;
             --box-bg-color: #1d3557;
             --box-header-color: #a8dadc;
             --input-bg-color: #457b9d;
             --input-font-color: #f1faee;
             --wave-color: #fafe0b;
+            --text-color: #f1faee;
+            --accent-color: #e65100;
         }
         .theme-korg-blue {
             --page-bg-color: #0a0f1c;
-            --text-color: #e0e6ff;
-            --accent-color: #00aaff;
             --box-bg-color: #111a33;
             --box-header-color: #00aaff;
             --input-bg-color: #0d223d;
             --input-font-color: #66ccff;
             --wave-color: #0077ff;
+            --text-color: #e0e6ff;
+            --accent-color: #00aaff;
         }
         .theme-korg-silver {
             --page-bg-color: #d9d9d9;
-            --text-color: #111;
-            --accent-color: #ff6600;
             --box-bg-color: #f0f0f0;
             --box-header-color: #ff6600;
             --input-bg-color: #cccccc;
             --input-font-color: #222;
             --wave-color: #0077ff;
+            --text-color: #111;
+            --accent-color: #ff6600;
         }
         .theme-korg-green {
             --page-bg-color: #1a2b1a;
-            --text-color: #e6ffe6;
-            --accent-color: #ffcc00;
             --box-bg-color: #2d402d;
             --box-header-color: #ffcc00;
             --input-bg-color: #334d33;
             --input-font-color: #ccffcc;
             --wave-color: #0077ff;
+            --text-color: #e6ffe6;
+            --accent-color: #ffcc00;
         }
         /* Reset body margins and prevent horizontal scroll */
         html, body {
@@ -536,19 +536,19 @@
 
             <div class="row">
                 <div class="col">
-                    <label for="customInputFont">Input Font:</label>
+                    <label for="customInputBg">Input Background:</label>
                 </div>
                 <div class="col">
-                    <input type="color" id="customInputFont">
+                    <input type="color" id="customInputBg">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label for="customInputBg">Input Background:</label>
+                    <label for="customInputFont">Input Font:</label>
                 </div>
                 <div class="col">
-                    <input type="color" id="customInputBg">
+                    <input type="color" id="customInputFont">
                 </div>
             </div>
 
