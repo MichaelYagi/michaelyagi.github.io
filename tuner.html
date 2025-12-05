@@ -143,6 +143,9 @@
             transition: opacity 0.1s ease;
         }
         /* Animated wave */
+        #micToggle {
+            margin-top: 10px;
+        }
         #toneWave {
             /* border: 1px solid #ddd; */
             margin-top: 12px;
@@ -339,6 +342,7 @@
     <div class="metric" id="note">--</div>
     <div id="freq" class="sub">-- Hz</div>
     <div id="cents" class="sub">-- cents</div>
+    <button id="micToggle" style="display: none;">Mute Mic</button>
     <div class="needle"><div id="needleIndicator"></div></div>
     <div class="status" id="status">Mic: initializing...</div>
 </div>
@@ -671,13 +675,39 @@
     }
 
     // Tuner loop
+    // Tuner
+    let micMuted = false;
+
+    // Toggle mute/unmute
+    document.getElementById("micToggle").addEventListener("click", () => {
+        if (!micStream) return;
+
+        micMuted = !micMuted;
+
+        // Enable/disable all audio tracks
+        micStream.getAudioTracks().forEach(track => {
+            track.enabled = !micMuted;
+        });
+
+        // Update button text
+        document.getElementById("micToggle").textContent = micMuted ? "Unmute Mic" : "Mute Mic";
+        statusElem.textContent = micMuted ? "Mic: muted" : "Mic: ready";
+
+        if (micMuted) {
+            noteElem.textContent = "--";
+            freqElem.textContent = "-- Hz";
+            centsElem.textContent = "-- cents";
+            needleIndicator.style.left = "50%";
+        }
+    });
+
     function startLoop() {
         let lastNote = "--";
         let lastFreq = "-- Hz";
         let lastCents = "-- cents";
 
         function update() {
-            if (tunerEnabled && analyser) {
+            if (tunerEnabled && analyser && !micMuted) {
                 analyser.getFloatTimeDomainData(yinBuffer);
                 const f = yinPitch(yinBuffer, audioCtx.sampleRate);
                 if (f && isFinite(f)) {
@@ -713,6 +743,7 @@
     }
 
     // Init audio
+    let micStream = null;
     async function init() {
         try {
             // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
@@ -721,6 +752,8 @@
             const stream = await checkMicrophonePermission();
 
             if (stream !== false) {
+                document.getElementById("micToggle").style.display = "block";
+                micStream = stream;
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 8192;
@@ -738,9 +771,12 @@
                 updateDialDisplay();
             } else {
                 statusElem.textContent = "Mic: permission denied or unavailable";
+                document.getElementById("micToggle").style.display = "none";
+
             }
         } catch (e) {
             statusElem.textContent = "Mic: permission denied or unavailable";
+            document.getElementById("micToggle").style.display = "none";
             console.error(e);
         }
     }
@@ -1015,14 +1051,14 @@
     }
 
     async function updatePauseMessages() {
-        const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
+        // const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
 
-        if (permissionStatus.state === "prompt") {
-            statusElem.textContent = "Mic: permission denied or unavailable";
-        } else if (toneOscillator) {
+        if (toneOscillator) {
             statusElem.textContent = "Tuner paused while tone is playing";
         } else if (metronomeInterval) {
             statusElem.textContent = "Tuner paused while metronome is on";
+//         } else if (permissionStatus.state === "prompt") {
+//             statusElem.textContent = "Mic: permission denied or unavailable";
         } else {
             statusElem.textContent = "Mic: ready";
         }
@@ -1178,9 +1214,9 @@
         // Handle hex
         if (color.startsWith('#')) {
             const hex = normalizeHex(color);
-            const r = parseInt(hex.substr(1,2),16);
-            const g = parseInt(hex.substr(3,2),16);
-            const b = parseInt(hex.substr(5,2),16);
+            const r = parseInt(hex.substring(1,2),16);
+            const g = parseInt(hex.substring(3,2),16);
+            const b = parseInt(hex.substring(5,2),16);
             return (r*299 + g*587 + b*114) / 1000;
         }
 
