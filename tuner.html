@@ -949,7 +949,7 @@
 
     function updatePauseMessages() {
         if (micMuted) {
-            statusElem.textContent = "Mic: muted";
+            statusElem.textContent = "Mic: disabled";
         } else if (toneOscillator && micAllowed) {
             statusElem.textContent = "Tuner paused while tone is playing";
         } else if (metronomeInterval && micAllowed) {
@@ -957,7 +957,7 @@
         } else if (!micAllowed) {
             statusElem.textContent = "Mic: permission denied or unavailable";
         } else {
-            statusElem.textContent = "Mic: ready";
+            statusElem.textContent = "Mic: enabled";
         }
     }
 
