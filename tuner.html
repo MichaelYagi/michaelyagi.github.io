@@ -1051,8 +1051,7 @@
             }
         }, beatMs);
 
-        document.getElementById("metronomeText").textContent =
-            `Playing at ${bpm} BPM (${subdivisions} subdivisions)`;
+        document.getElementById("metronomeText").textContent = (subdivisions > 1) ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)` : `Playing at ${bpm} BPM`;
         setElementState("startMetronome", false);
         metronomeRunning = true;
         syncUIState();
