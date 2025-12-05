@@ -23,6 +23,7 @@
             --box-header-color: #ff6600;
             --input-bg-color: #0b1d3a;
             --input-font-color: #ffcc00;
+            --wave-color: #0077ff;
             --status-color: #444; /* adaptive */
             --sub-color: #666;    /* adaptive */
         }
@@ -34,6 +35,7 @@
             --box-header-color: #ff6600;
             --input-bg-color: #0b1d3a;
             --input-font-color: #ffcc00;
+            --wave-color: #0077ff;
         }
         .theme-fuji {
             --page-bg-color: #faf3e0;
@@ -43,6 +45,7 @@
             --box-header-color: #e63946;
             --input-bg-color: #f1e9d2;
             --input-font-color: #1a1a1a;
+            --wave-color: #0077ff;
         }
         .theme-sunset {
             --page-bg-color: #fff3e0;
@@ -52,6 +55,7 @@
             --box-header-color: #6a1b9a;
             --input-bg-color: #ffe0b2;
             --input-font-color: #3d2c2c;
+            --wave-color: #0077ff;
         }
         .theme-korg-blue {
             --page-bg-color: #0a0f1c;
@@ -61,6 +65,7 @@
             --box-header-color: #00aaff;
             --input-bg-color: #0d223d;
             --input-font-color: #66ccff;
+            --wave-color: #0077ff;
         }
         .theme-korg-silver {
             --page-bg-color: #d9d9d9;
@@ -70,6 +75,7 @@
             --box-header-color: #ff6600;
             --input-bg-color: #cccccc;
             --input-font-color: #222;
+            --wave-color: #0077ff;
         }
         .theme-korg-green {
             --page-bg-color: #1a2b1a;
@@ -79,6 +85,7 @@
             --box-header-color: #ffcc00;
             --input-bg-color: #334d33;
             --input-font-color: #ccffcc;
+            --wave-color: #0077ff;
         }
         /* Reset body margins and prevent horizontal scroll */
         html, body {
@@ -449,6 +456,15 @@
                     <input type="color" id="customBoxBg">
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="customWaveColor">Wave Color:</label>
+                </div>
+                <div class="col">
+                    <input type="color" id="customWaveColor">
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -652,7 +668,18 @@
             ctx.lineTo(x, y);
         }
 
-        ctx.strokeStyle = "#0077ff";
+        let waveColor = "#0077ff";
+        if (typeof(Storage) !== "undefined") {
+            const theme = localStorage.getItem("theme");
+            if (theme) {
+                const classTheme = 'theme-' + theme;
+                document.body.classList.add(classTheme);
+                const element = document.querySelector('.'+classTheme);
+                waveColor = getComputedStyle(element).getPropertyValue('--wave-color').trim();
+            }
+        }
+
+        ctx.strokeStyle = waveColor;
         ctx.lineWidth = 2;
         ctx.stroke();
     }
@@ -1143,6 +1170,7 @@
             document.documentElement.style.setProperty('--box-header-color', custom.boxHeader);
             document.documentElement.style.setProperty('--page-bg-color', custom.pageBg);
             document.documentElement.style.setProperty('--box-bg-color', custom.boxBg);
+            document.documentElement.style.setProperty('--wave-color', custom.waveColor);
             adaptTextColors(custom.boxBg);
             localStorage.setItem('theme','custom'); // ensure theme is saved
         } else {
@@ -1256,6 +1284,7 @@
         document.getElementById("customBoxHeader").value = custom.boxHeader;
         document.getElementById("customPageBg").value = custom.pageBg;
         document.getElementById("customBoxBg").value = custom.boxBg;
+        document.getElementById("customWaveColor").value = custom.waveColor;
     }
 
     loadTheme();
@@ -1279,7 +1308,7 @@
                 const custom = getSavedCustomTheme();
                 if (custom) {
                     applyTheme("custom", custom);
-                    setCustomInputs(custom); // <-- populate pickers
+                    setCustomInputs(custom); // populate pickers
                 }
                 document.getElementById("customThemeInputs").style.display = "block";
             } else {
@@ -1290,14 +1319,15 @@
         });
     });
 
-    ["customInputFont","customInputBg","customBoxHeader","customPageBg","customBoxBg"].forEach(id => {
+    ["customInputFont","customInputBg","customBoxHeader","customPageBg","customBoxBg","customWaveColor"].forEach(id => {
         document.getElementById(id).addEventListener("input", () => {
             const custom = {
                 inputFont: document.getElementById("customInputFont").value,
                 inputBg: document.getElementById("customInputBg").value,
                 boxHeader: document.getElementById("customBoxHeader").value,
                 pageBg: document.getElementById("customPageBg").value,
-                boxBg: document.getElementById("customBoxBg").value
+                boxBg: document.getElementById("customBoxBg").value,
+                waveColor: document.getElementById("customWaveColor").value
             };
             applyTheme("custom", custom);
             saveTheme("custom", custom);
