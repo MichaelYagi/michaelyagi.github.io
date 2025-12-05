@@ -24,7 +24,7 @@
             --input-bg-color: #0b1d3a;
             --input-font-color: #ffcc00;
             --wave-color: #0077ff;
-            --status-color: #444; /* adaptive */
+            --status-color: #666; /* adaptive */
             --sub-color: #666;    /* adaptive */
         }
         .theme-default {
@@ -177,7 +177,7 @@
             left: 50.5%;              /* middle of the slider */
             width: 2px;
             height: 5px;
-            background: #333;        /* notch color */
+            background: var(--sub-color);      /* notch color */
             transform: translate(-50%, -50%);
             pointer-events: none;    /* don’t block slider interaction */
         }
@@ -331,7 +331,7 @@
         <div class="sliderWrapper" style="position:relative;display:inline-block;">
             <input id="noteDial" type="range" min="0" max="60" value="30">
             <!-- notch marker -->
-            <div class="sliderNotch"></div>
+            <div class="sliderNotch sub"></div>
         </div>
 
         <button id="incrementNote">▶</button>
@@ -1264,10 +1264,10 @@
     function setAdaptiveStatusColors(brightness) {
         // Two-tier contrast; tweak thresholds as needed
         if (brightness < 128) {
-            document.documentElement.style.setProperty('--status-color', '#cccccc');
+            document.documentElement.style.setProperty('--status-color', '#aaaaaa');
             document.documentElement.style.setProperty('--sub-color', '#aaaaaa');
         } else {
-            document.documentElement.style.setProperty('--status-color', '#444444');
+            document.documentElement.style.setProperty('--status-color', '#666666');
             document.documentElement.style.setProperty('--sub-color', '#666666');
         }
     }
