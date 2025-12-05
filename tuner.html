@@ -444,7 +444,7 @@
     <div class="metric" id="note">--</div>
     <div id="freq" class="sub">-- Hz</div>
     <div id="cents" class="sub">-- cents</div>
-    <button id="micToggle" style="display: none;">Mute Mic</button>
+    <button id="micToggle" style="display: none;">Disable Mic</button>
     <div class="needle"><div id="needleIndicator"></div></div>
     <div class="status" id="status">Mic: initializing...</div>
 </div>
@@ -812,7 +812,7 @@
             // Stop all audio tracks — releases mic at OS level
             micStream.getAudioTracks().forEach(track => track.stop());
             micStream = null; // clear reference
-            document.getElementById("micToggle").textContent = "Unmute Mic";
+            document.getElementById("micToggle").textContent = "Enable Mic";
             updatePauseMessages();
 
             noteElem.textContent = "--";
@@ -836,7 +836,7 @@
 
                     yinBuffer = new Float32Array(8192);
 
-                    document.getElementById("micToggle").textContent = "Mute Mic";
+                    document.getElementById("micToggle").textContent = "Disable Mic";
                     updatePauseMessages();
                     startLoop();
                     updateDialDisplay();
