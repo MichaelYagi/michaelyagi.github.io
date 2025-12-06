@@ -1605,12 +1605,26 @@
     });
     tempoUp.addEventListener("click", () => {
         tempo.value = Math.min(parseInt(tempo.value, 10) + 1, parseInt(tempo.max, 10));
+
+        if (metronomeRunning) {
+            document.getElementById("metronomeText").textContent = `Playing at ${tempo.value} BPM`;
+        } else {
+            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        }
+
         if (metronomeInterval) {
             startMetronome();
         }
     });
     tempoDown.addEventListener("click", () => {
         tempo.value = Math.max(parseInt(tempo.value, 10) - 1, parseInt(tempo.min, 10));
+
+        if (metronomeRunning) {
+            document.getElementById("metronomeText").textContent = `Playing at ${tempo.value} BPM`;
+        } else {
+            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        }
+
         if (metronomeInterval) {
             startMetronome();
         }
