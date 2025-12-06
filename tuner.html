@@ -579,6 +579,78 @@
         <li>Down/s - Decrease tempo</li>
         <li>Shift - Reset pitch to A4</li>
     </ul>
+
+    <hr>
+
+    <p>Make music and use the webpage's browser console. Example:</p>
+
+    <p>Configure a simple beat pattern. Use hihat, kick, or snare.</p>
+
+    <pre><code>
+    const beatPattern = [
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 }
+    ];
+    </code></pre>
+
+    <p>Configure a melody pattern. Use use notes or frequencies.</p>
+
+    <pre><code>
+    const melody = [
+        { note: "A5", dur: 1 },
+        { rest: true, dur: 1 },
+        { note: "G#5", dur: 1 },
+        { note: "E5", dur: 1 },
+        { rest: true, dur: 1 },
+        { note: "A5", dur: 1 },
+        { rest: true, dur: 1 },
+        { note: "G#5", dur: 1 },
+        { rest: true, dur: 3 },
+        { note: "E5", dur: 2 },
+        { note: "E5", dur: 2 },
+        { note: "D5", dur: 0.5 },
+        { rest: true, dur: 0.5 },
+        { note: "D5", dur: 6 }
+    ];
+
+    // Or use frequencies (this is the same pattern as the above)
+    // const melody = [
+    //     { freq: 880.000, dur: 1 }, // A5
+    //     { rest: true, dur: 1 },
+    //     { freq: 830.609, dur: 1 }, // G#5
+    //     { freq: 659.255, dur: 1 }, // E5
+    //     { rest: true, dur: 1 },
+    //     { freq: 880.000, dur: 1 }, // A5
+    //     { rest: true, dur: 1 },
+    //     { freq: 830.609, dur: 1 }, // G#5
+    //     { rest: true, dur: 3 },
+    //     { freq: 659.255, dur: 2 }, // E5
+    //     { freq: 659.255, dur: 2 }, // E5
+    //     { freq: 587.330, dur: 0.5 }, // D5 - half a beat
+    //     { rest: true, dur: 0.5 },
+    //     { freq: 587.330, dur: 6 }, // D5
+    // ];
+    </code></pre>
+
+    <p>And play!</p>
+
+    <pre><code>
+    startBeat(beatPattern);
+    playMelody(melody);
+    </code></pre>
 </div>
 
 <script>
@@ -1543,96 +1615,213 @@
     // Initialize presets box on page load
     initPresets();
 
-    function playDBZEasterEgg(bpm = 300) {
+    function playMelody(melody = [], bpm = 300) {
         if (!audioCtx) audioCtx = new AudioContext();
 
         const beatMs = 60000 / bpm;
         const beatSec = beatMs / 1000;
 
-        const melody = [
-            { freq: 880.000, dur: 2 }, // A5
-            { freq: 830.609, dur: 1 }, // G#5
-            { freq: 659.255, dur: 2 }, // E5
-            { freq: 880.000, dur: 2 }, // A5
-            { freq: 830.609, dur: 4 }, // G#5
-            { freq: 659.255, dur: 2 }, // E5
-            { freq: 659.255, dur: 2 }, // E5
-            { freq: 587.330, dur: 1 }, // D5
-            { freq: 587.330, dur: 6 }, // D5
-        ];
-
         let startTime = audioCtx.currentTime;
 
         melody.forEach(note => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-
-            osc.type = "square";
-            osc.frequency.setValueAtTime(note.freq, startTime);
-            gain.gain.setValueAtTime(0.2, startTime);
-
-            osc.connect(gain).connect(audioCtx.destination);
-
             const noteDuration = beatSec * note.dur;
-            osc.start(startTime);
-            osc.stop(startTime + noteDuration);
 
+            // Determine frequency: either freq or note
+            let freq = null;
+            if (typeof note.freq === "number" && isFinite(note.freq)) {
+                freq = note.freq;
+            } else if (note.note) {
+                freq = noteToFrequency(note.note);
+            }
+
+            // Skip oscillator if it's a rest
+            if (!note.rest && freq) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = "square";
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.2, startTime);
+
+                osc.connect(gain).connect(audioCtx.destination);
+
+                osc.start(startTime);
+                osc.stop(startTime + noteDuration);
+            }
+
+            // Always advance timeline
             startTime += noteDuration;
         });
-
-        // --- calculate total melody length in ms ---
-        const totalDurationMs = melody.reduce((sum, note) => sum + note.dur * beatMs, 0);
-
-        // --- stop the beat after melody finishes ---
-        setTimeout(() => {
-            stopBeat();
-        }, totalDurationMs);
     }
 
-    let beatIntervalId;
+    function noteToFrequency(note) {
+        const A4 = 440;
+        const notes = {
+            "C": -9, "C#": -8, "Db": -8,
+            "D": -7, "D#": -6, "Eb": -6,
+            "E": -5,
+            "F": -4, "F#": -3, "Gb": -3,
+            "G": -2, "G#": -1, "Ab": -1,
+            "A": 0, "A#": 1, "Bb": 1,
+            "B": 2
+        };
 
-    function startBeat(bpm = 150) {
+        // split note string into pitch + octave
+        const match = note.match(/^([A-G]#?|[A-G]b?)(\d)$/);
+        if (!match) return null;
+
+        const pitch = match[1];
+        const octave = parseInt(match[2], 10);
+
+        // semitone distance from A4
+        const semitones = notes[pitch] + (octave - 4) * 12;
+        return A4 * Math.pow(2, semitones / 12);
+    }
+
+    // hihat, kick, or snare
+    function startBeat(beatPattern, bpm = 150) {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const beatMs = 60000 / bpm;
+        const beatSec = beatMs / 1000;
 
-        // clear any previous loop
-        if (beatIntervalId) clearInterval(beatIntervalId);
+        let startTime = audioCtx.currentTime;
 
-        beatIntervalId = setInterval(() => {
-            const now = audioCtx.currentTime;
+        beatPattern.forEach(step => {
+            const stepDuration = beatSec * step.dur;
 
-            // short oscillator burst for the beat
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-
-            osc.type = "sine"; // or "square" for a sharper click
-            osc.frequency.setValueAtTime(200, now); // low thump
-            gain.gain.setValueAtTime(0.5, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-
-            osc.connect(gain).connect(audioCtx.destination);
-            osc.start(now);
-            osc.stop(now + 0.05);
-
-            // visual dot flash
-            const dot = document.getElementById("metronomeDot");
-            if (dot) {
-                dot.style.opacity = "1";
-                setTimeout(() => { dot.style.opacity = "0"; }, beatMs);
+            if (!step.rest) {
+                if (step.type === "hihat") {
+                    playHiHatBeat(startTime);
+                } else if (step.type === "kick") {
+                    playKickBeat(startTime);
+                } else if (step.type === "snare") {
+                    playSnareBeat(startTime);
+                }
             }
-        }, beatMs);
+
+            // Visual dot flash
+            setTimeout(() => {
+                const dot = document.getElementById("metronomeDot");
+                if (dot) {
+                    dot.style.opacity = "1";
+                    setTimeout(() => { dot.style.opacity = "0"; }, beatMs * step.dur);
+                }
+            }, (startTime - audioCtx.currentTime) * 1000);
+
+            startTime += stepDuration;
+        });
     }
 
-    function stopBeat() {
-        if (beatIntervalId) clearInterval(beatIntervalId);
-        beatIntervalId = null;
+    function playHiHatBeat(time) {
+        const bufferSize = audioCtx.sampleRate * 0.05;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "highpass";
+        filter.frequency.value = 8000;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.5, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+
+        noise.connect(filter).connect(gain).connect(audioCtx.destination);
+        noise.start(time);
+        noise.stop(time + 0.05);
+    }
+
+    function playKickBeat(time) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(150, time);
+        osc.frequency.exponentialRampToValueAtTime(50, time + 0.1);
+        gain.gain.setValueAtTime(0.8, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(time);
+        osc.stop(time + 0.3);
+    }
+
+    function playSnareBeat(time) {
+        const bufferSize = audioCtx.sampleRate * 0.2;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.value = 1800;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.6, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+
+        noise.connect(filter).connect(gain).connect(audioCtx.destination);
+        noise.start(time);
+        noise.stop(time + 0.2);
     }
 
     // Events
     konamiCodeListener((activated) => {
         if (activated) {
-            startBeat(150);
-            playDBZEasterEgg(300);
+            const beatPattern = [
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 }
+            ];
+            startBeat(beatPattern, 150);
+
+            const melody = [
+                { note: "A5", dur: 1 },
+                { rest: true, dur: 1 },
+                { note: "G#5", dur: 1 },
+                { note: "E5", dur: 1 },
+                { rest: true, dur: 1 },
+                { note: "A5", dur: 1 },
+                { rest: true, dur: 1 },
+                { note: "G#5", dur: 1 },
+                { rest: true, dur: 3 },
+                { note: "E5", dur: 2 },
+                { note: "E5", dur: 2 },
+                { note: "D5", dur: 1 },
+                { note: "D5", dur: 6 }
+            ];
+            // const melody = [
+            //     { freq: 880.000, dur: 1 }, // A5
+            //     { rest: true, dur: 1 },
+            //     { freq: 830.609, dur: 1 }, // G#5
+            //     { freq: 659.255, dur: 1 }, // E5
+            //     { rest: true, dur: 1 },
+            //     { freq: 880.000, dur: 1 }, // A5
+            //     { rest: true, dur: 1 },
+            //     { freq: 830.609, dur: 1 }, // G#5
+            //     { rest: true, dur: 3 },
+            //     { freq: 659.255, dur: 2 }, // E5
+            //     { freq: 659.255, dur: 2 }, // E5
+            //     { freq: 587.330, dur: 1 }, // D5
+            //     { freq: 587.330, dur: 6 }, // D5
+            // ];
+            playMelody(melody, 300);
         }
     });
 
