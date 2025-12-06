@@ -650,6 +650,30 @@
 
     <p>Copy and paste every thing in the console and play!</p>
 
+    <p>Play around with chords or stacked beats:</p>
+
+    <pre><code>
+    const melody = [
+        ...,
+        { notes: [
+            { note: "B3", dur: 0.5 },
+            { note: "B5", dur: 1 },
+            { note: "B2", dur: 1 }
+        ]}
+        ...
+    ];
+    const beatPattern = [
+        ...,
+        { type: "hihat", dur: 1 },
+        { types: [
+            { type: "kick", dur: 2 },
+            { type: "snare", dur: 2 },
+            { type: "hihat", dur: 1 },
+        ]},
+        ...
+    ];
+    </code></pre>
+
     </div>
 
     <a href="https://www.gnu.org/" target="_blank"><img src="./images/gplv3.png"></a>
