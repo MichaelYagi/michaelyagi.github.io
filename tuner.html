@@ -1051,8 +1051,10 @@
                     document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
                 } else {
                     // Stop all audio tracks — releases mic at OS level
-                    micStream.getAudioTracks().forEach(track => track.stop());
-                    micStream = null; // clear reference
+                    if (micStream !== null) {
+                        micStream.getAudioTracks().forEach(track => track.stop());
+                        micStream = null; // clear reference
+                    }
                     document.getElementById("micToggle").textContent = "Enable Mic";
                     updatePauseMessages();
 
