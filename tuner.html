@@ -627,38 +627,20 @@
     <pre><code>
     const melody = [
         { note: "A5", dur: 1 },
-        { rest: true, dur: 1 },
+        { note: "rest", dur: 1 },
         { note: "G#5", dur: 1 },
         { note: "E5", dur: 1 },
-        { rest: true, dur: 1 },
+        { note: "rest", dur: 1 },
         { note: "A5", dur: 1 },
-        { rest: true, dur: 1 },
+        { note: "rest", dur: 1 },
         { note: "G#5", dur: 1 },
-        { rest: true, dur: 3 },
+        { note: "rest", dur: 3 },
         { note: "E5", dur: 2 },
         { note: "E5", dur: 2 },
         { note: "D5", dur: 0.5 },
-        { rest: true, dur: 0.5 },
+        { note: "rest", dur: 0.5 },
         { note: "D5", dur: 6 }
     ];
-
-    // Or use frequencies (this is the same pattern as the above)
-    // const melody = [
-    //     { freq: 880.000, dur: 1 }, // A5
-    //     { rest: true, dur: 1 },
-    //     { freq: 830.609, dur: 1 }, // G#5
-    //     { freq: 659.255, dur: 1 }, // E5
-    //     { rest: true, dur: 1 },
-    //     { freq: 880.000, dur: 1 }, // A5
-    //     { rest: true, dur: 1 },
-    //     { freq: 830.609, dur: 1 }, // G#5
-    //     { rest: true, dur: 3 },
-    //     { freq: 659.255, dur: 2 }, // E5
-    //     { freq: 659.255, dur: 2 }, // E5
-    //     { freq: 587.330, dur: 0.5 }, // D5 - half a beat
-    //     { rest: true, dur: 0.5 },
-    //     { freq: 587.330, dur: 6 }, // D5
-    // ];
     </code></pre>
 
     <pre><code>
@@ -1723,7 +1705,7 @@
                     freq = noteToFrequency(step.note);
                 }
 
-                if (!step.rest && freq) {
+                if (step.type !== "rest" && freq) {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
 
@@ -1885,7 +1867,7 @@
     konamiCodeListener((activated) => {
         if (activated) {
             const beatPattern = [
-                { rest: true, dur: 5 },
+                { type: "rest", dur: 5 },
                 { types: [
                     { type: "kick", dur: 2 },
                     { type: "snare", dur: 2 },
