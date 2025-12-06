@@ -1053,8 +1053,10 @@
                     // Stop all audio tracks — releases mic at OS level
                     if (micStream !== null) {
                         micStream.getAudioTracks().forEach(track => track.stop());
-                        micStream = null; // clear reference
                     }
+                    micStream = null;
+                    micSource = null;
+                    micGainNode = null;
                     document.getElementById("micToggle").textContent = "Enable Mic";
                     updatePauseMessages();
 
