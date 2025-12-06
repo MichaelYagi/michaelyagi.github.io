@@ -914,6 +914,10 @@
             localStorage.setItem("micDisabled", micDisabled ? "true" : "false");
         }
 
+        toggleMic();
+    });
+
+    function toggleMic() {
         if (micDisabled) {
             // Stop all audio tracks — releases mic at OS level
             micStream.getAudioTracks().forEach(track => track.stop());
@@ -949,7 +953,7 @@
                 }
             });
         }
-    });
+    }
 
     function startLoop() {
         let lastNote = "--";
@@ -1024,32 +1028,7 @@
                     }
                 }
 
-                if (!micDisabled) {
-                    document.getElementById("micToggle").style.display = "block";
-                    micStream = stream;
-
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    analyser = audioCtx.createAnalyser();
-                    analyser.fftSize = 8192;
-                    analyser.minDecibels = -100;
-                    analyser.maxDecibels = -10;
-                    analyser.smoothingTimeConstant = 0.0;
-
-                    // Create source and gain node
-                    micSource = audioCtx.createMediaStreamSource(stream);
-                    micGainNode = audioCtx.createGain();
-                    micGainNode.gain.value = 1; // start unmuted
-
-                    // Connect chain: source -> gain -> analyser
-                    micSource.connect(micGainNode).connect(analyser);
-
-                    yinBuffer = new Float32Array(8192);
-
-                    updatePauseMessages();
-                    startLoop();
-                    updateDialDisplay();
-                    document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
-                }
+                toggleMic();
             } else {
                 micDisabled = true;
                 if (typeof(Storage) !== "undefined") {
