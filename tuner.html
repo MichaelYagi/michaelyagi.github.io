@@ -1781,7 +1781,7 @@
             const stepBeats = (typeof step.dur === "number" && isFinite(step.dur)) ? step.dur : 1;
             const stepDuration = beatSec * stepBeats;
 
-            if (!step.rest) {
+            if (step.type !== "rest") {
                 // single type
                 if (step.type) {
                     const dur = step.dur || stepBeats;
