@@ -998,6 +998,15 @@
     let micGainNode = null;
 
     async function checkMicrophonePermission() {
+        micDisabled = true
+        if (localStorage.getItem("micDisabled") !== null) {
+            micDisabled = localStorage.getItem("micDisabled") === "true";
+        }
+        
+        if (micDisabled) {
+            return false;
+        }
+
         try {
             return await navigator.mediaDevices.getUserMedia({
                 audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
