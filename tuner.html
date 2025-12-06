@@ -1676,23 +1676,54 @@
         let startTime = audioCtx.currentTime;
 
         melody.forEach(step => {
-            const noteDuration = beatSec * step.dur;
-
-            // Collect frequencies for this step
-            let freqs = [];
-
-            if (step.notes && Array.isArray(step.notes)) {
-                freqs = step.notes.map(n => noteToFrequency(n)).filter(f => f);
-            } else if (step.note) {
-                const f = noteToFrequency(step.note);
-                if (f) freqs.push(f);
-            } else if (typeof step.freq === "number" && isFinite(step.freq)) {
-                freqs.push(step.freq);
+            // determine how long this step lasts
+            let stepBeats;
+            if (typeof step.dur === "number" && isFinite(step.dur)) {
+                stepBeats = step.dur;
+            } else if (step.notes && Array.isArray(step.notes) && step.notes.length > 0) {
+                stepBeats = Math.max(...step.notes.map(n =>
+                    (typeof n.dur === "number" && isFinite(n.dur)) ? n.dur : 0
+                ));
+            } else {
+                stepBeats = 0;
             }
 
-            // Play all frequencies in parallel
-            if (!step.rest && freqs.length > 0) {
-                freqs.forEach(freq => {
+            const stepDuration = beatSec * stepBeats;
+
+            if (step.notes && Array.isArray(step.notes)) {
+                step.notes.forEach(n => {
+                    let freq = null;
+                    if (typeof n.freq === "number" && isFinite(n.freq)) {
+                        freq = n.freq;
+                    } else if (n.note) {
+                        freq = noteToFrequency(n.note);
+                    }
+
+                    if (freq) {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+
+                        osc.type = "square";
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.2, startTime);
+
+                        osc.connect(gain).connect(audioCtx.destination);
+
+                        const noteDuration = beatSec * n.dur;
+                        osc.start(startTime);
+                        osc.stop(startTime + noteDuration);
+                    }
+                });
+            } else {
+                // single note or freq
+                let freq = null;
+                if (typeof step.freq === "number" && isFinite(step.freq)) {
+                    freq = step.freq;
+                } else if (step.note) {
+                    freq = noteToFrequency(step.note);
+                }
+
+                if (!step.rest && freq) {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
 
@@ -1701,14 +1732,17 @@
                     gain.gain.setValueAtTime(0.2, startTime);
 
                     osc.connect(gain).connect(audioCtx.destination);
+
                     osc.start(startTime);
-                    osc.stop(startTime + noteDuration);
-                });
+                    osc.stop(startTime + stepDuration);
+                }
             }
 
-            startTime += noteDuration;
+            // advance timeline by step duration
+            startTime += stepDuration;
         });
     }
+
 
     function noteToFrequency(note) {
         const A4 = 440;
@@ -1743,22 +1777,29 @@
         let startTime = audioCtx.currentTime;
 
         beatPattern.forEach(step => {
-            const stepDuration = beatSec * step.dur;
+            // default step length = explicit dur or 1 beat
+            const stepBeats = (typeof step.dur === "number" && isFinite(step.dur)) ? step.dur : 1;
+            const stepDuration = beatSec * stepBeats;
 
             if (!step.rest) {
                 // single type
                 if (step.type) {
-                    if (step.type === "hihat") playHiHatBeat(startTime);
-                    else if (step.type === "kick") playKickBeat(startTime);
-                    else if (step.type === "snare") playSnareBeat(startTime);
+                    const dur = step.dur || stepBeats;
+                    scheduleHit(step.type, startTime, dur * beatSec);
                 }
 
                 // multiple types
                 if (step.types && Array.isArray(step.types)) {
                     step.types.forEach(t => {
-                        if (t === "hihat") playHiHatBeat(startTime);
-                        else if (t === "kick") playKickBeat(startTime);
-                        else if (t === "snare") playSnareBeat(startTime);
+                        let typeName, hitDur;
+                        if (typeof t === "string") {
+                            typeName = t;
+                            hitDur = stepBeats;
+                        } else if (typeof t === "object") {
+                            typeName = t.type;
+                            hitDur = t.dur || stepBeats;
+                        }
+                        scheduleHit(typeName, startTime, hitDur * beatSec);
                     });
                 }
             }
@@ -1768,16 +1809,23 @@
                 const dot = document.getElementById("metronomeDot");
                 if (dot) {
                     dot.style.opacity = "1";
-                    setTimeout(() => { dot.style.opacity = "0"; }, beatMs * step.dur);
+                    setTimeout(() => { dot.style.opacity = "0"; }, beatMs * stepBeats);
                 }
             }, (startTime - audioCtx.currentTime) * 1000);
 
+            // advance timeline by step duration (shortest beat)
             startTime += stepDuration;
         });
     }
 
-    function playHiHatBeat(time) {
-        const bufferSize = audioCtx.sampleRate * 0.05;
+    function scheduleHit(type, time, duration) {
+        if (type === "hihat") playHiHatBeat(time, duration);
+        else if (type === "kick") playKickBeat(time, duration);
+        else if (type === "snare") playSnareBeat(time, duration);
+    }
+
+    function playHiHatBeat(time, duration = 0.05) {
+        const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
@@ -1791,28 +1839,28 @@
 
         const gain = audioCtx.createGain();
         gain.gain.setValueAtTime(0.5, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
         noise.connect(filter).connect(gain).connect(audioCtx.destination);
         noise.start(time);
-        noise.stop(time + 0.05);
+        noise.stop(time + duration);
     }
 
-    function playKickBeat(time) {
+    function playKickBeat(time, duration = 0.3) {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sine";
         osc.frequency.setValueAtTime(150, time);
         osc.frequency.exponentialRampToValueAtTime(50, time + 0.1);
         gain.gain.setValueAtTime(0.8, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(time);
-        osc.stop(time + 0.3);
+        osc.stop(time + duration);
     }
 
-    function playSnareBeat(time) {
-        const bufferSize = audioCtx.sampleRate * 0.2;
+    function playSnareBeat(time, duration = 0.2) {
+        const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
@@ -1826,11 +1874,11 @@
 
         const gain = audioCtx.createGain();
         gain.gain.setValueAtTime(0.6, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
         noise.connect(filter).connect(gain).connect(audioCtx.destination);
         noise.start(time);
-        noise.stop(time + 0.2);
+        noise.stop(time + duration);
     }
 
     // Events
@@ -1856,35 +1904,109 @@
             playBeat(beatPattern, 150);
 
             const melody = [
-                { note: "A5", dur: 1 },
-                { rest: true, dur: 1 },
-                { note: "G#5", dur: 1 },
-                { note: "E5", dur: 1 },
-                { rest: true, dur: 1 },
-                { note: "A5", dur: 1 },
-                { rest: true, dur: 1 },
-                { note: "G#5", dur: 1 },
-                { rest: true, dur: 3 },
-                { note: "E5", dur: 2 },
-                { note: "E5", dur: 2 },
-                { note: "D5", dur: 1 },
-                { note: "D5", dur: 6 }
+                { note: "F#5", dur: 0.5 }, // Intro
+                { note: "C#5", dur: 0.5 },
+                { note: "B5", dur: 0.5 },
+                { note: "F#5", dur: 0.5 },
+                { note: "B5", dur: 0.5 },
+                { note: "C#5", dur: 0.5 },
+                { note: "F#5", dur: 0.5 },
+                { note: "C#5", dur: 0.5 },
+                { note: "B5", dur: 0.5 },
+                { note: "F#4", dur: 0.5 },
+                { notes: [
+                    { note: "B3", dur: 0.5 },
+                    { note: "B5", dur: 1 },
+                    { note: "B2", dur: 1 }
+                ]},
+                { note: "C#5", dur: 0.5 },
+                { notes: [
+                    { note: "F#5", dur: 0.5 },
+                    { note: "B5", dur: 2 },
+                    { note: "B2", dur: 2 }
+                ]},
+                { note: "C#5", dur: 0.5 },
+                { note: "B5", dur: 0.5 },
+                { note: "F#5", dur: 0.5 },
+                { note: "E2", dur: 1 }, // Melody
+                { note: "E3", dur: 1 },
+                { notes: [
+                    { note: "B4", dur: 1 },
+                    { note: "E4", dur: 1 },
+                    { note: "F#4", dur: 1 },
+                    { note: "A5", dur: 1 },
+                    { note: "E2", dur: 1 }
+                ]},
+                { note: "E3", dur: 1 },
+                { notes: [
+                    { note: "B4", dur: 1 },
+                    { note: "E4", dur: 1 },
+                    { note: "G#4", dur: 1 },
+                    { note: "E2", dur: 1 }
+                ]},
+                { notes: [
+                    { note: "B4", dur: 1 },
+                    { note: "E4", dur: 1 },
+                    { note: "E3", dur: 1 }
+                ]},
+                { note: "E2", dur: 1 },
+                { notes: [
+                    { note: "B4", dur: 1 },
+                    { note: "E4", dur: 1 },
+                    { note: "F#4", dur: 1 },
+                    { note: "A5", dur: 1 },
+                    { note: "E3", dur: 1 }
+                ]},
+                { note: "E2", dur: 1 },
+                { notes: [
+                    { note: "B4", dur: 1 },
+                    { note: "E4", dur: 1 },
+                    { note: "G#4", dur: 1 },
+                    { note: "E3", dur: 1 }
+                ]},
+                { note: "E2", dur: 1 },
+                { note: "E3", dur: 1 },
+                { note: "E2", dur: 1 },
+                { notes: [
+                    { note: "B4", dur: 2 },
+                    { note: "E4", dur: 2 },
+                    { note: "G#4", dur: 2 },
+                    { note: "E3", dur: 1 }
+                ]},
+                { note: "E2", dur: 1 },
+                { notes: [
+                    { note: "B4", dur: 2 },
+                    { note: "E4", dur: 2 },
+                    { note: "G#4", dur: 2 },
+                    { note: "E3", dur: 1 }
+                ]},
+                { note: "D2", dur: 1 },
+                { notes: [
+                    { note: "A5", dur: 1 },
+                    { note: "F#4", dur: 1 },
+                    { note: "D4", dur: 1 },
+                    { note: "A4", dur: 1 },
+                    { note: "D3", dur: 1 }
+                ]},
+                { notes: [
+                    { note: "A5", dur: 2 },
+                    { note: "F#4", dur: 2 },
+                    { note: "D4", dur: 2 },
+                    { note: "A4", dur: 2 },
+                    { note: "D2", dur: 1 }
+                ]},
+                { note: "D3", dur: 1 },
+                { notes: [
+                    { note: "A5", dur: 4 },
+                    { note: "F#4", dur: 4 },
+                    { note: "D4", dur: 4 },
+                    { note: "A4", dur: 4 },
+                    { note: "D2", dur: 1 }
+                ]},
+                { note: "D3", dur: 1 },
+                { note: "D2", dur: 1 },
+                { note: "D3", dur: 1 }
             ];
-            // const melody = [
-            //     { freq: 880.000, dur: 1 }, // A5
-            //     { rest: true, dur: 1 },
-            //     { freq: 830.609, dur: 1 }, // G#5
-            //     { freq: 659.255, dur: 1 }, // E5
-            //     { rest: true, dur: 1 },
-            //     { freq: 880.000, dur: 1 }, // A5
-            //     { rest: true, dur: 1 },
-            //     { freq: 830.609, dur: 1 }, // G#5
-            //     { rest: true, dur: 3 },
-            //     { freq: 659.255, dur: 2 }, // E5
-            //     { freq: 659.255, dur: 2 }, // E5
-            //     { freq: 587.330, dur: 1 }, // D5
-            //     { freq: 587.330, dur: 6 }, // D5
-            // ];
             playMelody(melody, 300);
         }
     });
