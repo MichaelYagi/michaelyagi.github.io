@@ -1076,8 +1076,6 @@
             statusElem.textContent = "Tuner paused while tone is playing";
         } else if (metronomeInterval && !micDisabled) {
             statusElem.textContent = "Tuner paused while metronome is on";
-        } else if (!micDisabled) {
-            statusElem.textContent = "Mic: permission denied or unavailable";
         } else {
             statusElem.textContent = "Mic: enabled";
         }
