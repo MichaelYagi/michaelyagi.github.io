@@ -922,7 +922,7 @@
             localStorage.setItem("micDisabled", micDisabled ? "true" : "false");
         }
 
-        if (micDisabled) {
+        if (micDisabled && micStream !== null) {
             // Stop all audio tracks — releases mic at OS level
             micStream.getAudioTracks().forEach(track => track.stop());
             micStream = null; // clear reference
