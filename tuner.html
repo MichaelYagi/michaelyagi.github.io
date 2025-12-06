@@ -1859,12 +1859,11 @@
         if (typeof(Storage) !== "undefined") {
             const micDisabledLS = localStorage.getItem("micDisabled") === "true";
 
-            if (micDisabledLS === true) {
-                micDisabled = true;
+            if (micDisabledLS) {
                 updatePauseMessages();
-                document.getElementById("micToggle").textContent = "Disable Mic";
+                document.getElementById("micToggle").textContent = "Enable Mic";
                 document.getElementById("micToggle").style.display = "block";
-                statusElem.textContent = "Disable Mic";
+                statusElem.textContent = "Mic: disable";
             }
         }
     });
