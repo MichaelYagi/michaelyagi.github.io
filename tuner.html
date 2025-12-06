@@ -649,7 +649,7 @@
     playMelody(melody);
     </code></pre>
 
-    <p>Copy and paste every thing in the console and play!</p>
+    <p>Copy and paste every thing in the console or <button id="playSimpleSong">Play</button> now!</p>
 
     <p>Play around with chords or stacked beats:</p>
 
@@ -1904,6 +1904,51 @@
     }
 
     // Events
+    document.getElementById("playSimpleSong").addEventListener("click", function () {
+        if (songPlaying === false) {
+            songPlaying = true;
+            const beatPattern = [
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 }
+            ];
+
+            const melody = [
+                { note: "A5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "G#5", dur: 1 },
+                { note: "E5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "A5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "G#5", dur: 1 },
+                { note: "rest", dur: 3 },
+                { note: "E5", dur: 2 },
+                { note: "E5", dur: 2 },
+                { note: "D5", dur: 0.5 },
+                { note: "rest", dur: 0.5 },
+                { note: "D5", dur: 6 }
+            ];
+
+            playBeat(beatPattern);
+            playMelody(melody, 300, () => {
+                songPlaying = false;
+            });
+        }
+    });
+
     document.getElementById("playSong").addEventListener("click", function () {
         if (songPlaying === false) {
             songPlaying = true;
