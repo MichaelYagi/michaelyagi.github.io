@@ -1080,6 +1080,52 @@
         updateDialDisplay(); // reuse your existing function
     }
 
+    function konamiCodeListener(callback) {
+        let konamiCodePosition = 0;
+        const konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
+        const konamiAllowedKeys = {
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down',
+            65: 'a',
+            66: 'b',
+            'ArrowLeft': 'left',
+            'ArrowUp': 'up',
+            'ArrowRight': 'right',
+            'ArrowDown': 'down',
+            'KeyA': 'a',
+            'KeyB': 'b',
+            'a': 'a',
+            'b': 'b'
+        };
+
+        // add keydown event listener
+        document.addEventListener('keydown', function(e) {
+            // get the value of the key code from the key map
+            const key = konamiAllowedKeys[e.key || e.code || e.which || e.keyCode];
+            // get the value of the required key from the konami code
+            const requiredKey = konamiCode[konamiCodePosition];
+            // compare the key with the required key
+            if (key === requiredKey) {
+
+                // move to the next key in the konami code sequence
+                konamiCodePosition++;
+
+                // if the last key is reached, activate cheats
+                if (konamiCodePosition === konamiCode.length) {
+                    konamiCodePosition = 0;
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            } else {
+                konamiCodePosition = 0;
+                callback(false);
+            }
+        });
+    }
+
     // Metronome
     let metronomeInterval = null;
     let subdivisionInterval = null;
@@ -1131,12 +1177,11 @@
         // Adaptive blink duration
         const bpm = parseInt(document.getElementById("tempo").value, 10) || 120;
         const beatMs = 60000 / bpm;
-
-        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 0;
+        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 1;
         const subdivisionMs = beatMs / subdivisions;
 
-        // Blink for ~30% of subdivision length, capped between 50–300 ms
-        const blinkDuration = Math.max(50, Math.min(300, subdivisionMs * 0.3));
+        // Blink for ~20% of subdivision length, no hard minimum
+        const blinkDuration = subdivisionMs * 0.2;
 
         setTimeout(() => { dot.style.opacity = "0"; }, blinkDuration);
     }
@@ -1498,7 +1543,99 @@
     // Initialize presets box on page load
     initPresets();
 
+    function playDBZEasterEgg(bpm = 300) {
+        if (!audioCtx) audioCtx = new AudioContext();
+
+        const beatMs = 60000 / bpm;
+        const beatSec = beatMs / 1000;
+
+        const melody = [
+            { freq: 880.000, dur: 2 }, // A5
+            { freq: 830.609, dur: 1 }, // G#5
+            { freq: 659.255, dur: 2 }, // E5
+            { freq: 880.000, dur: 2 }, // A5
+            { freq: 830.609, dur: 4 }, // G#5
+            { freq: 659.255, dur: 2 }, // E5
+            { freq: 659.255, dur: 2 }, // E5
+            { freq: 587.330, dur: 1 }, // D5
+            { freq: 587.330, dur: 6 }, // D5
+        ];
+
+        let startTime = audioCtx.currentTime;
+
+        melody.forEach(note => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = "square";
+            osc.frequency.setValueAtTime(note.freq, startTime);
+            gain.gain.setValueAtTime(0.2, startTime);
+
+            osc.connect(gain).connect(audioCtx.destination);
+
+            const noteDuration = beatSec * note.dur;
+            osc.start(startTime);
+            osc.stop(startTime + noteDuration);
+
+            startTime += noteDuration;
+        });
+
+        // --- calculate total melody length in ms ---
+        const totalDurationMs = melody.reduce((sum, note) => sum + note.dur * beatMs, 0);
+
+        // --- stop the beat after melody finishes ---
+        setTimeout(() => {
+            stopBeat();
+        }, totalDurationMs);
+    }
+
+    let beatIntervalId;
+
+    function startBeat(bpm = 150) {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const beatMs = 60000 / bpm;
+
+        // clear any previous loop
+        if (beatIntervalId) clearInterval(beatIntervalId);
+
+        beatIntervalId = setInterval(() => {
+            const now = audioCtx.currentTime;
+
+            // short oscillator burst for the beat
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = "sine"; // or "square" for a sharper click
+            osc.frequency.setValueAtTime(200, now); // low thump
+            gain.gain.setValueAtTime(0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
+
+            // visual dot flash
+            const dot = document.getElementById("metronomeDot");
+            if (dot) {
+                dot.style.opacity = "1";
+                setTimeout(() => { dot.style.opacity = "0"; }, beatMs);
+            }
+        }, beatMs);
+    }
+
+    function stopBeat() {
+        if (beatIntervalId) clearInterval(beatIntervalId);
+        beatIntervalId = null;
+    }
+
     // Events
+    konamiCodeListener((activated) => {
+        if (activated) {
+            startBeat(150);
+            playDBZEasterEgg(300);
+        }
+    });
+
     window.addEventListener("DOMContentLoaded", () => {
         if (typeof(Storage) !== "undefined") {
             const micMutedLS = localStorage.getItem("micMuted") === "true";
