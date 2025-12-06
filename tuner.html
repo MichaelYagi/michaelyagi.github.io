@@ -369,6 +369,9 @@
         <option value="sine">Sine</option>
         <option value="triangle">Triangle</option>
         <option value="sawtooth">Sawtooth</option>
+        <option value="hihat">Hi-Hat</option>
+        <option value="kick">Kick</option>
+        <option value="snare">Snare</option>
     </select>
     <button id="startMetronome" style="margin-left:8px;">Start</button>
     <button id="stopMetronome">Stop</button>
@@ -1273,27 +1276,34 @@
 
         const soundChoice = document.getElementById("clickSound")?.value || "square";
 
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = soundChoice;
-
-        // Differentiate tones:
-        if (type === "poly") {
-            // distinct pitch for polyrhythm
-            osc.frequency.setValueAtTime(1600, now);
-            gain.gain.setValueAtTime(0.15, now);
+        // --- choose sound source ---
+        if (soundChoice === "hihat") {
+            playHiHatBeat(now, 0.05);   // short crisp click
+        } else if (soundChoice === "kick") {
+            playKickBeat(now, 0.1);     // punchy downbeat
+        } else if (soundChoice === "snare") {
+            playSnareBeat(now, 0.1);    // snappy click
         } else {
-            // keep existing main/subdivision tones
-            osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
-            gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
+            // fallback: oscillator click
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = soundChoice; // e.g. "square", "sine", etc.
+
+            if (type === "poly") {
+                osc.frequency.setValueAtTime(1600, now);
+                gain.gain.setValueAtTime(0.15, now);
+            } else {
+                osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
+                gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
+            }
+
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
         }
 
-        osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.05);
-
-        // choose dot color based on type
+        // --- dot flash logic stays the same ---
         let dot;
         if (type === "poly") {
             dot = document.getElementById("polyDot");
@@ -1305,13 +1315,10 @@
 
         dot.style.opacity = "1";
 
-        // Adaptive blink duration
         const bpm = parseInt(document.getElementById("tempo").value, 10) || 120;
         const beatMs = 60000 / bpm;
         const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 1;
         const subdivisionMs = beatMs / subdivisions;
-
-        // Blink for ~20% of subdivision length, no hard minimum
         const blinkDuration = subdivisionMs * 0.2;
 
         setTimeout(() => { dot.style.opacity = "0"; }, blinkDuration);
