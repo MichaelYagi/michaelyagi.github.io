@@ -202,7 +202,7 @@
             height: 5px;
             background: var(--sub-color);      /* notch color */
             transform: translate(-50%, -50%);
-            pointer-events: none;    /* don’t block slider interaction */
+            cursor: pointer;
         }
         .tempoSliderNotch {
             position: absolute;
@@ -212,7 +212,7 @@
             height: 5px;
             background: var(--sub-color);      /* notch color */
             transform: translate(-50%, -50%);
-            pointer-events: none;    /* don’t block slider interaction */
+            cursor: pointer;
         }
         .row {
             display: flex;
@@ -364,7 +364,7 @@
         <div class="sliderWrapper" style="position:relative;display:inline-block;">
             <input id="tempo" type="range" min="30" max="240" value="120">
             <!-- notch marker -->
-            <div class="tempoSliderNotch sub"></div>
+            <div id="tempoSliderNotch" class="tempoSliderNotch sub"></div>
         </div>
 
         <button id="incrementTempo">▶</button>
@@ -426,7 +426,7 @@
         <div class="sliderWrapper" style="position:relative;display:inline-block;">
             <input id="noteDial" type="range" min="0" max="60" value="30">
             <!-- notch marker -->
-            <div class="sliderNotch sub"></div>
+            <div id="sliderNotch" class="sliderNotch sub"></div>
         </div>
 
         <button id="incrementNote">▶</button>
@@ -1555,6 +1555,7 @@
         });
     });
 
+    // Metronome
     metronomeBox.addEventListener("pointerdown", (e) => {
         // Ignore clicks on controls inside the metronome box
         if (e.target.closest("input, select, button")) return;
@@ -1574,6 +1575,12 @@
         }
     });
 
+    document.getElementById("tempoSliderNotch").addEventListener("click", () => {
+        tempo.value = 120;
+
+        // Trigger any input event listeners bound to the slider
+        tempo.dispatchEvent(new Event("input", { bubbles: true }));
+    });
     document.getElementById("startMetronome").addEventListener("click", () => {
         stopTone();
         startMetronome();
@@ -1631,6 +1638,14 @@
     });
 
     // Tone generator
+    document.getElementById("sliderNotch").addEventListener("click", () => {
+        const min = parseInt(noteDial.min, 10);
+        const max = parseInt(noteDial.max, 10);
+        noteDial.value = (min + max) / 2;
+
+        // Trigger any input event listeners bound to the slider
+        noteDial.dispatchEvent(new Event("input", { bubbles: true }));
+    });
     document.getElementById("decrementNote").addEventListener("click", () => {
         changeDial(-1);
     });
