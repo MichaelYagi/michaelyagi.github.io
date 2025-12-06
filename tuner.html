@@ -901,19 +901,19 @@
 
     // Tuner loop
     // Tuner
-    let micMuted = false;
+    let micDisabled = false;
 
     // Toggle mute/unmute
     document.getElementById("micToggle").addEventListener("click", () => {
         // if (!micStream) return;
 
-        micMuted = !micMuted;
+        micDisabled = !micDisabled;
 
         if (typeof(Storage) !== "undefined") {
-            localStorage.setItem("micMuted", micMuted ? "true" : "false");
+            localStorage.setItem("micDisabled", micDisabled ? "true" : "false");
         }
 
-        if (micMuted) {
+        if (micDisabled) {
             // Stop all audio tracks — releases mic at OS level
             micStream.getAudioTracks().forEach(track => track.stop());
             micStream = null; // clear reference
@@ -956,7 +956,7 @@
         let lastCents = "-- cents";
 
         function update() {
-            if (tunerEnabled && analyser && !micMuted) {
+            if (tunerEnabled && analyser && !micDisabled) {
                 analyser.getFloatTimeDomainData(yinBuffer);
                 const f = yinPitch(yinBuffer, audioCtx.sampleRate);
                 if (f && isFinite(f)) {
@@ -993,7 +993,6 @@
 
     // Init audio
     let micStream = null;
-    let micAllowed = false;
     let micSource = null;
     let micGainNode = null;
 
@@ -1015,50 +1014,54 @@
             let stream = await checkMicrophonePermission();
 
             if (stream !== false) {
-                micAllowed = true;
-                micMuted = false;
+                micDisabled = false;
                 if (typeof(Storage) !== "undefined") {
-                    localStorage.setItem("micMuted", micMuted);
+                    if (localStorage.getItem("micDisabled") !== null) {
+                        micDisabled = localStorage.getItem("micDisabled") === "true";
+                    } else {
+                        localStorage.setItem("micDisabled", micDisabled);
+                    }
                 }
-                document.getElementById("micToggle").style.display = "block";
-                micStream = stream;
 
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 8192;
-                analyser.minDecibels = -100;
-                analyser.maxDecibels = -10;
-                analyser.smoothingTimeConstant = 0.0;
+                if (!micDisabled) {
+                    document.getElementById("micToggle").style.display = "block";
+                    micStream = stream;
 
-                // Create source and gain node
-                micSource = audioCtx.createMediaStreamSource(stream);
-                micGainNode = audioCtx.createGain();
-                micGainNode.gain.value = 1; // start unmuted
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 8192;
+                    analyser.minDecibels = -100;
+                    analyser.maxDecibels = -10;
+                    analyser.smoothingTimeConstant = 0.0;
 
-                // Connect chain: source -> gain -> analyser
-                micSource.connect(micGainNode).connect(analyser);
+                    // Create source and gain node
+                    micSource = audioCtx.createMediaStreamSource(stream);
+                    micGainNode = audioCtx.createGain();
+                    micGainNode.gain.value = 1; // start unmuted
 
-                yinBuffer = new Float32Array(8192);
+                    // Connect chain: source -> gain -> analyser
+                    micSource.connect(micGainNode).connect(analyser);
 
-                updatePauseMessages();
-                startLoop();
-                updateDialDisplay();
-                document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+                    yinBuffer = new Float32Array(8192);
+
+                    updatePauseMessages();
+                    startLoop();
+                    updateDialDisplay();
+                    document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+                }
             } else {
-                micAllowed = true;
-                micMuted = true;
+                micDisabled = true;
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.setItem("micDisabled", micDisabled);
+                }
                 document.getElementById("micToggle").textContent = "Enable Mic";
                 document.getElementById("micToggle").style.display = "block";
-                if (typeof(Storage) !== "undefined") {
-                    localStorage.setItem("micMuted", micMuted);
-                }
                 updatePauseMessages();
             }
         } catch (e) {
-            micAllowed = false;
-            micMuted = true;
+            micDisabled = true;
             if (typeof(Storage) !== "undefined") {
-                localStorage.setItem("micMuted", micMuted);
+                localStorage.setItem("micDisabled", micDisabled);
             }
             updatePauseMessages();
             document.getElementById("micToggle").style.display = "none";
@@ -1067,13 +1070,13 @@
     }
 
     function updatePauseMessages() {
-        if (micMuted) {
+        if (micDisabled) {
             statusElem.textContent = "Mic: disabled";
-        } else if (toneOscillator && micAllowed) {
+        } else if (toneOscillator && !micDisabled) {
             statusElem.textContent = "Tuner paused while tone is playing";
-        } else if (metronomeInterval && micAllowed) {
+        } else if (metronomeInterval && !micDisabled) {
             statusElem.textContent = "Tuner paused while metronome is on";
-        } else if (!micAllowed) {
+        } else if (!micDisabled) {
             statusElem.textContent = "Mic: permission denied or unavailable";
         } else {
             statusElem.textContent = "Mic: enabled";
@@ -1856,10 +1859,10 @@
 
     window.addEventListener("DOMContentLoaded", () => {
         if (typeof(Storage) !== "undefined") {
-            const micMutedLS = localStorage.getItem("micMuted") === "true";
+            const micDisabledLS = localStorage.getItem("micDisabled") === "true";
 
-            if (micMutedLS === true) {
-                micMuted = true;
+            if (micDisabledLS === true) {
+                micDisabled = true;
                 updatePauseMessages();
                 document.getElementById("micToggle").textContent = "Disable Mic";
                 document.getElementById("micToggle").style.display = "block";
