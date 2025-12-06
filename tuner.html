@@ -662,7 +662,7 @@
     </code></pre>
 
     <pre><code>
-    startBeat(beatPattern);
+    playBeat(beatPattern);
     playMelody(melody);
     </code></pre>
 
@@ -1002,7 +1002,7 @@
         if (localStorage.getItem("micDisabled") !== null) {
             micDisabled = localStorage.getItem("micDisabled") === "true";
         }
-        
+
         if (micDisabled) {
             return false;
         }
@@ -1673,36 +1673,39 @@
 
         const beatMs = 60000 / bpm;
         const beatSec = beatMs / 1000;
-
         let startTime = audioCtx.currentTime;
 
-        melody.forEach(note => {
-            const noteDuration = beatSec * note.dur;
+        melody.forEach(step => {
+            const noteDuration = beatSec * step.dur;
 
-            // Determine frequency: either freq or note
-            let freq = null;
-            if (typeof note.freq === "number" && isFinite(note.freq)) {
-                freq = note.freq;
-            } else if (note.note) {
-                freq = noteToFrequency(note.note);
+            // Collect frequencies for this step
+            let freqs = [];
+
+            if (step.notes && Array.isArray(step.notes)) {
+                freqs = step.notes.map(n => noteToFrequency(n)).filter(f => f);
+            } else if (step.note) {
+                const f = noteToFrequency(step.note);
+                if (f) freqs.push(f);
+            } else if (typeof step.freq === "number" && isFinite(step.freq)) {
+                freqs.push(step.freq);
             }
 
-            // Skip oscillator if it's a rest
-            if (!note.rest && freq) {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
+            // Play all frequencies in parallel
+            if (!step.rest && freqs.length > 0) {
+                freqs.forEach(freq => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
 
-                osc.type = "square";
-                osc.frequency.setValueAtTime(freq, startTime);
-                gain.gain.setValueAtTime(0.2, startTime);
+                    osc.type = "square";
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    gain.gain.setValueAtTime(0.2, startTime);
 
-                osc.connect(gain).connect(audioCtx.destination);
-
-                osc.start(startTime);
-                osc.stop(startTime + noteDuration);
+                    osc.connect(gain).connect(audioCtx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + noteDuration);
+                });
             }
 
-            // Always advance timeline
             startTime += noteDuration;
         });
     }
@@ -1732,27 +1735,35 @@
     }
 
     // hihat, kick, or snare
-    function startBeat(beatPattern, bpm = 150) {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeat(beatPattern = [], bpm = 300) {
+        if (!audioCtx) audioCtx = new AudioContext();
+
         const beatMs = 60000 / bpm;
         const beatSec = beatMs / 1000;
-
         let startTime = audioCtx.currentTime;
 
         beatPattern.forEach(step => {
             const stepDuration = beatSec * step.dur;
 
             if (!step.rest) {
-                if (step.type === "hihat") {
-                    playHiHatBeat(startTime);
-                } else if (step.type === "kick") {
-                    playKickBeat(startTime);
-                } else if (step.type === "snare") {
-                    playSnareBeat(startTime);
+                // single type
+                if (step.type) {
+                    if (step.type === "hihat") playHiHatBeat(startTime);
+                    else if (step.type === "kick") playKickBeat(startTime);
+                    else if (step.type === "snare") playSnareBeat(startTime);
+                }
+
+                // multiple types
+                if (step.types && Array.isArray(step.types)) {
+                    step.types.forEach(t => {
+                        if (t === "hihat") playHiHatBeat(startTime);
+                        else if (t === "kick") playKickBeat(startTime);
+                        else if (t === "snare") playSnareBeat(startTime);
+                    });
                 }
             }
 
-            // Visual dot flash
+            // visual dot flash
             setTimeout(() => {
                 const dot = document.getElementById("metronomeDot");
                 if (dot) {
@@ -1842,7 +1853,7 @@
                 { type: "hihat", dur: 1 },
                 { type: "hihat", dur: 1 }
             ];
-            startBeat(beatPattern, 150);
+            playBeat(beatPattern, 150);
 
             const melody = [
                 { note: "A5", dur: 1 },
