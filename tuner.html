@@ -1885,21 +1885,54 @@
     konamiCodeListener((activated) => {
         if (activated) {
             const beatPattern = [
+                { rest: true, dur: 5 },
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
                 { type: "hihat", dur: 1 },
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
                 { type: "hihat", dur: 1 },
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
                 { type: "hihat", dur: 1 },
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
                 { type: "hihat", dur: 1 },
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
                 { type: "hihat", dur: 1 },
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
                 { type: "hihat", dur: 1 },
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
                 { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 }
+                { types: [
+                    { type: "kick", dur: 2 },
+                    { type: "snare", dur: 2 },
+                    { type: "hihat", dur: 1 },
+                ]},
             ];
             playBeat(beatPattern, 150);
 
