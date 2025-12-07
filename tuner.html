@@ -605,74 +605,73 @@
         <p>Create tunes! Configure a simple beat and melody pattern. You can use a combination of hihats, kicks, or snare.</p>
 
         <pre><code>
-    const beatPattern = [
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 },
-        { type: "hihat", dur: 1 }
-    ];
-    </code></pre>
+        const beatPattern = [
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 },
+            { type: "hihat", dur: 2 }
+        ];
+        </code></pre>
 
         <pre><code>
-    const melody = [
-        { note: "A5", dur: 1 },
-        { note: "rest", dur: 1 },
-        { note: "G#5", dur: 1 },
-        { note: "E5", dur: 1 },
-        { note: "rest", dur: 1 },
-        { note: "A5", dur: 1 },
-        { note: "rest", dur: 1 },
-        { note: "G#5", dur: 1 },
-        { note: "rest", dur: 3 },
-        { note: "E5", dur: 2 },
-        { note: "E5", dur: 2 },
-        { note: "D5", dur: 0.5 },
-        { note: "rest", dur: 0.5 },
-        { note: "D5", dur: 6 }
-    ];
-    </code></pre>
+        const melody = [
+            { note: "A5", dur: 1 },
+            { note: "rest", dur: 1 },
+            { note: "G#5", dur: 1 },
+            { note: "E5", dur: 1 },
+            { note: "rest", dur: 1 },
+            { note: "A5", dur: 1 },
+            { note: "rest", dur: 1 },
+            { note: "G#5", dur: 1 },
+            { note: "rest", dur: 3 },
+            { note: "E5", dur: 2 },
+            { note: "E5", dur: 2 },
+            { note: "D5", dur: 0.5 },
+            { note: "rest", dur: 0.5 },
+            { note: "D5", dur: 6 }
+        ];
+        </code></pre>
 
         <pre><code>
-    playBeat(beatPattern);
-    playMelody(melody);
-    </code></pre>
+        playBeat(beatPattern);
+        playMelody(melody);
+        </code></pre>
 
         <p>Copy and paste everything in the console or <button id="playSimpleSong">Play</button> now!</p>
 
         <p>Play around with chords or stacked beats too.</p>
 
         <pre><code>
-    const melody = [
-        ...,
-        { notes: [
-            { note: "B3", dur: 0.5 },
-            { note: "B5", dur: 1 },
-            { note: "B2", dur: 1 }
-        ]}
-        ...
-    ];
-    const beatPattern = [
-        ...,
-        { type: "hihat", dur: 1 },
-        { types: [
-            { type: "kick", dur: 2 },
-            { type: "snare", dur: 2 },
+        const melody = [
+            ...,
+            { notes: [
+                { note: "B3", dur: 0.5 },
+                { note: "B5", dur: 1 },
+                { note: "B2", dur: 1 }
+            ]}
+            ...
+        ];
+        const beatPattern = [
+            ...,
             { type: "hihat", dur: 1 },
-        ]},
-        ...
-    ];
-    </code></pre>
+            { types: [
+                { type: "kick", dur: 2 },
+                { type: "snare", dur: 2 },
+                { type: "hihat", dur: 1 },
+            ]},
+            ...
+        ];
+        </code></pre>
 
         <p><button id="playSong">Play</button> a version of the above that combines different chords and beat patterns.</p>
 
@@ -1905,21 +1904,20 @@
         if (songPlaying === false) {
             songPlaying = true;
             const beatPattern = [
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 },
-                { type: "hihat", dur: 1 }
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 }
             ];
 
             const melody = [
@@ -1952,58 +1950,58 @@
             const beatPattern = [
                 {type: "rest", dur: 4},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "clap", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "clap", dur: 1},
+                ]},
                 {type: "hihat", dur: 1},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "hihat", dur: 1},
+                ]},
                 {type: "hihat", dur: 1},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "clap", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "clap", dur: 1},
+                ]},
                 {type: "hihat", dur: 1},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "clap", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "clap", dur: 1},
+                ]},
                 {type: "hihat", dur: 1},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "clap", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "clap", dur: 1},
+                ]},
                 {type: "hihat", dur: 1},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "clap", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "clap", dur: 1},
+                ]},
                 {type: "hihat", dur: 1},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "clap", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "clap", dur: 1},
+                ]},
                 {type: "hihat", dur: 1},
                 {types: [
-                        {type: "kick", dur: 2},
-                        {type: "snare", dur: 2},
-                        {type: "clap", dur: 1},
-                    ]},
+                    {type: "kick", dur: 2},
+                    {type: "snare", dur: 2},
+                    {type: "clap", dur: 1},
+                ]},
                 {type: "hihat", dur: 1}
             ];
             playBeat(beatPattern, 150);
 
             const melody = [
-                {note: "F#6", dur: 0.5}, // Intro
+                {note: "F#6", dur: 0.5}, // Intro - 16ths
                 {note: "C#6", dur: 0.5},
                 {note: "B5", dur: 0.5},
                 {note: "F#5", dur: 0.5},
@@ -2019,81 +2017,81 @@
                 {note: "C#6", dur: 0.5},
                 {note: "B5", dur: 0.5},
                 {note: "F#5", dur: 0.5},
-                {note: "E2", dur: 1}, // Melody
+                {note: "E2", dur: 1}, // Melody - 8ths
                 {note: "E3", dur: 1},
                 {notes: [
-                        {note: "B5", dur: 1},
-                        {note: "E5", dur: 1},
-                        {note: "F#5", dur: 1},
-                        {note: "A5", dur: 1},
-                        {note: "E2", dur: 1}
-                    ]},
+                    {note: "B5", dur: 1},
+                    {note: "E5", dur: 1},
+                    {note: "F#5", dur: 1},
+                    {note: "A5", dur: 1},
+                    {note: "E2", dur: 1}
+                ]},
                 {note: "E3", dur: 1},
                 {notes: [
-                        {note: "B5", dur: 1},
-                        {note: "E5", dur: 1},
-                        {note: "G#5", dur: 1},
-                        {note: "E2", dur: 1}
-                    ]},
+                    {note: "B5", dur: 1},
+                    {note: "E5", dur: 1},
+                    {note: "G#5", dur: 1},
+                    {note: "E2", dur: 1}
+                ]},
                 {notes: [
-                        {note: "B5", dur: 1},
-                        {note: "E5", dur: 1},
-                        {note: "E3", dur: 1}
-                    ]},
+                    {note: "B5", dur: 1},
+                    {note: "E5", dur: 1},
+                    {note: "E3", dur: 1}
+                ]},
                 {note: "E2", dur: 1},
                 {notes: [
-                        {note: "B5", dur: 1},
-                        {note: "E5", dur: 1},
-                        {note: "F#5", dur: 1},
-                        {note: "A5", dur: 1},
-                        {note: "E3", dur: 1}
-                    ]},
+                    {note: "B5", dur: 1},
+                    {note: "E5", dur: 1},
+                    {note: "F#5", dur: 1},
+                    {note: "A5", dur: 1},
+                    {note: "E3", dur: 1}
+                ]},
                 {note: "E2", dur: 1},
                 {notes: [
-                        {note: "B5", dur: 1},
-                        {note: "E5", dur: 1},
-                        {note: "G#5", dur: 1},
-                        {note: "E3", dur: 1}
-                    ]},
+                    {note: "B5", dur: 1},
+                    {note: "E5", dur: 1},
+                    {note: "G#5", dur: 1},
+                    {note: "E3", dur: 1}
+                ]},
                 {note: "E2", dur: 1},
                 {note: "E3", dur: 1},
                 {note: "E2", dur: 1},
                 {notes: [
-                        {note: "B5", dur: 2},
-                        {note: "E5", dur: 2},
-                        {note: "G#5", dur: 2},
-                        {note: "E3", dur: 1}
-                    ]},
+                    {note: "B5", dur: 2},
+                    {note: "E5", dur: 2},
+                    {note: "G#5", dur: 2},
+                    {note: "E3", dur: 1}
+                ]},
                 {note: "E2", dur: 1},
                 {notes: [
-                        {note: "B5", dur: 2},
-                        {note: "E5", dur: 2},
-                        {note: "G#5", dur: 2},
-                        {note: "E3", dur: 1}
-                    ]},
+                    {note: "B5", dur: 2},
+                    {note: "E5", dur: 2},
+                    {note: "G#5", dur: 2},
+                    {note: "E3", dur: 1}
+                ]},
                 {note: "D2", dur: 1},
                 {notes: [
-                        {note: "A5", dur: 1},
-                        {note: "F#5", dur: 1},
-                        {note: "D5", dur: 1},
-                        {note: "A5", dur: 1},
-                        {note: "D3", dur: 1}
-                    ]},
+                    {note: "A5", dur: 1},
+                    {note: "F#5", dur: 1},
+                    {note: "D5", dur: 1},
+                    {note: "A5", dur: 1},
+                    {note: "D3", dur: 1}
+                ]},
                 {notes: [
-                        {note: "A5", dur: 2},
-                        {note: "F#5", dur: 2},
-                        {note: "D5", dur: 2},
-                        {note: "A5", dur: 2},
-                        {note: "D2", dur: 1}
-                    ]},
+                    {note: "A5", dur: 2},
+                    {note: "F#5", dur: 2},
+                    {note: "D5", dur: 2},
+                    {note: "A5", dur: 2},
+                    {note: "D2", dur: 1}
+                ]},
                 {note: "D3", dur: 1},
                 {notes: [
-                        {note: "A5", dur: 4},
-                        {note: "F#5", dur: 4},
-                        {note: "D5", dur: 4},
-                        {note: "A5", dur: 4},
-                        {note: "D2", dur: 1}
-                    ]},
+                    {note: "A5", dur: 4},
+                    {note: "F#5", dur: 4},
+                    {note: "D5", dur: 4},
+                    {note: "A5", dur: 4},
+                    {note: "D2", dur: 1}
+                ]},
                 {note: "D3", dur: 1},
                 {note: "D2", dur: 1},
                 {note: "D3", dur: 1}
