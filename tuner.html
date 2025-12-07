@@ -949,6 +949,7 @@
                 micStream = null;
                 document.getElementById("micToggle").textContent = "Enable Mic";
                 document.getElementById("status").textContent = "Mic: disabled";
+                localStorage.setItem("micEnabled", "false");
                 updatePauseMessages();
                 resetTunerUI();
                 stopLoop()
@@ -1009,12 +1010,7 @@
     let micStream = null;
 
     async function init() {
-        let micPref = localStorage.getItem("micEnabled");
-        if (micPref === null) {
-            localStorage.setItem("micEnabled", "true");
-            micPref = "true";
-        }
-
+        const micPref = localStorage.getItem("micEnabled") || "false";
         document.getElementById("micToggle").style.display = "block";
 
         if (micPref === "true") {
