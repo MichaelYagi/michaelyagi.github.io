@@ -908,10 +908,7 @@
         ctx.clearRect(0, 0, toneWaveCanvas.width, toneWaveCanvas.height);
     }
 
-    // Tuner loop
     // Tuner
-    let micDisabled = false;
-
     // Toggle mute/unmute
     document.getElementById("micToggle").addEventListener("click", async () => {
         if (micStream) {
@@ -974,7 +971,6 @@
         let lastCents = "-- cents";
 
         function update() {
-            // if (tunerEnabled && analyser && !micDisabled) {
             if (analyser && yinBuffer && audioCtx && audioCtx.state === "running") {
                 analyser.getFloatTimeDomainData(yinBuffer);
                 const f = yinPitch(yinBuffer, audioCtx.sampleRate);
@@ -984,10 +980,6 @@
                     lastFreq = `${f.toFixed(2)} Hz`;
                     lastCents = `${cents > 0 ? "+" : ""}${cents.toFixed(1)} cents`;
 
-                    // noteElem.textContent = `${name}${octave}`;
-                    // freqElem.textContent = `${f.toFixed(2)} Hz`;
-                    // centsElem.textContent = `${cents > 0 ? "+" : ""}${cents.toFixed(1)} cents`;
-
                     noteElem.textContent = lastNote;
                     freqElem.textContent = lastFreq;
                     centsElem.textContent = lastCents;
@@ -996,10 +988,6 @@
                     const offsetPx = (clamped / 200) * 320;
                     needleIndicator.style.left = `calc(50% + ${offsetPx}px)`;
                 } else {
-                    // noteElem.textContent = "--";
-                    // freqElem.textContent = "-- Hz";
-                    // centsElem.textContent = "-- cents";
-                    // needleIndicator.style.left = "50%";
                     noteElem.textContent = lastNote;
                     freqElem.textContent = lastFreq;
                     centsElem.textContent = lastCents;
