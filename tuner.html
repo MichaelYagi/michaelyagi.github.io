@@ -1600,7 +1600,7 @@ const beatPattern = [
         let totalDuration = 0;
 
         melody.forEach(step => {
-            // determine how long this step lasts → shortest note
+            // determine step length by shortest note
             let stepBeats;
             if (typeof step.dur === "number" && isFinite(step.dur)) {
                 stepBeats = step.dur;
@@ -1627,13 +1627,15 @@ const beatPattern = [
                         const osc = audioCtx.createOscillator();
                         const gain = audioCtx.createGain();
 
-                        osc.type = "square";
+                        // instrument option, default to "square"
+                        const instrument = n.instrument || "square";
+                        osc.type = instrument;
+
                         osc.frequency.setValueAtTime(freq, startTime);
                         gain.gain.setValueAtTime(0.2, startTime);
 
                         osc.connect(gain).connect(audioCtx.destination);
 
-                        // each note plays for its own duration, even if longer than step
                         const noteDuration = beatSec * n.dur;
                         osc.start(startTime);
                         osc.stop(startTime + noteDuration);
@@ -1652,7 +1654,10 @@ const beatPattern = [
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
 
-                    osc.type = "square";
+                    // instrument option, default to "square"
+                    const instrument = step.instrument || "square";
+                    osc.type = instrument;
+
                     osc.frequency.setValueAtTime(freq, startTime);
                     gain.gain.setValueAtTime(0.2, startTime);
 
