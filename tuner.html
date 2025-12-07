@@ -1758,42 +1758,27 @@
         highpass.type = "highpass";
         highpass.frequency.value = 8000;
 
-        // metallic band
+        // metallic band (still noise, not pitched)
         const bandpass = audioCtx.createBiquadFilter();
         bandpass.type = "bandpass";
         bandpass.frequency.value = 9000;
         bandpass.Q.value = 1.5;
 
+        // envelope gain (boosted)
         const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.7, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+        gain.gain.setValueAtTime(1.2, time); // louder start
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
 
-        // connect both filters to gain
-        noise.connect(highpass).connect(gain).connect(audioCtx.destination);
-        noise.connect(bandpass).connect(gain).connect(audioCtx.destination);
+        // master gain stage
+        const masterGain = audioCtx.createGain();
+        masterGain.gain.value = 1.5; // global boost
+
+        // connect both filters to gain → master
+        noise.connect(highpass).connect(gain).connect(masterGain).connect(audioCtx.destination);
+        noise.connect(bandpass).connect(gain).connect(masterGain).connect(audioCtx.destination);
 
         noise.start(time);
         noise.stop(time + duration);
-
-        // optional metallic partials
-        const osc1 = audioCtx.createOscillator();
-        osc1.type = "square";
-        osc1.frequency.value = 300;
-        const osc2 = audioCtx.createOscillator();
-        osc2.type = "square";
-        osc2.frequency.value = 450;
-
-        const oscGain = audioCtx.createGain();
-        oscGain.gain.setValueAtTime(0.05, time);
-        oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
-
-        osc1.connect(oscGain).connect(audioCtx.destination);
-        osc2.connect(oscGain).connect(audioCtx.destination);
-
-        osc1.start(time);
-        osc1.stop(time + 0.2);
-        osc2.start(time);
-        osc2.stop(time + 0.2);
     }
 
     function playKickBeat(time, duration = 0.3) {
@@ -1850,51 +1835,41 @@
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
-        // Crack (upper mids)
-        const filterCrack = audioCtx.createBiquadFilter();
-        filterCrack.type = "bandpass";
-        filterCrack.frequency.value = 3500;
-        filterCrack.Q.value = 1.0;
-        const gainCrack = audioCtx.createGain();
-        gainCrack.gain.setValueAtTime(1.0, time);
-        gainCrack.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+        // Crack (strong transient)
+        const crackFilter = audioCtx.createBiquadFilter();
+        crackFilter.type = "bandpass";
+        crackFilter.frequency.value = 3500;
+        const crackGain = audioCtx.createGain();
+        crackGain.gain.setValueAtTime(2.0, time); // much louder
+        crackGain.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
 
-        // Body (lower mids, reduced)
-        const filterBody = audioCtx.createBiquadFilter();
-        filterBody.type = "bandpass";
-        filterBody.frequency.value = 1000;
-        filterBody.Q.value = 0.7;
-        const gainBody = audioCtx.createGain();
-        gainBody.gain.setValueAtTime(0.5, time); // lower gain
-        gainBody.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+        // Body (short but boosted)
+        const bodyFilter = audioCtx.createBiquadFilter();
+        bodyFilter.type = "bandpass";
+        bodyFilter.frequency.value = 1200;
+        const bodyGain = audioCtx.createGain();
+        bodyGain.gain.setValueAtTime(1.2, time); // louder body
+        bodyGain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
 
-        // Air (high shimmer)
-        const filterAir = audioCtx.createBiquadFilter();
-        filterAir.type = "bandpass";
-        filterAir.frequency.value = 8000;
-        filterAir.Q.value = 1.2;
-        const gainAir = audioCtx.createGain();
-        gainAir.gain.setValueAtTime(0.3, time);
-        gainAir.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+        // Air (bright shimmer, boosted)
+        const airFilter = audioCtx.createBiquadFilter();
+        airFilter.type = "bandpass";
+        airFilter.frequency.value = 9000;
+        const airGain = audioCtx.createGain();
+        airGain.gain.setValueAtTime(0.8, time); // brighter
+        airGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
 
-        // Optional resonance oscillator (very subtle)
-        const osc = audioCtx.createOscillator();
-        osc.type = "sine";
-        osc.frequency.value = 200;
-        const oscGain = audioCtx.createGain();
-        oscGain.gain.setValueAtTime(0.1, time);
-        oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+        // Master gain stage to ensure loudness
+        const masterGain = audioCtx.createGain();
+        masterGain.gain.value = 1.5; // global boost
 
         // Connect chains
-        noise.connect(filterCrack).connect(gainCrack).connect(audioCtx.destination);
-        noise.connect(filterBody).connect(gainBody).connect(audioCtx.destination);
-        noise.connect(filterAir).connect(gainAir).connect(audioCtx.destination);
-        osc.connect(oscGain).connect(audioCtx.destination);
+        noise.connect(crackFilter).connect(crackGain).connect(masterGain).connect(audioCtx.destination);
+        noise.connect(bodyFilter).connect(bodyGain).connect(masterGain).connect(audioCtx.destination);
+        noise.connect(airFilter).connect(airGain).connect(masterGain).connect(audioCtx.destination);
 
         noise.start(time);
         noise.stop(time + duration);
-        osc.start(time);
-        osc.stop(time + 0.05);
     }
 
     function playClapBeat(time, duration = 0.15) {
