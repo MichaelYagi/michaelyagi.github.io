@@ -720,7 +720,6 @@ const beatPattern = [
     const NOTE_STRINGS = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 
     // Audio + analyser
-    let audioCtx = null;
     let analyser = null;
     let yinBuffer = null;
     let toneEnabled = true;
@@ -1068,6 +1067,7 @@ const beatPattern = [
     }
 
     // Tone generator
+    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let toneOscillator = null;
     let toneGain = null;
 
@@ -1107,48 +1107,80 @@ const beatPattern = [
     function updateWaveform() {
         const wave = document.getElementById("waveform").value;
         if (toneOscillator) {
-            toneOscillator.type = wave; // change waveform live
+            const validTypes = ["sine","square","triangle","sawtooth"];
+            if (validTypes.includes(wave)) {
+                toneOscillator.type = wave; // change live, no new oscillator
+            }
         }
     }
 
     function playTone(freq, type = "sine") {
+        stopTone();
+
         if (toneOscillator) return;
 
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        toneOscillator = audioCtx.createOscillator();
-        toneGain = audioCtx.createGain();
+        const validTypes = ["sine", "square", "triangle", "sawtooth"];
 
-        toneOscillator.type = type;
-        toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        if (validTypes.includes(type)) {
+            // Standard oscillator
+            toneOscillator = audioCtx.createOscillator();
+            toneGain = audioCtx.createGain();
 
-        toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        toneOscillator.connect(toneGain).connect(audioCtx.destination);
-        toneOscillator.start();
+            toneOscillator.type = type;
+            toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            toneOscillator.connect(toneGain).connect(audioCtx.destination);
+            toneOscillator.start();
+
+            toneOscillator.onended = () => {
+                toneOscillator = null;
+                toneGain = null;
+                setPlayButtonState(true);
+                setTunerActive(true);
+                stopWaveAnimation();
+                updatePauseMessages();
+            };
+        } else {
+            // Custom instruments
+            const duration = 1.0; // default preview length
+            const startTime = audioCtx.currentTime;
+
+            if (type === "piano") {
+                playPianoTone(freq, startTime, duration);
+            } else if (type === "strings") {
+                playStringTone(freq, startTime, duration);
+            } else if (type === "electricGuitar") {
+                playElectricGuitarTone(freq, startTime, duration);
+            } else if (type === "acousticGuitar") {
+                playAcousticGuitarTone(freq, startTime, duration);
+            } else {
+                // fallback to square
+                toneOscillator = audioCtx.createOscillator();
+                toneGain = audioCtx.createGain();
+                toneOscillator.type = "square";
+                toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                toneOscillator.connect(toneGain).connect(audioCtx.destination);
+                toneOscillator.start();
+            }
+        }
 
         setPlayButtonState(false);
         setTunerActive(false);
-
         startWaveAnimation(freq);
         syncUIState();
-
-        toneOscillator.onended = () => {
-            toneOscillator = null;
-            toneGain = null;
-            setPlayButtonState(true);
-            setTunerActive(true);
-            stopWaveAnimation();
-            updatePauseMessages();
-        };
-
         updatePauseMessages();
     }
 
     function stopTone() {
         if (toneOscillator) {
-            toneOscillator.stop();
+            try { toneOscillator.stop(); } catch(e) {}
             toneOscillator.disconnect();
-            if (toneGain) toneGain.disconnect();
             toneOscillator = null;
+        }
+        if (toneGain) {
+            toneGain.disconnect();
             toneGain = null;
         }
 
@@ -1624,21 +1656,26 @@ const beatPattern = [
                     }
 
                     if (freq) {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-
-                        // instrument option, default to "square"
-                        const instrument = n.instrument || "square";
-                        osc.type = instrument;
-
-                        osc.frequency.setValueAtTime(freq, startTime);
-                        gain.gain.setValueAtTime(0.2, startTime);
-
-                        osc.connect(gain).connect(audioCtx.destination);
-
                         const noteDuration = beatSec * n.dur;
-                        osc.start(startTime);
-                        osc.stop(startTime + noteDuration);
+                        if (n.instrument === "piano") {
+                            playPianoTone(freq, startTime, noteDuration);
+                        } else if (n.instrument === "strings") {
+                            playStringTone(freq, startTime, noteDuration);
+                        } else if (n.instrument === "electricGuitar") {
+                            playElectricGuitarTone(freq, startTime, noteDuration);
+                        } else if (n.instrument === "acousticGuitar") {
+                            playAcousticGuitarTone(freq, startTime, noteDuration);
+                        } else {
+                            // default oscillator
+                            const osc = audioCtx.createOscillator();
+                            const gain = audioCtx.createGain();
+                            osc.type = n.instrument || "square";
+                            osc.frequency.setValueAtTime(freq, startTime);
+                            gain.gain.setValueAtTime(0.2, startTime);
+                            osc.connect(gain).connect(audioCtx.destination);
+                            osc.start(startTime);
+                            osc.stop(startTime + noteDuration);
+                        }
                     }
                 });
             } else {
@@ -1651,20 +1688,25 @@ const beatPattern = [
                 }
 
                 if (step.type !== "rest" && freq) {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-
-                    // instrument option, default to "square"
-                    const instrument = step.instrument || "square";
-                    osc.type = instrument;
-
-                    osc.frequency.setValueAtTime(freq, startTime);
-                    gain.gain.setValueAtTime(0.2, startTime);
-
-                    osc.connect(gain).connect(audioCtx.destination);
-
-                    osc.start(startTime);
-                    osc.stop(startTime + stepDuration);
+                    const noteDuration = beatSec * step.dur;
+                    if (step.instrument === "piano") {
+                        playPianoTone(freq, startTime, noteDuration);
+                    } else if (step.instrument === "strings") {
+                        playStringTone(freq, startTime, noteDuration);
+                    } else if (step.instrument === "electricGuitar") {
+                        playElectricGuitarTone(freq, startTime, noteDuration);
+                    } else if (step.instrument === "acousticGuitar") {
+                        playAcousticGuitarTone(freq, startTime, noteDuration);
+                    } else {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = step.instrument || "square";
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.2, startTime);
+                        osc.connect(gain).connect(audioCtx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + noteDuration);
+                    }
                 }
             }
 
@@ -1679,6 +1721,87 @@ const beatPattern = [
                 onFinished();
             }, totalDuration * 1000);
         }
+    }
+
+    function playPianoTone(freq, startTime, duration) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = "sine"; // fundamental tone
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        // Envelope: sharp attack, quick decay, natural release
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.9, startTime + 0.01); // hammer strike
+        gain.gain.linearRampToValueAtTime(0.4, startTime + 0.15); // decay
+        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
+
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+    }
+
+    function playStringTone(freq, startTime, duration) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        // Envelope: slow attack, steady sustain, gentle release
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.6, startTime + 0.5); // attack
+        gain.gain.setValueAtTime(0.6, startTime + duration - 0.3); // sustain
+        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(500, startTime);
+
+        osc.connect(filter).connect(gain).connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+    }
+
+    function playElectricGuitarTone(freq, startTime, duration) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = "sawtooth"; // bright harmonic content
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        // Envelope: sharp attack, sustain, release
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.8, startTime + 0.02); // fast attack
+        gain.gain.setValueAtTime(0.6, startTime + duration - 0.1); // sustain
+        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
+
+        // Filter to tame harshness
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(2500, startTime);
+
+        osc.connect(filter).connect(gain).connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+    }
+
+    function playAcousticGuitarTone(freq, startTime, duration) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = "triangle"; // softer harmonic profile
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        // Envelope: pluck attack, quick decay
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(1.0, startTime + 0.01); // sharp pluck
+        gain.gain.linearRampToValueAtTime(0.3, startTime + 0.1);  // quick decay
+        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
+
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
     }
 
     function noteToFrequency(note) {
