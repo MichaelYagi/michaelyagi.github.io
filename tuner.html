@@ -911,6 +911,7 @@
     // Tuner loop
     // Tuner
     let micDisabled = false;
+    let micManuallyDisabled = false;
 
     // Toggle mute/unmute
     document.getElementById("micToggle").addEventListener("click", async () => {
@@ -923,36 +924,37 @@
             updatePauseMessages();
             resetTunerUI(); // blanks Hz/cents/needle
             return;
-        }
+        } else {
+            micManuallyDisabled = false;
+            // Enable mic → always try getUserMedia
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
+                });
 
-        // Enable mic → always try getUserMedia
-        try {
-            micStream = await navigator.mediaDevices.getUserMedia({
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-            });
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 8192;
+                const source = audioCtx.createMediaStreamSource(micStream);
+                source.connect(analyser);
 
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 8192;
-            const source = audioCtx.createMediaStreamSource(micStream);
-            source.connect(analyser);
+                document.getElementById("micToggle").textContent = "Disable Mic";
+                updatePauseMessages();
+                startLoop();
+                updateDialDisplay();
+            } catch (err) {
+                // Permission denied → clear UI immediately
+                resetTunerUI();
 
-            document.getElementById("micToggle").textContent = "Disable Mic";
-            updatePauseMessages();
-            startLoop();
-            updateDialDisplay();
-        } catch (err) {
-            // Permission denied → clear UI immediately
-            resetTunerUI();
+                if (audioCtx && audioCtx.state !== "closed") {
+                    audioCtx.close();
+                    audioCtx = null;
+                }
 
-            if (audioCtx && audioCtx.state !== "closed") {
-                audioCtx.close();
-                audioCtx = null;
+                micStream = null;
+                document.getElementById("micToggle").textContent = "Enable Mic";
+                updatePauseMessages();
             }
-
-            micStream = null;
-            document.getElementById("micToggle").textContent = "Enable Mic";
-            updatePauseMessages();
         }
     });
 
@@ -964,33 +966,21 @@
     }
 
     function startLoop() {
-        let lastNote = "--";
-        let lastFreq = "-- Hz";
-        let lastCents = "-- cents";
-
         function update() {
-            // if (tunerEnabled && analyser && !micDisabled) {
-            if (audioCtx && analyser) {
+            if (tunerEnabled && analyser && micStream) {
                 analyser.getFloatTimeDomainData(yinBuffer);
-                const f = yinPitch(yinBuffer, audioCtx.sampleRate);
+                const f = yinPitch(yinBuffer, audioCtx?.sampleRate);
                 if (f && isFinite(f)) {
                     const { name, octave, cents } = freqToNoteData(f);
-                    lastNote = `${name}${octave}`;
-                    lastFreq = `${f.toFixed(2)} Hz`;
-                    lastCents = `${cents > 0 ? "+" : ""}${cents.toFixed(1)} cents`;
-                    
-                    noteElem.textContent = lastNote;
-                    freqElem.textContent = lastFreq;
-                    centsElem.textContent = lastCents;
-
-                    const clamped = Math.max(-100, Math.min(100, cents));
-                    const offsetPx = (clamped / 200) * 320;
-                    needleIndicator.style.left = `calc(50% + ${offsetPx}px)`;
-                } else {
-                    noteElem.textContent = lastNote;
-                    freqElem.textContent = lastFreq;
-                    centsElem.textContent = lastCents;
+                    noteElem.textContent = `${name}${octave}`;
+                    freqElem.textContent = `${f.toFixed(2)} Hz`;
+                    centsElem.textContent = `${cents > 0 ? "+" : ""}${cents.toFixed(1)} cents`;
+                    // update needle...
                 }
+                // if no pitch, just leave last values
+            } else if (micManuallyDisabled) {
+                // 🔹 only blank out if user explicitly disabled
+                resetTunerUI();
             }
             requestAnimationFrame(update);
         }
