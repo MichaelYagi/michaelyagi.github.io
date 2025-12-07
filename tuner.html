@@ -1784,17 +1784,45 @@
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.value = 1800;
+        // High crack
+        const filterHigh = audioCtx.createBiquadFilter();
+        filterHigh.type = "bandpass";
+        filterHigh.frequency.value = 3500;
+        filterHigh.Q.value = 1.0;
 
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.6, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+        // Low-mid body
+        const filterBody = audioCtx.createBiquadFilter();
+        filterBody.type = "bandpass";
+        filterBody.frequency.value = 250;
+        filterBody.Q.value = 0.7;
 
-        noise.connect(filter).connect(gain).connect(audioCtx.destination);
+        // Crack envelope
+        const gainHigh = audioCtx.createGain();
+        gainHigh.gain.setValueAtTime(1.2, time);
+        gainHigh.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+
+        // Body envelope
+        const gainBody = audioCtx.createGain();
+        gainBody.gain.setValueAtTime(0.8, time);
+        gainBody.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+
+        // Optional resonance oscillator
+        const osc = audioCtx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.value = 200;
+        const oscGain = audioCtx.createGain();
+        oscGain.gain.setValueAtTime(0.2, time);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+
+        // Connect chains
+        noise.connect(filterHigh).connect(gainHigh).connect(audioCtx.destination);
+        noise.connect(filterBody).connect(gainBody).connect(audioCtx.destination);
+        osc.connect(oscGain).connect(audioCtx.destination);
+
         noise.start(time);
         noise.stop(time + duration);
+        osc.start(time);
+        osc.stop(time + 0.15);
     }
 
     // Events
