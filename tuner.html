@@ -2143,159 +2143,181 @@ const beatPattern = [
         }
     });
 
-    document.getElementById("playSong").addEventListener("click", function () {
-        if (songPlaying === false) {
-            songPlaying = true;
-            const beatPattern = [
-                {type: "rest", dur: 4},
-                {types: [
+    function getBeatPattern() {
+        return [
+            {type: "rest", dur: 4},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1},
-                {types: [
+                ]
+            },
+            {type: "hihat", dur: 1},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1},
-                {types: [
+                ]
+            },
+            {type: "hihat", dur: 1},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1},
-                {types: [
+                ]
+            },
+            {type: "hihat", dur: 1},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1},
-                {types: [
+                ]
+            },
+            {type: "hihat", dur: 1},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1},
-                {types: [
+                ]
+            },
+            {type: "hihat", dur: 1},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1},
-                {types: [
+                ]
+            },
+            {type: "hihat", dur: 1},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1},
-                {types: [
+                ]
+            },
+            {type: "hihat", dur: 1},
+            {
+                types: [
                     {type: "kick", dur: 2},
                     {type: "snare", dur: 2},
                     {type: "clap", dur: 1},
-                ]},
-                {type: "hihat", dur: 1}
-            ];
-            playBeat(beatPattern, 150);
+                ]
+            },
+            {type: "hihat", dur: 1}
+        ];
+    }
 
-            const melody = [
-                {note: "F#6", dur: 0.5, instrument: "electricGuitar"}, // Intro - 16ths
-                {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
-                {note: "B5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "F#5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "B5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
-                {note: "F#6", dur: 0.5, instrument: "electricGuitar"},
-                {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
-                {note: "B5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "F#5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "B5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
-                {note: "F#6", dur: 0.5, instrument: "electricGuitar"},
-                {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
-                {note: "B5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "F#5", dur: 0.5, instrument: "electricGuitar"},
-                {note: "E2", dur: 1, instrument: "electricGuitar"}, // Melody - 8ths
-                {note: "E3", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+    function getMelodyPattern() {
+        return [
+            {note: "F#6", dur: 0.5, instrument: "electricGuitar"}, // Intro - 16ths
+            {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
+            {note: "B5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "F#5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "B5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
+            {note: "F#6", dur: 0.5, instrument: "electricGuitar"},
+            {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
+            {note: "B5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "F#5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "B5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
+            {note: "F#6", dur: 0.5, instrument: "electricGuitar"},
+            {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
+            {note: "B5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "F#5", dur: 0.5, instrument: "electricGuitar"},
+            {note: "E2", dur: 1, instrument: "electricGuitar"}, // Melody - 8ths
+            {note: "E3", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "B5", dur: 1, instrument: "electricGuitar"},
                     {note: "E5", dur: 1, instrument: "electricGuitar"},
                     {note: "F#5", dur: 1, instrument: "electricGuitar"},
                     {note: "A5", dur: 1, instrument: "electricGuitar"},
                     {note: "E2", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "E3", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+            {note: "E3", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "B5", dur: 1, instrument: "electricGuitar"},
                     {note: "E5", dur: 1, instrument: "electricGuitar"},
                     {note: "G#5", dur: 1, instrument: "electricGuitar"},
                     {note: "E2", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {notes: [
+            {notes: [
                     {note: "B5", dur: 1, instrument: "electricGuitar"},
                     {note: "E5", dur: 1, instrument: "electricGuitar"},
                     {note: "E3", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "E2", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+            {note: "E2", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "B5", dur: 1, instrument: "electricGuitar"},
                     {note: "E5", dur: 1, instrument: "electricGuitar"},
                     {note: "F#5", dur: 1, instrument: "electricGuitar"},
                     {note: "A5", dur: 1, instrument: "electricGuitar"},
                     {note: "E3", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "E2", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+            {note: "E2", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "B5", dur: 1, instrument: "electricGuitar"},
                     {note: "E5", dur: 1, instrument: "electricGuitar"},
                     {note: "G#5", dur: 1, instrument: "electricGuitar"},
                     {note: "E3", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "E2", dur: 1, instrument: "electricGuitar"},
-                {note: "E3", dur: 1, instrument: "electricGuitar"},
-                {note: "E2", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+            {note: "E2", dur: 1, instrument: "electricGuitar"},
+            {note: "E3", dur: 1, instrument: "electricGuitar"},
+            {note: "E2", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "B5", dur: 2, instrument: "electricGuitar"},
                     {note: "E5", dur: 2, instrument: "electricGuitar"},
                     {note: "G#5", dur: 2, instrument: "electricGuitar"},
                     {note: "E3", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "E2", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+            {note: "E2", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "B5", dur: 2, instrument: "electricGuitar"},
                     {note: "E5", dur: 2, instrument: "electricGuitar"},
                     {note: "G#5", dur: 2, instrument: "electricGuitar"},
                     {note: "E3", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "D2", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+            {note: "D2", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "A5", dur: 1, instrument: "electricGuitar"},
                     {note: "F#5", dur: 1, instrument: "electricGuitar"},
                     {note: "D5", dur: 1, instrument: "electricGuitar"},
                     {note: "A5", dur: 1, instrument: "electricGuitar"},
                     {note: "D3", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {notes: [
+            {notes: [
                     {note: "A5", dur: 2, instrument: "electricGuitar"},
                     {note: "F#5", dur: 2, instrument: "electricGuitar"},
                     {note: "D5", dur: 2, instrument: "electricGuitar"},
                     {note: "A5", dur: 2, instrument: "electricGuitar"},
                     {note: "D2", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "D3", dur: 1, instrument: "electricGuitar"},
-                {notes: [
+            {note: "D3", dur: 1, instrument: "electricGuitar"},
+            {notes: [
                     {note: "A5", dur: 4, instrument: "electricGuitar"},
                     {note: "F#5", dur: 4, instrument: "electricGuitar"},
                     {note: "D5", dur: 4, instrument: "electricGuitar"},
                     {note: "A5", dur: 4, instrument: "electricGuitar"},
                     {note: "D2", dur: 1, instrument: "electricGuitar"}
                 ]},
-                {note: "D3", dur: 1, instrument: "electricGuitar"},
-                {note: "D2", dur: 1, instrument: "electricGuitar"},
-                {note: "D3", dur: 1, instrument: "electricGuitar"}
-            ];
-            playMelody(melody, 300, () => {
+            {note: "D3", dur: 1, instrument: "electricGuitar"},
+            {note: "D2", dur: 1, instrument: "electricGuitar"},
+            {note: "D3", dur: 1, instrument: "electricGuitar"}
+        ];
+    }
+
+    document.getElementById("playSong").addEventListener("click", function () {
+        if (songPlaying === false) {
+            songPlaying = true;
+
+            playBeat(getBeatPattern(), 150);
+            playMelody(getMelodyPattern(), 300, () => {
                 songPlaying = false;
             });
         }
