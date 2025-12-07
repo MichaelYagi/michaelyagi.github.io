@@ -1,84 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!-- Copyright (C) 2025 Michael Yagi -->
+<!-- This program is free software: you can redistribute it and/or modify -->
+<!-- it under the terms of the GNU General Public License as published by -->
+<!-- the Free Software Foundation, either version 3 of the License, or -->
+<!-- (at your option) any later version. -->
+<!-- This program is distributed in the hope that it will be useful, -->
+<!-- but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!-- GNU General Public License for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
 <head>
     <meta charset="UTF-8">
-    <title>Open Source Metronome | Subdivisions, Tone Generator, Tuner, Presets</title>
-    <meta name="description" content="The best open source, ad-free premium metronome. Includes subdivisions, tone generator, tuner, and preset saving for musicians.">
-    <meta name="keywords" content="metronome, open source metronome, premium metronome, ad-free metronome, metronome with subdivisions, tone generator, tuner, presets, musician practice tool, classical music, violin, viola, cello, bass, wind instruments, brass, html, javascript">
+    <title>Open Source Metronome | Subdivisions, Polyrhythms, Tone Generator, Tuner, Presets</title>
+    <meta name="description" content="The best open source, ad-free premium metronome. Includes subdivisions, polyrhythms, tone generator, tuner, and preset saving for musicians.">
+    <meta name="keywords" content="metronome, open source metronome, premium metronome, ad-free metronome, metronome with subdivisions, polyrhythms, tone generator, tuner, presets, musician practice tool, classical music, violin, viola, cello, bass, wind instruments, brass, html, javascript">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Michael Yagi">
     <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <link rel="canonical" href="https://michaelyagi.github.io/tuner.html">
     <meta property="og:title" content="Premium Open Source Metronome">
-    <meta property="og:description" content="Ad-free metronome with subdivisions, tone generator, tuner, and presets.">
+    <meta property="og:description" content="Ad-free metronome with subdivisions, polyrhythms, tone generator, tuner, and presets.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://michaelyagi.github.io/tuner.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         /* --- Theme Variables --- */
         :root {
-            --page-bg-color: #111;
-            --text-color: #eee;
-            --accent-color: #ff6600;
-            --box-bg-color: #111;
-            --box-header-color: #ff6600;
-            --input-bg-color: #0b1d3a;
-            --input-font-color: #ffcc00;
-            --status-color: #444; /* adaptive */
-            --sub-color: #666;    /* adaptive */
+            --page-bg-color: #111;       /* Page Background Color */
+            --box-bg-color: #111;        /* Box Background Color */
+            --box-header-color: #ff6600; /* Box Header Font Color */
+            --input-font-color: #ffcc00; /* Input Font Color */
+            --input-bg-color: #0b1d3a;   /* Input Background Color */
+            --wave-color: #0077ff;       /* Tone Generator Wave Color */
+            --text-color: #eee;          /* General Font Color */
+            --accent-color: #ff6600;     /* Swatch Select Outline Color */
+            --status-color: #666;        /* adaptive - tuner status */
+            --sub-color: #666;           /* adaptive */
         }
         .theme-default {
             --page-bg-color: #111;
-            --text-color: #eee;
-            --accent-color: #ff6600;
             --box-bg-color: #111;
             --box-header-color: #ff6600;
-            --input-bg-color: #0b1d3a;
             --input-font-color: #ffcc00;
+            --input-bg-color: #0b1d3a;
+            --wave-color: #0077ff;
+            --text-color: #eee;
+            --accent-color: #ff6600;
         }
-        .theme-fuji {
-            --page-bg-color: #faf3e0;
-            --text-color: #1a1a1a;
+        .theme-optimus {
+            --page-bg-color: #D92121;
+            --box-bg-color: #0047AB;
+            --box-header-color: #D3D3D3;
+            --input-font-color: #111111;
+            --input-bg-color: #ffcc00;
+            --wave-color: #4682BF;
+            --text-color: #D3D3D3;
             --accent-color: #e63946;
-            --box-bg-color: #264653;
-            --box-header-color: #e63946;
-            --input-bg-color: #f1e9d2;
-            --input-font-color: #1a1a1a;
         }
-        .theme-sunset {
-            --page-bg-color: #fff3e0;
-            --text-color: #3d2c2c;
+        .theme-cotton-candy {
+            --page-bg-color: #e63946;
+            --box-bg-color: #1d3557;
+            --box-header-color: #a8dadc;
+            --input-bg-color: #457b9d;
+            --input-font-color: #f1faee;
+            --wave-color: #fafe0b;
+            --text-color: #f1faee;
             --accent-color: #e65100;
-            --box-bg-color: #fbc02d;
-            --box-header-color: #6a1b9a;
-            --input-bg-color: #ffe0b2;
-            --input-font-color: #3d2c2c;
         }
         .theme-korg-blue {
             --page-bg-color: #0a0f1c;
-            --text-color: #e0e6ff;
-            --accent-color: #00aaff;
             --box-bg-color: #111a33;
             --box-header-color: #00aaff;
             --input-bg-color: #0d223d;
             --input-font-color: #66ccff;
+            --wave-color: #0077ff;
+            --text-color: #e0e6ff;
+            --accent-color: #00aaff;
         }
         .theme-korg-silver {
             --page-bg-color: #d9d9d9;
-            --text-color: #111;
-            --accent-color: #ff6600;
             --box-bg-color: #f0f0f0;
             --box-header-color: #ff6600;
             --input-bg-color: #cccccc;
             --input-font-color: #222;
+            --wave-color: #0077ff;
+            --text-color: #111;
+            --accent-color: #ff6600;
         }
         .theme-korg-green {
             --page-bg-color: #1a2b1a;
-            --text-color: #e6ffe6;
-            --accent-color: #ffcc00;
             --box-bg-color: #2d402d;
             --box-header-color: #ffcc00;
             --input-bg-color: #334d33;
             --input-font-color: #ccffcc;
+            --wave-color: #0077ff;
+            --text-color: #e6ffe6;
+            --accent-color: #ffcc00;
         }
         /* Reset body margins and prevent horizontal scroll */
         html, body {
@@ -117,6 +138,7 @@
         }
         .dimmed { opacity: 0.4; }
         #noteDial { width: 100%; box-sizing: border-box; }
+        #tempo { width: 100%; box-sizing: border-box; }
         /* Blinking red dot */
         #metronomeDot {
             display: inline-block;
@@ -126,10 +148,12 @@
             margin-bottom: 5px;
             border-radius: 50%;
             background-color: red;
+            border: 1px solid black;
             opacity: 0; /* hidden until pulse */
             vertical-align: middle;
             transition: opacity 0.1s ease;
         }
+
         #subdivisionDot {
             display: inline-block;
             width: 20px;
@@ -138,9 +162,29 @@
             margin-bottom: 5px;
             border-radius: 50%;
             background-color: blue; /* distinct color */
+            border: 1px solid black;
             opacity: 0;
             vertical-align: middle;
             transition: opacity 0.1s ease;
+        }
+
+        #polyDot {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 6px;
+            margin-bottom: 5px;
+            border-radius: 50%;
+            background-color: green; /* distinct color */
+            border: 1px solid black;
+            opacity: 0;
+            vertical-align: middle;
+            transition: opacity 0.1s ease;
+        }
+
+        #visualDots {
+            margin-left: -7px;
+            margin-top: 10px;
         }
         /* Animated wave */
         #micToggle {
@@ -170,9 +214,19 @@
             left: 50.5%;              /* middle of the slider */
             width: 2px;
             height: 5px;
-            background: #333;        /* notch color */
+            background: var(--sub-color);      /* notch color */
             transform: translate(-50%, -50%);
-            pointer-events: none;    /* don’t block slider interaction */
+            cursor: pointer;
+        }
+        .tempoSliderNotch {
+            position: absolute;
+            top: 100%;
+            left: 43.5%;              /* middle of the slider */
+            width: 2px;
+            height: 5px;
+            background: var(--sub-color);      /* notch color */
+            transform: translate(-50%, -50%);
+            cursor: pointer;
         }
         .row {
             display: flex;
@@ -234,33 +288,48 @@
             cursor: pointer;
         }
         .box button:hover { background: #333; }
+
         #themeSwatches {
-            display: flex;
-            flex-direction: row;   /* side by side */
-            gap: 12px;
-            margin-top: 12px;
-            flex-wrap: wrap;       /* allow wrapping if too many */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 tiles per row */
+            gap: 12px;                              /* spacing between tiles */
+            margin-top: 16px;
         }
 
         .theme-swatch {
             display: flex;
-            gap: 6px;
-            padding: 6px;
+            justify-content: space-between;         /* keep gaps between color blocks */
+            align-items: center;
+            padding: 8px;                           /* smaller padding so they fit */
             border: 2px solid transparent;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: border 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .swatch {
+            flex: 1;
+            aspect-ratio: 1 / 1;                    /* force square shape */
+            margin: 0 4px;                          /* spacing between blocks */
+            border-radius: 6px;
+            border: 1px solid #444;
+            max-width: 60px;                        /* cap width so they fit inside 500px box */
         }
 
         .theme-swatch.selected {
             border-color: var(--accent-color);
         }
 
-        .swatch {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            border: 1px solid #444;
+        .theme-swatch .page-bg {
+            background: var(--page-bg-color);
+        }
+        .theme-swatch .box-bg {
+            background: var(--box-bg-color);
+        }
+        .theme-swatch .box-header {
+            background: var(--box-header-color);
         }
 
         /* Custom theme row */
@@ -268,6 +337,16 @@
             display: flex;
             flex-direction: column; /* stacked inputs */
             margin-top: 16px;
+        }
+
+        .theme-swatch[data-theme="custom"] {
+            justify-content: unset;   /* remove spacing */
+            gap: 6px;                 /* small consistent gap between squares */
+        }
+
+        .theme-text {
+            margin-top: 40px;
+            margin-left: 10px;
         }
     </style>
     <!-- Google tag (gtag.js) -->
@@ -284,25 +363,65 @@
 <!-- Metronome -->
 <div class="box" id="metronomeBox">
     <h3>Metronome</h3>
-    <label for="tempo">Tempo (BPM):</label>
-    <input id="tempo" type="number" min="30" max="240" value="120" style="width:80px;">
-    <button id="startMetronome">Start</button>
+    <label for="clickSound">Click Sound:</label>
+    <select id="clickSound">
+        <option value="square">Square</option>
+        <option value="sine">Sine</option>
+        <option value="triangle">Triangle</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="hihat">Hi-Hat</option>
+        <option value="kick">Kick</option>
+        <option value="snare">Snare</option>
+    </select>
+    <button id="startMetronome" style="margin-left:8px;">Start</button>
     <button id="stopMetronome">Stop</button>
+    <div style="display:flex;align-items:center;gap:8px;position:relative;">
+        <button id="decrementTempo">◀</button>
+
+        <div class="sliderWrapper" style="position:relative;display:inline-block;">
+            <input id="tempo" type="range" min="30" max="240" value="120">
+            <!-- notch marker -->
+            <div id="tempoSliderNotch" class="tempoSliderNotch sub"></div>
+        </div>
+
+        <button id="incrementTempo">▶</button>
+    </div>
+
     <div>
         <label for="subdivisions">Subdivisions:</label>
-        <input id="subdivisions" type="number" min="1" value="1" style="width:60px;">
-        <label for="clickSound">Click Sound:</label>
-        <select id="clickSound">
-            <option value="square">Square</option>
-            <option value="sine">Sine</option>
-            <option value="triangle">Triangle</option>
-            <option value="sawtooth">Sawtooth</option>
+        <select id="subdivisions" style="margin-right: 15px;">
+            <option value="0">None</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+        </select>
+        <label for="polySubdivisions">Polyrhythm:</label>
+        <select id="polySubdivisions">
+            <option value="0">None</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
         </select>
     </div>
+
     <div id="metronomeStatus" class="status">
-        <span id="metronomeText">Stopped</span>
+        <span id="metronomeText">&nbsp;</span>
+    </div>
+
+    <div id="visualDots">
         <span id="metronomeDot"></span>
         <span id="subdivisionDot"></span>
+        <span id="polyDot"></span>
     </div>
 </div>
 
@@ -324,7 +443,7 @@
         <div class="sliderWrapper" style="position:relative;display:inline-block;">
             <input id="noteDial" type="range" min="0" max="60" value="30">
             <!-- notch marker -->
-            <div class="sliderNotch"></div>
+            <div id="sliderNotch" class="sliderNotch sub"></div>
         </div>
 
         <button id="incrementNote">▶</button>
@@ -342,7 +461,7 @@
     <div class="metric" id="note">--</div>
     <div id="freq" class="sub">-- Hz</div>
     <div id="cents" class="sub">-- cents</div>
-    <button id="micToggle" style="display: none;">Mute Mic</button>
+    <button id="micToggle" style="display: none;">Disable Mic</button>
     <div class="needle"><div id="needleIndicator"></div></div>
     <div class="status" id="status">Mic: initializing...</div>
 </div>
@@ -360,78 +479,51 @@
 
 <!-- Themes -->
 <div id="themePicker" class="box">
-    <h3>Theme</h3>
+    <h3>Themes</h3>
 
     <!-- Predefined themes side by side -->
     <div id="themeSwatches">
-        <div class="theme-swatch" data-theme="default">
-            <div class="swatch" style="background:#111;"></div> <!-- page-bg-color -->
-            <div class="swatch" style="background:#111;"></div> <!-- box-bg-color -->
-            <div class="swatch" style="background:#ff6600;"></div> <!-- box-header-color -->
+        <div class="theme-swatch theme-default" data-theme="default" title="Korg TM-60">
+            <div class="swatch page-bg"></div>
+            <div class="swatch box-bg"></div>
+            <div class="swatch box-header"></div>
         </div>
-        <div class="theme-swatch" data-theme="fuji">
-            <div class="swatch" style="background:#faf3e0;"></div>
-            <div class="swatch" style="background:#264653;"></div>
-            <div class="swatch" style="background:#e63946;"></div>
+        <div class="theme-swatch theme-korg-blue" data-theme="korg-blue" title="Korg MA-2">
+            <div class="swatch page-bg"></div>
+            <div class="swatch box-bg"></div>
+            <div class="swatch box-header"></div>
         </div>
-        <div class="theme-swatch" data-theme="sunset">
-            <div class="swatch" style="background:#fff3e0;"></div>
-            <div class="swatch" style="background:#fbc02d;"></div>
-            <div class="swatch" style="background:#6a1b9a;"></div>
+        <div class="theme-swatch theme-korg-silver" data-theme="korg-silver" title="Korg Kross 2">
+            <div class="swatch page-bg"></div>
+            <div class="swatch box-bg"></div>
+            <div class="swatch box-header"></div>
         </div>
-        <div class="theme-swatch" data-theme="korg-blue">
-            <div class="swatch" style="background:#0a0f1c;"></div>
-            <div class="swatch" style="background:#111a33;"></div>
-            <div class="swatch" style="background:#00aaff;"></div>
+        <div class="theme-swatch theme-korg-green" data-theme="korg-green" title="Korg MS-20">
+            <div class="swatch page-bg"></div>
+            <div class="swatch box-bg"></div>
+            <div class="swatch box-header"></div>
         </div>
-        <div class="theme-swatch" data-theme="korg-silver">
-            <div class="swatch" style="background:#d9d9d9;"></div>
-            <div class="swatch" style="background:#f0f0f0;"></div>
-            <div class="swatch" style="background:#ff6600;"></div>
+        <div class="theme-swatch theme-optimus" data-theme="optimus" title="Optimus Prime">
+            <div class="swatch page-bg"></div>
+            <div class="swatch box-bg"></div>
+            <div class="swatch box-header"></div>
         </div>
-        <div class="theme-swatch" data-theme="korg-green">
-            <div class="swatch" style="background:#1a2b1a;"></div>
-            <div class="swatch" style="background:#2d402d;"></div>
-            <div class="swatch" style="background:#ffcc00;"></div>
+        <div class="theme-swatch theme-cotton-candy" data-theme="cotton-candy" title="Cotton Candy">
+            <div class="swatch page-bg"></div>
+            <div class="swatch box-bg"></div>
+            <div class="swatch box-header"></div>
         </div>
     </div>
 
     <!-- Custom theme row -->
     <div id="customThemeRow">
-        <div class="theme-swatch" data-theme="custom">
+        <div class="theme-swatch" data-theme="custom" title="Custom">
             <div class="swatch" style="background:#ccc;"></div>
             <div class="swatch" style="background:#999;"></div>
             <div class="swatch" style="background:#666;"></div>
         </div>
 
-        <div id="customThemeInputs" class="form-rows">
-            <div class="row">
-                <div class="col">
-                    <label for="customInputFont">Input Font:</label>
-                </div>
-                <div class="col">
-                    <input type="color" id="customInputFont">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <label for="customInputBg">Input Background:</label>
-                </div>
-                <div class="col">
-                    <input type="color" id="customInputBg">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <label for="customBoxHeader">Box Header:</label>
-                </div>
-                <div class="col">
-                    <input type="color" id="customBoxHeader">
-                </div>
-            </div>
-
+        <div id="customThemeInputs" class="form-rows" style="display: none;">
             <div class="row">
                 <div class="col">
                     <label for="customPageBg">Page Background:</label>
@@ -449,6 +541,42 @@
                     <input type="color" id="customBoxBg">
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="customBoxHeader">Box Header:</label>
+                </div>
+                <div class="col">
+                    <input type="color" id="customBoxHeader" value="#FFFFFF">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="customInputBg">Input Background:</label>
+                </div>
+                <div class="col">
+                    <input type="color" id="customInputBg">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="customInputFont">Input Font:</label>
+                </div>
+                <div class="col">
+                    <input type="color" id="customInputFont">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="customWaveColor">Wave Color:</label>
+                </div>
+                <div class="col">
+                    <input type="color" id="customWaveColor">
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -458,16 +586,98 @@
     <h3>About</h3>
     <p>It's a metronome and tuner! Works offline. Accept microphone permissions to use the tuner. Tap the metronome box to capture BPM.</p>
     <p>Send feedback to myagi.developer[@]gmail.com</p>
-    <p>Keyboard inputs:</p>
-    <ul>
-        <li>Spacebar - play tone</li>
-        <li>e/q - Change waveform</li>
-        <li>Right/d - increase pitch</li>
-        <li>Left/a - decrease pitch</li>
-        <li>Up/w - Increase tempo</li>
-        <li>Down/s - Decrease tempo</li>
-        <li>Shift - Reset pitch to A4</li>
-    </ul>
+
+    <div id="aboutExtras" style="display: none;">
+        <p>Keyboard inputs:</p>
+        <ul>
+            <li>Spacebar - play tone</li>
+            <li>e/q - Change waveform</li>
+            <li>Right/d - increase pitch</li>
+            <li>Left/a - decrease pitch</li>
+            <li>Up/w - Increase tempo</li>
+            <li>Down/s - Decrease tempo</li>
+            <li>Shift - Reset pitch to A4</li>
+        </ul>
+
+        <hr>
+
+        <p>Create tunes! Configure a simple beat and melody pattern. You can use a combination of hihats, kicks, or snare.</p>
+
+        <pre><code>
+    const beatPattern = [
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 },
+        { type: "hihat", dur: 1 }
+    ];
+    </code></pre>
+
+        <pre><code>
+    const melody = [
+        { note: "A5", dur: 1 },
+        { note: "rest", dur: 1 },
+        { note: "G#5", dur: 1 },
+        { note: "E5", dur: 1 },
+        { note: "rest", dur: 1 },
+        { note: "A5", dur: 1 },
+        { note: "rest", dur: 1 },
+        { note: "G#5", dur: 1 },
+        { note: "rest", dur: 3 },
+        { note: "E5", dur: 2 },
+        { note: "E5", dur: 2 },
+        { note: "D5", dur: 0.5 },
+        { note: "rest", dur: 0.5 },
+        { note: "D5", dur: 6 }
+    ];
+    </code></pre>
+
+        <pre><code>
+    playBeat(beatPattern);
+    playMelody(melody);
+    </code></pre>
+
+        <p>Copy and paste everything in the console or <button id="playSimpleSong">Play</button> now!</p>
+
+        <p>Play around with chords or stacked beats too.</p>
+
+        <pre><code>
+    const melody = [
+        ...,
+        { notes: [
+            { note: "B3", dur: 0.5 },
+            { note: "B5", dur: 1 },
+            { note: "B2", dur: 1 }
+        ]}
+        ...
+    ];
+    const beatPattern = [
+        ...,
+        { type: "hihat", dur: 1 },
+        { types: [
+            { type: "kick", dur: 2 },
+            { type: "snare", dur: 2 },
+            { type: "hihat", dur: 1 },
+        ]},
+        ...
+    ];
+    </code></pre>
+
+        <p><button id="playSong">Play</button> a version of the above that combines different chords and beat patterns.</p>
+
+    </div>
+
+    <a href="https://www.gnu.org/" target="_blank"><img src="./images/gplv3.png"></a>
 </div>
 
 <script>
@@ -491,6 +701,8 @@
     const clickSound = document.getElementById("clickSound");
     const startMetronomeButton = document.getElementById("startMetronome");
     const stopMetronomeButton = document.getElementById("stopMetronome");
+    const tempoUp = document.getElementById("incrementTempo");
+    const tempoDown = document.getElementById("decrementTempo");
 
     const NOTE_STRINGS = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 
@@ -506,6 +718,17 @@
     const ctx = toneWaveCanvas.getContext("2d");
     let waveAnimation = null;
     let waveFreq = 440; // current tone frequency
+    let songPlaying = false;
+
+    function isMobile() {
+        let check = false;
+        (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+        return check;
+    }
+
+    if (!isMobile()) {
+        document.getElementById("aboutExtras").style.display = "block";
+    }
 
     function setElementState(id, enabled) {
         document.getElementById(id).disabled = !enabled;
@@ -652,7 +875,18 @@
             ctx.lineTo(x, y);
         }
 
-        ctx.strokeStyle = "#0077ff";
+        let waveColor = "#0077ff";
+        if (typeof(Storage) !== "undefined") {
+            const theme = localStorage.getItem("theme");
+            if (theme) {
+                const classTheme = 'theme-' + theme;
+                document.body.classList.add(classTheme);
+                const element = document.querySelector('.'+classTheme);
+                waveColor = getComputedStyle(element).getPropertyValue('--wave-color').trim();
+            }
+        }
+
+        ctx.strokeStyle = waveColor;
         ctx.lineWidth = 2;
         ctx.stroke();
     }
@@ -676,28 +910,52 @@
 
     // Tuner loop
     // Tuner
-    let micMuted = false;
+    let micDisabled = false;
 
     // Toggle mute/unmute
     document.getElementById("micToggle").addEventListener("click", () => {
-        if (!micStream) return;
+        // if (!micStream) return;
 
-        micMuted = !micMuted;
+        micDisabled = !micDisabled;
 
-        // Enable/disable all audio tracks
-        micStream.getAudioTracks().forEach(track => {
-            track.enabled = !micMuted;
-        });
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem("micDisabled", micDisabled ? "true" : "false");
+        }
 
-        // Update button text
-        document.getElementById("micToggle").textContent = micMuted ? "Unmute Mic" : "Mute Mic";
-        statusElem.textContent = micMuted ? "Mic: muted" : "Mic: ready";
+        if (micDisabled && micStream !== null) {
+            // Stop all audio tracks — releases mic at OS level
+            micStream.getAudioTracks().forEach(track => track.stop());
+            micStream = null; // clear reference
+            document.getElementById("micToggle").textContent = "Enable Mic";
+            updatePauseMessages();
 
-        if (micMuted) {
             noteElem.textContent = "--";
             freqElem.textContent = "-- Hz";
             centsElem.textContent = "-- cents";
             needleIndicator.style.left = "50%";
+        } else {
+            // Re‑request mic when unmuting
+            checkMicrophonePermission().then(stream => {
+                if (stream !== false) {
+                    micStream = stream;
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 8192;
+                    analyser.minDecibels = -100;
+                    analyser.maxDecibels = -10;
+                    analyser.smoothingTimeConstant = 0.0;
+
+                    const source = audioCtx.createMediaStreamSource(stream);
+                    source.connect(analyser);
+
+                    yinBuffer = new Float32Array(8192);
+
+                    document.getElementById("micToggle").textContent = "Disable Mic";
+                    updatePauseMessages();
+                    startLoop();
+                    updateDialDisplay();
+                }
+            });
         }
     });
 
@@ -707,7 +965,7 @@
         let lastCents = "-- cents";
 
         function update() {
-            if (tunerEnabled && analyser && !micMuted) {
+            if (tunerEnabled && analyser && !micDisabled) {
                 analyser.getFloatTimeDomainData(yinBuffer);
                 const f = yinPitch(yinBuffer, audioCtx.sampleRate);
                 if (f && isFinite(f)) {
@@ -744,59 +1002,113 @@
 
     // Init audio
     let micStream = null;
+    let micSource = null;
+    let micGainNode = null;
+
+    async function checkMicrophonePermission() {
+        micDisabled = true
+        if (localStorage.getItem("micDisabled") !== null) {
+            micDisabled = localStorage.getItem("micDisabled") === "true";
+        }
+
+        if (micDisabled) {
+            return false;
+        }
+
+        try {
+            return await navigator.mediaDevices.getUserMedia({
+                audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
+            });
+        } catch (_) {
+            return false;
+        }
+    }
+
     async function init() {
         try {
             // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
             statusElem.textContent = "Mic: requesting access...";
 
-            const stream = await checkMicrophonePermission();
+            let stream = await checkMicrophonePermission();
 
             if (stream !== false) {
-                document.getElementById("micToggle").style.display = "block";
-                micStream = stream;
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 8192;
-                analyser.minDecibels = -100;
-                analyser.maxDecibels = -10;
-                analyser.smoothingTimeConstant = 0.0;
+                micDisabled = false;
+                if (typeof(Storage) !== "undefined") {
+                    if (localStorage.getItem("micDisabled") !== null) {
+                        micDisabled = localStorage.getItem("micDisabled") === "true";
+                    } else {
+                        localStorage.setItem("micDisabled", micDisabled);
+                    }
+                }
 
-                const source = audioCtx.createMediaStreamSource(stream);
-                source.connect(analyser);
+                if (!micDisabled) {
+                    document.getElementById("micToggle").style.display = "block";
+                    micStream = stream;
 
-                yinBuffer = new Float32Array(8192);
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 8192;
+                    analyser.minDecibels = -100;
+                    analyser.maxDecibels = -10;
+                    analyser.smoothingTimeConstant = 0.0;
 
-                statusElem.textContent = "Mic: ready";
-                startLoop();
-                updateDialDisplay();
+                    // Create source and gain node
+                    micSource = audioCtx.createMediaStreamSource(stream);
+                    micGainNode = audioCtx.createGain();
+                    micGainNode.gain.value = 1; // start unmuted
+
+                    // Connect chain: source -> gain -> analyser
+                    micSource.connect(micGainNode).connect(analyser);
+
+                    yinBuffer = new Float32Array(8192);
+
+                    updatePauseMessages();
+                    startLoop();
+                    updateDialDisplay();
+                    document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+                } else {
+                    // Stop all audio tracks — releases mic at OS level
+                    stream.getAudioTracks().forEach(track => track.stop());
+                    micStream = null;
+                    micSource = null;
+                    micGainNode = null;
+                    document.getElementById("micToggle").textContent = "Enable Mic";
+                    updatePauseMessages();
+
+                    noteElem.textContent = "--";
+                    freqElem.textContent = "-- Hz";
+                    centsElem.textContent = "-- cents";
+                    needleIndicator.style.left = "50%";
+                }
             } else {
-                statusElem.textContent = "Mic: permission denied or unavailable";
-                document.getElementById("micToggle").style.display = "none";
-
+                micDisabled = true;
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.setItem("micDisabled", micDisabled);
+                }
+                document.getElementById("micToggle").textContent = "Enable Mic";
+                document.getElementById("micToggle").style.display = "block";
+                updatePauseMessages();
             }
         } catch (e) {
-            statusElem.textContent = "Mic: permission denied or unavailable";
+            micDisabled = true;
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem("micDisabled", micDisabled);
+            }
+            updatePauseMessages();
             document.getElementById("micToggle").style.display = "none";
             console.error(e);
         }
     }
 
-    async function checkMicrophonePermission() {
-        try {
-            const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
-            if (permissionStatus.state === 'granted') {
-                return await navigator.mediaDevices.getUserMedia({
-                    audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
-                });
-            } else if (permissionStatus.state === 'denied') {
-                return false;
-            } else if (permissionStatus.state === 'prompt') {
-                return await navigator.mediaDevices.getUserMedia({
-                    audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
-                });
-            }
-        } catch (error) {
-            return false;
+    function updatePauseMessages() {
+        if (micDisabled) {
+            statusElem.textContent = "Mic: disabled";
+        } else if (toneOscillator && !micDisabled) {
+            statusElem.textContent = "Tuner paused while tone is playing";
+        } else if (metronomeInterval && !micDisabled) {
+            statusElem.textContent = "Tuner paused while metronome is on";
+        } else {
+            statusElem.textContent = "Mic: enabled";
         }
     }
 
@@ -825,6 +1137,7 @@
     }
 
     function updateDialDisplay() {
+        // tone generator
         const idx = parseInt(document.getElementById("noteDial").value, 10);
         const { name, octave, f } = dialToNote(idx);
         document.getElementById("dialNote").textContent = `Note: ${name}${octave}`;
@@ -908,7 +1221,7 @@
     let tapTimeout = null;
     let metronomeRunning = false;
 
-    function playClick(strong = true) {
+    function playClick(strong = true, type = "main") {
         if (tappingActive) return;
 
         if (!audioCtx) audioCtx = new AudioContext();
@@ -916,35 +1229,56 @@
 
         const soundChoice = document.getElementById("clickSound")?.value || "square";
 
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        // --- choose sound source ---
+        if (soundChoice === "hihat") {
+            playHiHatBeat(now, 0.05);   // short crisp click
+        } else if (soundChoice === "kick") {
+            playKickBeat(now, 0.1);     // punchy downbeat
+        } else if (soundChoice === "snare") {
+            playSnareBeat(now, 0.1);    // snappy click
+        } else {
+            // fallback: oscillator click
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
 
-        osc.type = soundChoice;
-        osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
-        gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
+            osc.type = soundChoice; // e.g. "square", "sine", etc.
 
-        osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.05);
+            if (type === "poly") {
+                osc.frequency.setValueAtTime(1600, now);
+                gain.gain.setValueAtTime(0.15, now);
+            } else {
+                osc.frequency.setValueAtTime(strong ? 1000 : 1500, now);
+                gain.gain.setValueAtTime(strong ? 0.2 : 0.1, now);
+            }
 
-        const dot = strong ? document.getElementById("metronomeDot")
-            : document.getElementById("subdivisionDot");
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
+        }
+
+        // --- dot flash logic stays the same ---
+        let dot;
+        if (type === "poly") {
+            dot = document.getElementById("polyDot");
+            dot.style.backgroundColor = "green";
+        } else {
+            dot = strong ? document.getElementById("metronomeDot")
+                : document.getElementById("subdivisionDot");
+        }
+
         dot.style.opacity = "1";
 
-        // Adaptive blink duration
         const bpm = parseInt(document.getElementById("tempo").value, 10) || 120;
-        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 1;
         const beatMs = 60000 / bpm;
+        const subdivisions = parseInt(document.getElementById("subdivisions").value, 10) || 1;
         const subdivisionMs = beatMs / subdivisions;
+        const blinkDuration = subdivisionMs * 0.2;
 
-        // Blink for ~30% of subdivision length, capped between 50–300 ms
-        const blinkDuration = Math.max(50, Math.min(300, subdivisionMs * 0.3));
-
-        setTimeout(() => { dot.style.opacity = 0; }, blinkDuration);
+        setTimeout(() => { dot.style.opacity = "0"; }, blinkDuration);
     }
 
     function registerTap(e) {
-        const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo","clickSound"]);
+        const ignoredIds = new Set(["startMetronome","stopMetronome","subdivisions","tempo","clickSound","polySubdivisions"]);
         if (ignoredIds.has(e.target.id)) return;
         e.preventDefault();
 
@@ -985,30 +1319,44 @@
             tempo.value = tempoValue;
         }
         const bpm = parseInt(tempoValue, 10);
-        const subdivisions = parseInt(getSubdivisions(), 10);
+        const subdivisions = getSubdivisions();
+        let polySubs = getPolySubdivisions();
+        if (subdivisions === polySubs) {
+            polySubs = 0;
+        }
+
         const beatMs = 60000 / bpm;
         const subMs = beatMs / subdivisions;
+        const polyMs = polySubs > 1 ? beatMs / polySubs : null;
 
-        // clear existing intervals
         stopMetronome();
 
-        // main beat drives scheduling; subdivisions are timed off each beat
         metronomeInterval = setInterval(() => {
-            // main beat (strong)
+            // main beat
             playClick(true);
 
-            // schedule subdivisions relative to this beat (no separate interval)
+            // normal subdivisions
             if (subdivisions > 1) {
                 for (let i = 1; i < subdivisions; i++) {
-                    setTimeout(() => {
-                        playClick(false);
-                    }, i * subMs);
+                    setTimeout(() => playClick(false), i * subMs);
+                }
+            }
+
+            // polyrhythm pulses (stretch across the same beat)
+            if (polyMs) {
+                for (let i = 1; i < polySubs; i++) {
+                    setTimeout(() => playClick(false, "poly"), i * polyMs);
                 }
             }
         }, beatMs);
 
         document.getElementById("metronomeText").textContent =
-            `Playing at ${bpm} BPM (${subdivisions} subdivisions)`;
+            polySubs > 1
+                ? `Playing ${bpm} BPM with ${subdivisions} subdivisions + ${polySubs}-pulse polyrhythm`
+                : (subdivisions > 1
+                    ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)`
+                    : `Playing at ${bpm} BPM`);
+
         setElementState("startMetronome", false);
         metronomeRunning = true;
         syncUIState();
@@ -1021,9 +1369,9 @@
         metronomeInterval = null;
         subdivisionInterval = null;
 
-        document.getElementById("metronomeText").textContent = "Stopped";
-        document.getElementById("metronomeDot").style.opacity = 0;
-        document.getElementById("subdivisionDot").style.opacity = 0;
+        document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        document.getElementById("metronomeDot").style.opacity = "0";
+        document.getElementById("subdivisionDot").style.opacity = "0";
         setElementState("startMetronome", true);
         metronomeRunning = false;
         syncUIState();
@@ -1044,24 +1392,20 @@
         const subsField = document.getElementById("subdivisions");
         let subs = parseInt(subsField.value, 10);
         if (!subs || subs < 1) {
-            subs = 1; // default
+            subs = 0; // default
             subsField.value = subs;
         }
         return subs;
     }
 
-    async function updatePauseMessages() {
-        // const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
-
-        if (toneOscillator) {
-            statusElem.textContent = "Tuner paused while tone is playing";
-        } else if (metronomeInterval) {
-            statusElem.textContent = "Tuner paused while metronome is on";
-//         } else if (permissionStatus.state === "prompt") {
-//             statusElem.textContent = "Mic: permission denied or unavailable";
-        } else {
-            statusElem.textContent = "Mic: ready";
+    function getPolySubdivisions() {
+        const subsField = document.getElementById("polySubdivisions");
+        let subs = parseInt(subsField.value, 10);
+        if (!subs || subs < 1) {
+            subs = 0; // default
+            subsField.value = subs;
         }
+        return subs;
     }
 
     // Presets
@@ -1077,15 +1421,18 @@
     function savePreset() {
         const bpm = getTempo();
         const subdivisions = getSubdivisions();
+        const polySubdivisions = getPolySubdivisions();
         const noteDialVal = document.getElementById("noteDial").value;
         const waveformVal = document.getElementById("waveform").value;
         const clickSoundVal = document.getElementById("clickSound").value; // NEW
 
-        const preset = { bpm, subdivisions, noteDialVal, waveformVal, clickSoundVal };
+        const preset = { bpm, subdivisions, polySubdivisions, noteDialVal, waveformVal, clickSoundVal };
         const name = prompt("Preset name:");
         if (!name) return;
 
-        localStorage.setItem("preset_" + name, JSON.stringify(preset));
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem("preset_" + name, JSON.stringify(preset));
+        }
         refreshPresetList();
     }
 
@@ -1094,19 +1441,23 @@
         const key = select.value;
         if (!key) return;
 
-        const preset = JSON.parse(localStorage.getItem(key));
-        if (!preset) return;
+        if (typeof(Storage) !== "undefined") {
+            const preset = JSON.parse(localStorage.getItem(key));
+            if (!preset) return;
 
-        document.getElementById("tempo").value = preset.bpm;
-        document.getElementById("subdivisions").value = preset.subdivisions;
-        document.getElementById("noteDial").value = preset.noteDialVal;
-        document.getElementById("waveform").value = preset.waveformVal;
-        if (preset.clickSoundVal) {
-            document.getElementById("clickSound").value = preset.clickSoundVal; // NEW
+            document.getElementById("tempo").value = preset.bpm;
+            document.getElementById("metronomeText").textContent = `Stopped: ${preset.bpm} BPM`
+            document.getElementById("subdivisions").value = preset.subdivisions;
+            document.getElementById("polySubdivisions").value = preset.polySubdivisions;
+            document.getElementById("noteDial").value = preset.noteDialVal;
+            document.getElementById("waveform").value = preset.waveformVal;
+            if (preset.clickSoundVal) {
+                document.getElementById("clickSound").value = preset.clickSoundVal; // NEW
+            }
+
+            updateDialDisplay();
+            updateWaveform();
         }
-
-        updateDialDisplay();
-        updateWaveform();
     }
 
     function deletePreset() {
@@ -1114,7 +1465,9 @@
         const key = select.value;
         if (!key) return;
 
-        localStorage.removeItem(key);
+        if (typeof(Storage) !== "undefined") {
+            localStorage.removeItem(key);
+        }
         refreshPresetList();
     }
 
@@ -1123,14 +1476,16 @@
         select.innerHTML = "";
 
         let hasPresets = false;
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith("preset_")) {
-                const opt = document.createElement("option");
-                opt.value = key;
-                opt.textContent = key.replace("preset_", "");
-                select.appendChild(opt);
-                hasPresets = true;
+        if (typeof(Storage) !== "undefined") {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("preset_")) {
+                    const opt = document.createElement("option");
+                    opt.value = key;
+                    opt.textContent = key.replace("preset_", "");
+                    select.appendChild(opt);
+                    hasPresets = true;
+                }
             }
         }
 
@@ -1149,8 +1504,11 @@
             document.documentElement.style.setProperty('--box-header-color', custom.boxHeader);
             document.documentElement.style.setProperty('--page-bg-color', custom.pageBg);
             document.documentElement.style.setProperty('--box-bg-color', custom.boxBg);
+            document.documentElement.style.setProperty('--wave-color', custom.waveColor);
             adaptTextColors(custom.boxBg);
-            localStorage.setItem('theme','custom'); // ensure theme is saved
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('theme', 'custom'); // ensure theme is saved
+            }
         } else {
             // Change to the theme passed
             const classTheme = 'theme-' + theme;
@@ -1158,7 +1516,9 @@
             const element = document.querySelector('.'+classTheme);
             const boxBg = getComputedStyle(element).getPropertyValue('--box-bg-color').trim();
             adaptTextColors(boxBg);
-            localStorage.setItem('theme',theme); // save active theme
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('theme', theme); // save active theme
+            }
         }
     }
 
@@ -1242,17 +1602,21 @@
     function setAdaptiveStatusColors(brightness) {
         // Two-tier contrast; tweak thresholds as needed
         if (brightness < 128) {
-            document.documentElement.style.setProperty('--status-color', '#cccccc');
+            document.documentElement.style.setProperty('--status-color', '#aaaaaa');
             document.documentElement.style.setProperty('--sub-color', '#aaaaaa');
         } else {
-            document.documentElement.style.setProperty('--status-color', '#444444');
+            document.documentElement.style.setProperty('--status-color', '#666666');
             document.documentElement.style.setProperty('--sub-color', '#666666');
         }
     }
 
     function getSavedCustomTheme() {
-        const custom = localStorage.getItem("customTheme");
-        return custom ? JSON.parse(custom) : null;
+        if (typeof(Storage) !== "undefined") {
+            const custom = localStorage.getItem("customTheme");
+            return custom ? JSON.parse(custom) : null;
+        } else  {
+            return null;
+        }
     }
 
     function setCustomInputs(custom) {
@@ -1262,6 +1626,7 @@
         document.getElementById("customBoxHeader").value = custom.boxHeader;
         document.getElementById("customPageBg").value = custom.pageBg;
         document.getElementById("customBoxBg").value = custom.boxBg;
+        document.getElementById("customWaveColor").value = custom.waveColor;
     }
 
     loadTheme();
@@ -1269,7 +1634,447 @@
     // Initialize presets box on page load
     initPresets();
 
+    function playMelody(melody = [], bpm = 300, onFinished) {
+        if (!audioCtx) audioCtx = new AudioContext();
+
+        const beatMs = 60000 / bpm;
+        const beatSec = beatMs / 1000;
+        let startTime = audioCtx.currentTime;
+        let totalDuration = 0;
+
+        melody.forEach(step => {
+            // determine how long this step lasts
+            let stepBeats;
+            if (typeof step.dur === "number" && isFinite(step.dur)) {
+                stepBeats = step.dur;
+            } else if (step.notes && Array.isArray(step.notes) && step.notes.length > 0) {
+                stepBeats = Math.max(...step.notes.map(n =>
+                    (typeof n.dur === "number" && isFinite(n.dur)) ? n.dur : 0
+                ));
+            } else {
+                stepBeats = 0;
+            }
+
+            const stepDuration = beatSec * stepBeats;
+
+            if (step.notes && Array.isArray(step.notes)) {
+                step.notes.forEach(n => {
+                    let freq = null;
+                    if (typeof n.freq === "number" && isFinite(n.freq)) {
+                        freq = n.freq;
+                    } else if (n.note) {
+                        freq = noteToFrequency(n.note);
+                    }
+
+                    if (freq) {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+
+                        osc.type = "square";
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.2, startTime);
+
+                        osc.connect(gain).connect(audioCtx.destination);
+
+                        const noteDuration = beatSec * n.dur;
+                        osc.start(startTime);
+                        osc.stop(startTime + noteDuration);
+                    }
+                });
+            } else {
+                // single note or freq
+                let freq = null;
+                if (typeof step.freq === "number" && isFinite(step.freq)) {
+                    freq = step.freq;
+                } else if (step.note) {
+                    freq = noteToFrequency(step.note);
+                }
+
+                if (step.type !== "rest" && freq) {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = "square";
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    gain.gain.setValueAtTime(0.2, startTime);
+
+                    osc.connect(gain).connect(audioCtx.destination);
+
+                    osc.start(startTime);
+                    osc.stop(startTime + stepDuration);
+                }
+            }
+
+            // advance timeline by step duration
+            totalDuration += stepDuration;
+            startTime += stepDuration;
+        });
+
+        // schedule callback when finished
+        if (typeof onFinished === "function") {
+            setTimeout(() => {
+                onFinished();
+            }, totalDuration * 1000);
+        }
+    }
+
+    function noteToFrequency(note) {
+        const A4 = 440;
+        const notes = {
+            "C": -9, "C#": -8, "Db": -8,
+            "D": -7, "D#": -6, "Eb": -6,
+            "E": -5,
+            "F": -4, "F#": -3, "Gb": -3,
+            "G": -2, "G#": -1, "Ab": -1,
+            "A": 0, "A#": 1, "Bb": 1,
+            "B": 2
+        };
+
+        // split note string into pitch + octave
+        const match = note.match(/^([A-G]#?|[A-G]b?)(\d)$/);
+        if (!match) return null;
+
+        const pitch = match[1];
+        const octave = parseInt(match[2], 10);
+
+        // semitone distance from A4
+        const semitones = notes[pitch] + (octave - 4) * 12;
+        return A4 * Math.pow(2, semitones / 12);
+    }
+
+    // hihat, kick, or snare
+    function playBeat(beatPattern = [], bpm = 300) {
+        if (!audioCtx) audioCtx = new AudioContext();
+
+        const beatMs = 60000 / bpm;
+        const beatSec = beatMs / 1000;
+        let startTime = audioCtx.currentTime;
+
+        beatPattern.forEach(step => {
+            // default step length = explicit dur or 1 beat
+            const stepBeats = (typeof step.dur === "number" && isFinite(step.dur)) ? step.dur : 1;
+            const stepDuration = beatSec * stepBeats;
+
+            if (step.type !== "rest") {
+                // single type
+                if (step.type) {
+                    const dur = step.dur || stepBeats;
+                    scheduleHit(step.type, startTime, dur * beatSec);
+                }
+
+                // multiple types
+                if (step.types && Array.isArray(step.types)) {
+                    step.types.forEach(t => {
+                        let typeName, hitDur;
+                        if (typeof t === "string") {
+                            typeName = t;
+                            hitDur = stepBeats;
+                        } else if (typeof t === "object") {
+                            typeName = t.type;
+                            hitDur = t.dur || stepBeats;
+                        }
+                        scheduleHit(typeName, startTime, hitDur * beatSec);
+                    });
+                }
+            }
+
+            // visual dot flash
+            setTimeout(() => {
+                const dot = document.getElementById("metronomeDot");
+                if (dot) {
+                    dot.style.opacity = "1";
+                    setTimeout(() => { dot.style.opacity = "0"; }, beatMs * stepBeats);
+                }
+            }, (startTime - audioCtx.currentTime) * 1000);
+
+            // advance timeline by step duration (shortest beat)
+            startTime += stepDuration;
+        });
+    }
+
+    function scheduleHit(type, time, duration) {
+        if (type === "hihat") playHiHatBeat(time, duration);
+        else if (type === "kick") playKickBeat(time, duration);
+        else if (type === "snare") playSnareBeat(time, duration);
+    }
+
+    function playHiHatBeat(time, duration = 0.05) {
+        const bufferSize = audioCtx.sampleRate * duration;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "highpass";
+        filter.frequency.value = 8000;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.5, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+        noise.connect(filter).connect(gain).connect(audioCtx.destination);
+        noise.start(time);
+        noise.stop(time + duration);
+    }
+
+    function playKickBeat(time, duration = 0.3) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(150, time);
+        osc.frequency.exponentialRampToValueAtTime(50, time + 0.1);
+        gain.gain.setValueAtTime(0.8, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(time);
+        osc.stop(time + duration);
+    }
+
+    function playSnareBeat(time, duration = 0.2) {
+        const bufferSize = audioCtx.sampleRate * duration;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.value = 1800;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.6, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+        noise.connect(filter).connect(gain).connect(audioCtx.destination);
+        noise.start(time);
+        noise.stop(time + duration);
+    }
+
     // Events
+    document.getElementById("playSimpleSong").addEventListener("click", function () {
+        if (songPlaying === false) {
+            songPlaying = true;
+            const beatPattern = [
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 },
+                { type: "hihat", dur: 1 }
+            ];
+
+            const melody = [
+                { note: "A5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "G#5", dur: 1 },
+                { note: "E5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "A5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "G#5", dur: 1 },
+                { note: "rest", dur: 3 },
+                { note: "E5", dur: 2 },
+                { note: "E5", dur: 2 },
+                { note: "D5", dur: 0.5 },
+                { note: "rest", dur: 0.5 },
+                { note: "D5", dur: 6 }
+            ];
+
+            playBeat(beatPattern);
+            playMelody(melody, 300, () => {
+                songPlaying = false;
+            });
+        }
+    });
+
+    document.getElementById("playSong").addEventListener("click", function () {
+        if (songPlaying === false) {
+            songPlaying = true;
+            const beatPattern = [
+                {type: "rest", dur: 5},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1}
+            ];
+            playBeat(beatPattern, 150);
+
+            const melody = [
+                {note: "F#5", dur: 0.5}, // Intro
+                {note: "C#5", dur: 0.5},
+                {note: "B5", dur: 0.5},
+                {note: "F#5", dur: 0.5},
+                {note: "B5", dur: 0.5},
+                {note: "C#5", dur: 0.5},
+                {note: "F#5", dur: 0.5},
+                {note: "C#5", dur: 0.5},
+                {note: "B5", dur: 0.5},
+                {note: "F#4", dur: 0.5},
+                {notes: [
+                        {note: "B3", dur: 0.5},
+                        {note: "B5", dur: 1}, // Note will carry over to next half beat
+                        {note: "B2", dur: 1}
+                    ]},
+                {note: "C#5", dur: 0.5},
+                {notes: [
+                        {note: "F#5", dur: 0.5},
+                        {note: "B5", dur: 2},
+                        {note: "B2", dur: 2}
+                    ]},
+                {note: "C#5", dur: 0.5},
+                {note: "B5", dur: 0.5},
+                {note: "F#5", dur: 0.5},
+                {note: "E2", dur: 1}, // Melody
+                {note: "E3", dur: 1},
+                {notes: [
+                        {note: "B5", dur: 1},
+                        {note: "E5", dur: 1},
+                        {note: "F#5", dur: 1},
+                        {note: "A5", dur: 1},
+                        {note: "E2", dur: 1}
+                    ]},
+                {note: "E3", dur: 1},
+                {notes: [
+                        {note: "B5", dur: 1},
+                        {note: "E5", dur: 1},
+                        {note: "G#5", dur: 1},
+                        {note: "E2", dur: 1}
+                    ]},
+                {notes: [
+                        {note: "B5", dur: 1},
+                        {note: "E5", dur: 1},
+                        {note: "E3", dur: 1}
+                    ]},
+                {note: "E2", dur: 1},
+                {notes: [
+                        {note: "B5", dur: 1},
+                        {note: "E5", dur: 1},
+                        {note: "F#5", dur: 1},
+                        {note: "A5", dur: 1},
+                        {note: "E3", dur: 1}
+                    ]},
+                {note: "E2", dur: 1},
+                {notes: [
+                        {note: "B5", dur: 1},
+                        {note: "E5", dur: 1},
+                        {note: "G#5", dur: 1},
+                        {note: "E3", dur: 1}
+                    ]},
+                {note: "E2", dur: 1},
+                {note: "E3", dur: 1},
+                {note: "E2", dur: 1},
+                {notes: [
+                        {note: "B5", dur: 2},
+                        {note: "E5", dur: 2},
+                        {note: "G#5", dur: 2},
+                        {note: "E3", dur: 1}
+                    ]},
+                {note: "E2", dur: 1},
+                {notes: [
+                        {note: "B5", dur: 2},
+                        {note: "E5", dur: 2},
+                        {note: "G#5", dur: 2},
+                        {note: "E3", dur: 1}
+                    ]},
+                {note: "D2", dur: 1},
+                {notes: [
+                        {note: "A5", dur: 1},
+                        {note: "F#5", dur: 1},
+                        {note: "D5", dur: 1},
+                        {note: "A5", dur: 1},
+                        {note: "D3", dur: 1}
+                    ]},
+                {notes: [
+                        {note: "A5", dur: 2},
+                        {note: "F#5", dur: 2},
+                        {note: "D5", dur: 2},
+                        {note: "A5", dur: 2},
+                        {note: "D2", dur: 1}
+                    ]},
+                {note: "D3", dur: 1},
+                {notes: [
+                        {note: "A5", dur: 4},
+                        {note: "F#5", dur: 4},
+                        {note: "D5", dur: 4},
+                        {note: "A5", dur: 4},
+                        {note: "D2", dur: 1}
+                    ]},
+                {note: "D3", dur: 1},
+                {note: "D2", dur: 1},
+                {note: "D3", dur: 1}
+            ];
+            playMelody(melody, 300, () => {
+                songPlaying = false;
+            });
+        }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        if (typeof(Storage) !== "undefined") {
+            const micDisabledLS = localStorage.getItem("micDisabled") === "true";
+
+            if (micDisabledLS) {
+                updatePauseMessages();
+                document.getElementById("micToggle").textContent = "Enable Mic";
+                document.getElementById("micToggle").style.display = "block";
+                statusElem.textContent = "Mic: disabled";
+            }
+        }
+    });
+
     // Presets
     document.getElementById("savePreset").addEventListener("click", savePreset);
     document.getElementById("loadPreset").addEventListener("click", loadPreset);
@@ -1285,7 +2090,7 @@
                 const custom = getSavedCustomTheme();
                 if (custom) {
                     applyTheme("custom", custom);
-                    setCustomInputs(custom); // <-- populate pickers
+                    setCustomInputs(custom); // populate pickers
                 }
                 document.getElementById("customThemeInputs").style.display = "block";
             } else {
@@ -1296,14 +2101,15 @@
         });
     });
 
-    ["customInputFont","customInputBg","customBoxHeader","customPageBg","customBoxBg"].forEach(id => {
+    ["customInputFont","customInputBg","customBoxHeader","customPageBg","customBoxBg","customWaveColor"].forEach(id => {
         document.getElementById(id).addEventListener("input", () => {
             const custom = {
                 inputFont: document.getElementById("customInputFont").value,
                 inputBg: document.getElementById("customInputBg").value,
                 boxHeader: document.getElementById("customBoxHeader").value,
                 pageBg: document.getElementById("customPageBg").value,
-                boxBg: document.getElementById("customBoxBg").value
+                boxBg: document.getElementById("customBoxBg").value,
+                waveColor: document.getElementById("customWaveColor").value
             };
             applyTheme("custom", custom);
             saveTheme("custom", custom);
@@ -1311,6 +2117,7 @@
         });
     });
 
+    // Metronome
     metronomeBox.addEventListener("pointerdown", (e) => {
         // Ignore clicks on controls inside the metronome box
         if (e.target.closest("input, select, button")) return;
@@ -1330,6 +2137,12 @@
         }
     });
 
+    document.getElementById("tempoSliderNotch").addEventListener("click", () => {
+        tempo.value = 120;
+
+        // Trigger any input event listeners bound to the slider
+        tempo.dispatchEvent(new Event("input", { bubbles: true }));
+    });
     document.getElementById("startMetronome").addEventListener("click", () => {
         stopTone();
         startMetronome();
@@ -1349,13 +2162,66 @@
             startMetronome();
         }
     });
+    document.getElementById("polySubdivisions").addEventListener("change", () => {
+        if (metronomeInterval) {
+            startMetronome();
+        }
+    });
+    tempo.addEventListener("input", () => {
+        if (metronomeInterval) {
+            startMetronome(); // restart with new BPM
+        }
+    });
+    tempoUp.addEventListener("click", () => {
+        tempo.value = Math.min(parseInt(tempo.value, 10) + 1, parseInt(tempo.max, 10));
+
+        if (metronomeRunning) {
+            document.getElementById("metronomeText").textContent = `Playing at ${tempo.value} BPM`;
+        } else {
+            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        }
+
+        if (metronomeInterval) {
+            startMetronome();
+        }
+    });
+    tempoDown.addEventListener("click", () => {
+        tempo.value = Math.max(parseInt(tempo.value, 10) - 1, parseInt(tempo.min, 10));
+
+        if (metronomeRunning) {
+            document.getElementById("metronomeText").textContent = `Playing at ${tempo.value} BPM`;
+        } else {
+            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        }
+
+        if (metronomeInterval) {
+            startMetronome();
+        }
+    });
+
+    // Tone generator
+    document.getElementById("sliderNotch").addEventListener("click", () => {
+        const min = parseInt(noteDial.min, 10);
+        const max = parseInt(noteDial.max, 10);
+        noteDial.value = (min + max) / 2;
+
+        // Trigger any input event listeners bound to the slider
+        noteDial.dispatchEvent(new Event("input", { bubbles: true }));
+    });
     document.getElementById("decrementNote").addEventListener("click", () => {
         changeDial(-1);
     });
     document.getElementById("incrementNote").addEventListener("click", () => {
         changeDial(1);
     });
-
+    document.getElementById("tempo").addEventListener("input", () => {
+        if (metronomeRunning) {
+            const subdivisions = parseInt(getSubdivisions(), 10);
+            document.getElementById("metronomeText").textContent = (subdivisions > 1) ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)` : `Playing at ${bpm} BPM`;
+        } else {
+            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        }
+    });
     document.getElementById("noteDial").addEventListener("input", () => {
         updateDialDisplay();
     });
