@@ -918,42 +918,40 @@
             // Disable mic
             micStream.getAudioTracks().forEach(track => track.stop());
             micStream = null;
-
-            document.getElementById("micToggle").textContent = "Enable Mic";
-            updatePauseMessages();
-            resetTunerUI(); // blanks Hz/cents/needle
-            return;
-        }
-
-        // Enable mic → always try getUserMedia
-        try {
-            micStream = await navigator.mediaDevices.getUserMedia({
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-            });
-
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 8192;
-            yinBuffer = new Float32Array(analyser.fftSize);
-            const source = audioCtx.createMediaStreamSource(micStream);
-            source.connect(analyser);
-
-            document.getElementById("micToggle").textContent = "Disable Mic";
-            updatePauseMessages();
-            startLoop();
-            updateDialDisplay();
-        } catch (err) {
-            // Permission denied → clear UI immediately
+            localStorage.setItem("micEnabled", "false");
             resetTunerUI();
+        } else {
+            // Enable mic → always try getUserMedia
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({
+                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+                });
 
-            if (audioCtx && audioCtx.state !== "closed") {
-                audioCtx.close();
-                audioCtx = null;
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 8192;
+                yinBuffer = new Float32Array(analyser.fftSize);
+                const source = audioCtx.createMediaStreamSource(micStream);
+                source.connect(analyser);
+
+                document.getElementById("micToggle").textContent = "Disable Mic";
+                localStorage.setItem("micEnabled", "true");
+                updatePauseMessages();
+                startLoop();
+                updateDialDisplay();
+            } catch (err) {
+                // Permission denied → clear UI immediately
+                resetTunerUI();
+
+                if (audioCtx && audioCtx.state !== "closed") {
+                    audioCtx.close();
+                    audioCtx = null;
+                }
+
+                micStream = null;
+                document.getElementById("micToggle").textContent = "Enable Mic";
+                updatePauseMessages();
             }
-
-            micStream = null;
-            document.getElementById("micToggle").textContent = "Enable Mic";
-            updatePauseMessages();
         }
     });
 
@@ -1031,78 +1029,31 @@
     }
 
     async function init() {
-        try {
-            // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
-            statusElem.textContent = "Mic: requesting access...";
+        const micPref = localStorage.getItem("micEnabled");
+        if (micPref === "true") {
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 8192;
+                yinBuffer = new Float32Array(analyser.fftSize);
+                const source = audioCtx.createMediaStreamSource(micStream);
+                source.connect(analyser);
 
-            let stream = await checkMicrophonePermission();
-
-            if (stream !== false) {
-                micDisabled = false;
-                if (typeof(Storage) !== "undefined") {
-                    if (localStorage.getItem("micDisabled") !== null) {
-                        micDisabled = localStorage.getItem("micDisabled") === "true";
-                    } else {
-                        localStorage.setItem("micDisabled", micDisabled);
-                    }
-                }
-
-                if (!micDisabled) {
-                    document.getElementById("micToggle").style.display = "block";
-                    micStream = stream;
-
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    analyser = audioCtx.createAnalyser();
-                    analyser.fftSize = 8192;
-                    analyser.minDecibels = -100;
-                    analyser.maxDecibels = -10;
-                    analyser.smoothingTimeConstant = 0.0;
-
-                    // Create source and gain node
-                    micSource = audioCtx.createMediaStreamSource(stream);
-                    micGainNode = audioCtx.createGain();
-                    micGainNode.gain.value = 1; // start unmuted
-
-                    // Connect chain: source -> gain -> analyser
-                    micSource.connect(micGainNode).connect(analyser);
-
-                    yinBuffer = new Float32Array(analyser.fftSize);
-
-                    updatePauseMessages();
-                    startLoop();
-                    updateDialDisplay();
-                    document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
-                } else {
-                    // Stop all audio tracks — releases mic at OS level
-                    stream.getAudioTracks().forEach(track => track.stop());
-                    micStream = null;
-                    micSource = null;
-                    micGainNode = null;
-                    document.getElementById("micToggle").textContent = "Enable Mic";
-                    updatePauseMessages();
-
-                    noteElem.textContent = "--";
-                    freqElem.textContent = "-- Hz";
-                    centsElem.textContent = "-- cents";
-                    needleIndicator.style.left = "50%";
-                }
-            } else {
-                micDisabled = true;
-                if (typeof(Storage) !== "undefined") {
-                    localStorage.setItem("micDisabled", micDisabled);
-                }
+                document.getElementById("micToggle").textContent = "Disable Mic";
+                startLoop();
+                updateDialDisplay();
+            } catch (err) {
+                // Permission denied or error
+                micStream = null;
+                resetTunerUI();
                 document.getElementById("micToggle").textContent = "Enable Mic";
-                document.getElementById("micToggle").style.display = "block";
-                updatePauseMessages();
             }
-        } catch (e) {
-            micDisabled = true;
-            if (typeof(Storage) !== "undefined") {
-                localStorage.setItem("micDisabled", micDisabled);
-            }
-            updatePauseMessages();
-            document.getElementById("micToggle").style.display = "none";
-            console.error(e);
+        } else {
+            // Default: mic disabled
+            micStream = null;
+            resetTunerUI();
+            document.getElementById("micToggle").textContent = "Enable Mic";
         }
     }
 
