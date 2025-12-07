@@ -444,6 +444,8 @@
         <option value="sine">Sine</option>
         <option value="triangle">Triangle</option>
         <option value="sawtooth">Sawtooth</option>
+        <option value="electricGuitar">Electric Guitar</option>
+        <option value="acousticGuitar">Acoustic Guitar</option>
     </select>
     <button id="playTone" style="margin-left:8px;">Play</button>
     <button id="stopTone">Stop</button>
@@ -1109,11 +1111,23 @@ const beatPattern = [
 
     function updateWaveform() {
         const wave = document.getElementById("waveform").value;
-        if (toneOscillator) {
-            const validTypes = ["sine","square","triangle","sawtooth"];
-            if (validTypes.includes(wave)) {
-                toneOscillator.type = wave; // change live, no new oscillator
+        const validTypes = ["sine","square","triangle","sawtooth"];
+
+        stopTone(); // ensure no overlap
+
+        if (validTypes.includes(wave)) {
+            // If an oscillator is already running, just change its type
+            if (toneOscillator) {
+                toneOscillator.type = wave;
+            } else {
+                // If nothing is playing, start a new tone with this waveform
+                const freq = waveFreq || 440;
+                playTone(freq, wave);
             }
+        } else {
+            // For custom instruments, restart with the chosen type
+            const freq = waveFreq || 440;
+            playTone(freq, wave); // duration optional, defaults to sustain
         }
     }
 
@@ -1133,6 +1147,28 @@ const beatPattern = [
             toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             toneOscillator.connect(toneGain).connect(audioCtx.destination);
             toneOscillator.start();
+        } else {
+            // Custom instruments
+            const startTime = audioCtx.currentTime;
+
+            if (type === "piano") {
+                ({ osc: toneOscillator, gain: toneGain } = playPianoTone(freq, startTime));
+            } else if (type === "strings") {
+                ({ osc: toneOscillator, gain: toneGain } = playStringTone(freq, startTime));
+            } else if (type === "electricGuitar") {
+                ({ osc: toneOscillator, gain: toneGain } = playElectricGuitarTone(freq, startTime));
+            } else if (type === "acousticGuitar") {
+                ({ osc: toneOscillator, gain: toneGain } = playAcousticGuitarTone(freq, startTime));
+            } else {
+                // fallback to square
+                toneOscillator = audioCtx.createOscillator();
+                toneGain = audioCtx.createGain();
+                toneOscillator.type = "square";
+                toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                toneOscillator.connect(toneGain).connect(audioCtx.destination);
+                toneOscillator.start();
+            }
         }
 
         setPlayButtonState(false);
@@ -1155,7 +1191,6 @@ const beatPattern = [
 
         setPlayButtonState(true);
         setTunerActive(true);
-
         stopWaveAnimation();
         syncUIState();
         updatePauseMessages();
@@ -1703,11 +1738,16 @@ const beatPattern = [
         gain.gain.setValueAtTime(0, startTime);
         gain.gain.linearRampToValueAtTime(0.9, startTime + 0.01); // hammer strike
         gain.gain.linearRampToValueAtTime(0.4, startTime + 0.15); // decay
-        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
 
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(startTime);
-        osc.stop(startTime + duration);
+
+        if (duration) {
+            gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
+            osc.stop(startTime + duration);
+        }
+
+        return { osc, gain };
     }
 
     function playStringTone(freq, startTime, duration) {
@@ -1721,15 +1761,21 @@ const beatPattern = [
         // Envelope: slow attack, steady sustain, gentle release
         gain.gain.setValueAtTime(0, startTime);
         gain.gain.linearRampToValueAtTime(0.6, startTime + 0.5); // attack
-        gain.gain.setValueAtTime(0.6, startTime + duration - 0.3); // sustain
-        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
 
         filter.type = "lowpass";
         filter.frequency.setValueAtTime(500, startTime);
 
         osc.connect(filter).connect(gain).connect(audioCtx.destination);
         osc.start(startTime);
-        osc.stop(startTime + duration);
+
+        if (duration) {
+            // scheduled release
+            gain.gain.setValueAtTime(0.6, startTime + duration - 0.3); // sustain
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
+            osc.stop(startTime + duration);
+        }
+
+        return { osc, gain };
     }
 
     function playElectricGuitarTone(freq, startTime, duration) {
@@ -1743,8 +1789,6 @@ const beatPattern = [
         // Envelope: sharp attack, sustain, release
         gain.gain.setValueAtTime(0, startTime);
         gain.gain.linearRampToValueAtTime(0.8, startTime + 0.02); // fast attack
-        gain.gain.setValueAtTime(0.6, startTime + duration - 0.1); // sustain
-        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
 
         // Filter to tame harshness
         filter.type = "lowpass";
@@ -1752,7 +1796,15 @@ const beatPattern = [
 
         osc.connect(filter).connect(gain).connect(audioCtx.destination);
         osc.start(startTime);
-        osc.stop(startTime + duration);
+
+        if (duration) {
+            // scheduled release
+            gain.gain.setValueAtTime(0.6, startTime + duration - 0.1); // sustain
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
+            osc.stop(startTime + duration);
+        }
+
+        return { osc, gain };
     }
 
     function playAcousticGuitarTone(freq, startTime, duration) {
@@ -1766,11 +1818,17 @@ const beatPattern = [
         gain.gain.setValueAtTime(0, startTime);
         gain.gain.linearRampToValueAtTime(1.0, startTime + 0.01); // sharp pluck
         gain.gain.linearRampToValueAtTime(0.3, startTime + 0.1);  // quick decay
-        gain.gain.linearRampToValueAtTime(0, startTime + duration); // release
 
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(startTime);
-        osc.stop(startTime + duration);
+
+        if (duration) {
+            // scheduled release
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
+            osc.stop(startTime + duration);
+        }
+
+        return { osc, gain };
     }
 
     function noteToFrequency(note) {
@@ -1999,31 +2057,44 @@ const beatPattern = [
         noise.stop(time + duration);
     }
 
-    function playClapBeat(time, duration = 0.15) {
+    function playClapBeat(time, duration = 0.12) {
         const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
 
-        // Bandpass filter for clap tone
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.value = 2500; // mid-high focus
-        filter.Q.value = 1.0;
+        // Pink-ish noise: accumulate to reduce high-frequency harshness
+        let b0 = 0, b1 = 0, b2 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            b0 = 0.997 * b0 + white * 0.05;
+            b1 = 0.985 * b1 + white * 0.1;
+            b2 = 0.940 * b2 + white * 0.2;
+            data[i] = b0 + b1 + b2 + white * 0.05;
+        }
+
+        // Filters
+        const bandpass = audioCtx.createBiquadFilter();
+        bandpass.type = "bandpass";
+        bandpass.frequency.value = 2000; // slightly lower
+        bandpass.Q.value = 2.5;          // tighter band
+
+        const highpass = audioCtx.createBiquadFilter();
+        highpass.type = "highpass";
+        highpass.frequency.value = 800;  // remove low rumble
 
         // Burst offsets (simulate multiple hands)
-        const bursts = [0, 0.02, 0.04, 0.06]; // 0ms, 20ms, 40ms, 60ms
+        const bursts = [0, 0.02, 0.04];
         bursts.forEach((offset, idx) => {
             const noise = audioCtx.createBufferSource();
             noise.buffer = buffer;
 
             const gain = audioCtx.createGain();
-            gain.gain.setValueAtTime(1.0 - idx * 0.2, time + offset);
-            gain.gain.exponentialRampToValueAtTime(0.001, time + offset + 0.05); // short decay
+            gain.gain.setValueAtTime(1.0 - idx * 0.3, time + offset);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + offset + 0.08);
 
-            noise.connect(filter).connect(gain).connect(audioCtx.destination);
+            noise.connect(highpass).connect(bandpass).connect(gain).connect(audioCtx.destination);
             noise.start(time + offset);
-            noise.stop(time + offset + 0.05);
+            noise.stop(time + offset + 0.1);
         });
     }
 
