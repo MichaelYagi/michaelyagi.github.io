@@ -942,7 +942,7 @@ const beatPattern = [
                     audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
                 });
 
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (!audioCtx) audioCtx = new AudioContext();
                 analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 8192;
                 yinBuffer = new Float32Array(analyser.fftSize);
@@ -1031,7 +1031,7 @@ const beatPattern = [
         if (micPref === "true") {
             try {
                 micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioCtx = new AudioContext();
+                if (!audioCtx) audioCtx = new AudioContext();
                 analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 8192;
                 yinBuffer = new Float32Array(analyser.fftSize);
@@ -1120,8 +1120,6 @@ const beatPattern = [
     function playTone(freq, type = "sine") {
         stopTone();
 
-        if (toneOscillator) return;
-
         const validTypes = ["sine", "square", "triangle", "sawtooth"];
 
         if (validTypes.includes(type)) {
@@ -1135,38 +1133,6 @@ const beatPattern = [
             toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             toneOscillator.connect(toneGain).connect(audioCtx.destination);
             toneOscillator.start();
-
-            toneOscillator.onended = () => {
-                toneOscillator = null;
-                toneGain = null;
-                setPlayButtonState(true);
-                setTunerActive(true);
-                stopWaveAnimation();
-                updatePauseMessages();
-            };
-        } else {
-            // Custom instruments
-            const duration = 1.0; // default preview length
-            const startTime = audioCtx.currentTime;
-
-            if (type === "piano") {
-                playPianoTone(freq, startTime, duration);
-            } else if (type === "strings") {
-                playStringTone(freq, startTime, duration);
-            } else if (type === "electricGuitar") {
-                playElectricGuitarTone(freq, startTime, duration);
-            } else if (type === "acousticGuitar") {
-                playAcousticGuitarTone(freq, startTime, duration);
-            } else {
-                // fallback to square
-                toneOscillator = audioCtx.createOscillator();
-                toneGain = audioCtx.createGain();
-                toneOscillator.type = "square";
-                toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                toneOscillator.connect(toneGain).connect(audioCtx.destination);
-                toneOscillator.start();
-            }
         }
 
         setPlayButtonState(false);
@@ -1178,7 +1144,7 @@ const beatPattern = [
 
     function stopTone() {
         if (toneOscillator) {
-            try { toneOscillator.stop(); } catch(e) {}
+            try { toneOscillator.stop(); } catch(e) {console.warn(e);}
             toneOscillator.disconnect();
             toneOscillator = null;
         }
