@@ -372,6 +372,7 @@
         <option value="hihat">Hi-Hat</option>
         <option value="kick">Kick</option>
         <option value="snare">Snare</option>
+        <option value="clap">Clap</option>
     </select>
     <button id="startMetronome" style="margin-left:8px;">Start</button>
     <button id="stopMetronome">Stop</button>
@@ -1178,6 +1179,8 @@
             playKickBeat(now, 0.1);     // punchy downbeat
         } else if (soundChoice === "snare") {
             playSnareBeat(now, 0.1);    // snappy click
+        } else if (soundChoice === "clap") {
+            playClapBeat(now, 0.1);    // snappy click
         } else {
             // fallback: oscillator click
             const osc = audioCtx.createOscillator();
@@ -1738,6 +1741,7 @@
         if (type === "hihat") playHiHatBeat(time, duration);
         else if (type === "kick") playKickBeat(time, duration);
         else if (type === "snare") playSnareBeat(time, duration);
+        else if (type === "clap") playClapBeat(time, duration);
     }
 
     function playHiHatBeat(time, duration = 0.2) {
@@ -1893,6 +1897,34 @@
         osc.stop(time + 0.05);
     }
 
+    function playClapBeat(time, duration = 0.15) {
+        const bufferSize = audioCtx.sampleRate * duration;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        // Bandpass filter for clap tone
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.value = 2500; // mid-high focus
+        filter.Q.value = 1.0;
+
+        // Burst offsets (simulate multiple hands)
+        const bursts = [0, 0.02, 0.04, 0.06]; // 0ms, 20ms, 40ms, 60ms
+        bursts.forEach((offset, idx) => {
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(1.0 - idx * 0.2, time + offset);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + offset + 0.05); // short decay
+
+            noise.connect(filter).connect(gain).connect(audioCtx.destination);
+            noise.start(time + offset);
+            noise.stop(time + offset + 0.05);
+        });
+    }
+
     // Events
     document.getElementById("playSimpleSong").addEventListener("click", function () {
         if (songPlaying === false) {
@@ -1947,7 +1979,7 @@
                 {types: [
                         {type: "kick", dur: 2},
                         {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
+                        {type: "clap", dur: 1},
                     ]},
                 {type: "hihat", dur: 1},
                 {types: [
@@ -1959,37 +1991,37 @@
                 {types: [
                         {type: "kick", dur: 2},
                         {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
+                        {type: "clap", dur: 1},
                     ]},
                 {type: "hihat", dur: 1},
                 {types: [
                         {type: "kick", dur: 2},
                         {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
+                        {type: "clap", dur: 1},
                     ]},
                 {type: "hihat", dur: 1},
                 {types: [
                         {type: "kick", dur: 2},
                         {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
+                        {type: "clap", dur: 1},
                     ]},
                 {type: "hihat", dur: 1},
                 {types: [
                         {type: "kick", dur: 2},
                         {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
+                        {type: "clap", dur: 1},
                     ]},
                 {type: "hihat", dur: 1},
                 {types: [
                         {type: "kick", dur: 2},
                         {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
+                        {type: "clap", dur: 1},
                     ]},
                 {type: "hihat", dur: 1},
                 {types: [
                         {type: "kick", dur: 2},
                         {type: "snare", dur: 2},
-                        {type: "hihat", dur: 1},
+                        {type: "clap", dur: 1},
                     ]},
                 {type: "hihat", dur: 1}
             ];
