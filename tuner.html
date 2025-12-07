@@ -922,6 +922,7 @@
             document.getElementById("micToggle").textContent = "Enable Mic";
             document.getElementById("status").textContent = "Mic: disabled";
             resetTunerUI();
+            stopLoop();
         } else {
             // Enable mic → always try getUserMedia
             try {
@@ -953,6 +954,7 @@
                 document.getElementById("status").textContent = "Mic: disabled";
                 updatePauseMessages();
                 resetTunerUI();
+                stopLoop()
             }
         }
     });
@@ -963,6 +965,8 @@
         centsElem.textContent = "-- cents";
         needleIndicator.style.left = "50%";
     }
+
+    let loopId = null;
 
     function startLoop() {
         let lastNote = "--";
@@ -1001,9 +1005,16 @@
                     centsElem.textContent = lastCents;
                 }
             }
-            requestAnimationFrame(update);
+            loopId = requestAnimationFrame(update);
         }
-        requestAnimationFrame(update);
+        loopId = requestAnimationFrame(update);
+    }
+
+    function stopLoop() {
+        if (loopId) {
+            cancelAnimationFrame(loopId);
+            loopId = null;
+        }
     }
 
     // Init audio
