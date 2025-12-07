@@ -659,8 +659,8 @@ playMelody(melody);
         <pre class="box code"><button class="copy-btn">Copy</button><code>
 const melody = [
     { notes: [
-        // This short note sets the step length;
-        // sequence advances after 1 beat
+        // This shortest note defines the step length;
+        // the sequence advances after 1 beat
         { note: "B4", dur: 1 },
         // Sustains across the next 2 steps until
         // its full duration completes
@@ -678,7 +678,7 @@ const beatPattern = [
         // Sustains across the next step until
         // its full duration completes
         { type: "snare", dur: 2 },
-        // This shorter beat sets the step length
+        // This shortest beat defines the step length
         { type: "hihat", dur: 1 },
     ]},
     { type: "hihat", dur: 1 },
