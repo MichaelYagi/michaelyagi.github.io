@@ -654,27 +654,35 @@ playMelody(melody);
 
         <p>Copy and paste everything in the console or <button id="playSimpleSong">Play</button> now!</p>
 
-        <p>Play around with chords or stacked beats too.</p>
+        <p>Experiment with chords or stacked beats. The shortest value determines when the sequence advances, and any longer notes or hits will continue sounding until their full duration completes.</p>
 
         <pre class="box code"><button class="copy-btn">Copy</button><code>
 const melody = [
-    ...,
     { notes: [
-        { note: "B3", dur: 0.5 },
-        { note: "B5", dur: 1 },
-        { note: "B2", dur: 1 }
-    ]}
-    ...
+        // This short note sets the step length;
+        // sequence advances after 1 beat
+        { note: "B4", dur: 1 },
+        // Sustains across the next 2 steps until
+        // its full duration completes
+        { note: "B5", dur: 3 },
+        // Also sustains into the following step
+        { note: "B2", dur: 2 }
+    ]},
+    { note: "B3", dur: 1 },
+    { note: "B3", dur: 1 },
+    { note: "B3", dur: 1 }
 ];
 const beatPattern = [
-    ...,
-    { type: "hihat", dur: 1 },
     { types: [
         { type: "kick", dur: 2 },
+        // Sustains across the next step until
+        // its full duration completes
         { type: "snare", dur: 2 },
+        // This shorter beat sets the step length
         { type: "hihat", dur: 1 },
     ]},
-    ...
+    { type: "hihat", dur: 1 },
+    { type: "hihat", dur: 1 }
 ];
         </code></pre>
 
@@ -1592,13 +1600,13 @@ const beatPattern = [
         let totalDuration = 0;
 
         melody.forEach(step => {
-            // determine how long this step lasts
+            // determine how long this step lasts → shortest note
             let stepBeats;
             if (typeof step.dur === "number" && isFinite(step.dur)) {
                 stepBeats = step.dur;
             } else if (step.notes && Array.isArray(step.notes) && step.notes.length > 0) {
-                stepBeats = Math.max(...step.notes.map(n =>
-                    (typeof n.dur === "number" && isFinite(n.dur)) ? n.dur : 0
+                stepBeats = Math.min(...step.notes.map(n =>
+                    (typeof n.dur === "number" && isFinite(n.dur)) ? n.dur : Infinity
                 ));
             } else {
                 stepBeats = 0;
@@ -1625,6 +1633,7 @@ const beatPattern = [
 
                         osc.connect(gain).connect(audioCtx.destination);
 
+                        // each note plays for its own duration, even if longer than step
                         const noteDuration = beatSec * n.dur;
                         osc.start(startTime);
                         osc.stop(startTime + noteDuration);
@@ -1654,7 +1663,7 @@ const beatPattern = [
                 }
             }
 
-            // advance timeline by step duration
+            // advance timeline by shortest duration
             totalDuration += stepDuration;
             startTime += stepDuration;
         });
@@ -1691,7 +1700,7 @@ const beatPattern = [
         return A4 * Math.pow(2, semitones / 12);
     }
 
-    // hihat, kick, or snare
+    // hihat, kick, clap or snare
     function playBeat(beatPattern = [], bpm = 300) {
         if (!audioCtx) audioCtx = new AudioContext();
 
@@ -1700,8 +1709,25 @@ const beatPattern = [
         let startTime = audioCtx.currentTime;
 
         beatPattern.forEach(step => {
-            // default step length = explicit dur or 1 beat
-            const stepBeats = (typeof step.dur === "number" && isFinite(step.dur)) ? step.dur : 1;
+            let stepBeats;
+
+            if (typeof step.dur === "number" && isFinite(step.dur)) {
+                // explicit duration
+                stepBeats = step.dur;
+            } else if (step.types && Array.isArray(step.types) && step.types.length > 0) {
+                // compound types → shortest duration
+                stepBeats = Math.min(...step.types.map(t => {
+                    if (typeof t === "string") return 1;
+                    if (typeof t === "object" && typeof t.dur === "number" && isFinite(t.dur)) {
+                        return t.dur;
+                    }
+                    return 1;
+                }));
+            } else {
+                // default
+                stepBeats = 1;
+            }
+
             const stepDuration = beatSec * stepBeats;
 
             if (step.type !== "rest") {
@@ -1717,7 +1743,7 @@ const beatPattern = [
                         let typeName, hitDur;
                         if (typeof t === "string") {
                             typeName = t;
-                            hitDur = stepBeats;
+                            hitDur = stepBeats; // default
                         } else if (typeof t === "object") {
                             typeName = t.type;
                             hitDur = t.dur || stepBeats;
@@ -1736,7 +1762,7 @@ const beatPattern = [
                 }
             }, (startTime - audioCtx.currentTime) * 1000);
 
-            // advance timeline by step duration (shortest beat)
+            // advance timeline by shortest duration
             startTime += stepDuration;
         });
     }
