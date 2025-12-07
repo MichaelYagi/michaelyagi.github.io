@@ -953,6 +953,7 @@
             micStream = null;
             document.getElementById("micToggle").textContent = "Enable Mic";
             updatePauseMessages();
+            resetTunerUI();
         }
     });
 
@@ -969,7 +970,7 @@
         let lastCents = "-- cents";
 
         function update() {
-            if (tunerEnabled && analyser && !micDisabled) {
+            if (tunerEnabled && analyser && audioCtx && !micDisabled) {
                 analyser.getFloatTimeDomainData(yinBuffer);
                 const f = yinPitch(yinBuffer, audioCtx.sampleRate);
                 if (f && isFinite(f)) {
@@ -1079,10 +1080,7 @@
                     document.getElementById("micToggle").textContent = "Enable Mic";
                     updatePauseMessages();
 
-                    noteElem.textContent = "--";
-                    freqElem.textContent = "-- Hz";
-                    centsElem.textContent = "-- cents";
-                    needleIndicator.style.left = "50%";
+                    resetTunerUI();
                 }
             } else {
                 micDisabled = true;
@@ -1092,6 +1090,7 @@
                 document.getElementById("micToggle").textContent = "Enable Mic";
                 document.getElementById("micToggle").style.display = "block";
                 updatePauseMessages();
+                resetTunerUI();
             }
         } catch (e) {
             micDisabled = true;
@@ -2075,6 +2074,7 @@
                 document.getElementById("micToggle").textContent = "Enable Mic";
                 document.getElementById("micToggle").style.display = "block";
                 statusElem.textContent = "Mic: disabled";
+                resetTunerUI();
             }
         }
     });
