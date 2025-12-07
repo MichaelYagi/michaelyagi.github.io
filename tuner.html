@@ -604,7 +604,7 @@
 
         <p>Create tunes! Configure a simple beat and melody pattern. You can use a combination of hihats, claps, kicks, or snare.</p>
 
-        <pre><code>
+        <pre class="box"><code>
         const beatPattern = [
             { type: "hihat", dur: 2 },
             { type: "hihat", dur: 2 },
@@ -621,9 +621,7 @@
             { type: "hihat", dur: 2 },
             { type: "hihat", dur: 2 }
         ];
-        </code></pre>
 
-        <pre><code>
         const melody = [
             { note: "A5", dur: 1 },
             { note: "rest", dur: 1 },
@@ -640,9 +638,7 @@
             { note: "rest", dur: 0.5 },
             { note: "D5", dur: 6 }
         ];
-        </code></pre>
 
-        <pre><code>
         playBeat(beatPattern);
         playMelody(melody);
         </code></pre>
@@ -651,7 +647,7 @@
 
         <p>Play around with chords or stacked beats too.</p>
 
-        <pre><code>
+        <pre class="box"><code>
         const melody = [
             ...,
             { notes: [
