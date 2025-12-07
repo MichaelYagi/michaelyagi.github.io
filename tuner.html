@@ -934,6 +934,7 @@
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioCtx.createAnalyser();
             analyser.fftSize = 8192;
+            yinBuffer = new Float32Array(analyser.fftSize);
             const source = audioCtx.createMediaStreamSource(micStream);
             source.connect(analyser);
 
@@ -969,7 +970,8 @@
         let lastCents = "-- cents";
 
         function update() {
-            if (tunerEnabled && analyser && !micDisabled) {
+            // if (tunerEnabled && analyser && !micDisabled) {
+            if (analyser && yinBuffer && audioCtx && audioCtx.state === "running") {
                 analyser.getFloatTimeDomainData(yinBuffer);
                 const f = yinPitch(yinBuffer, audioCtx.sampleRate);
                 if (f && isFinite(f)) {
@@ -1064,7 +1066,7 @@
                     // Connect chain: source -> gain -> analyser
                     micSource.connect(micGainNode).connect(analyser);
 
-                    yinBuffer = new Float32Array(8192);
+                    yinBuffer = new Float32Array(analyser.fftSize);
 
                     updatePauseMessages();
                     startLoop();
@@ -1107,9 +1109,9 @@
     function updatePauseMessages() {
         if (!micStream) {
             statusElem.textContent = "Mic: disabled";
-        } else if (toneOscillator && !micDisabled) {
+        } else if (toneOscillator) {
             statusElem.textContent = "Tuner paused while tone is playing";
-        } else if (metronomeInterval && !micDisabled) {
+        } else if (metronomeInterval) {
             statusElem.textContent = "Tuner paused while metronome is on";
         } else {
             statusElem.textContent = "Mic: enabled";
