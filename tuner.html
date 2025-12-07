@@ -1847,13 +1847,18 @@
         if (songPlaying === false) {
             songPlaying = true;
             const beatPattern = [
-                {type: "rest", dur: 6},
-                // {type: "hihat", dur: 1},
-                // {types: [
-                //         {type: "kick", dur: 2},
-                //         {type: "snare", dur: 2},
-                //         {type: "hihat", dur: 1},
-                //     ]},
+                {type: "rest", dur: 4},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
+                {type: "hihat", dur: 1},
+                {types: [
+                        {type: "kick", dur: 2},
+                        {type: "snare", dur: 2},
+                        {type: "hihat", dur: 1},
+                    ]},
                 {type: "hihat", dur: 1},
                 {types: [
                         {type: "kick", dur: 2},
