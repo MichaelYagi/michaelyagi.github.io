@@ -727,8 +727,8 @@ const melody = [
         { note: "B2", dur: 2 }
     ]},
     // Instrument options:
-    // sine,square,triangle,sawtooth
-    // piano,strings,electricGuitar or acousticGuitar
+    // sine,square,triangle,sawtooth,piano,
+    // strings,electricGuitar or acousticGuitar
     { note: "B3", dur: 1, instrument: "electricGuitar" },
     { note: "B3", dur: 1 },
     { note: "B3", dur: 1 }
@@ -736,9 +736,9 @@ const melody = [
 
 const beatPattern = [
     { types: [
-        { type: "kick", dur: 2 },
         // Sustains across the next step until
         // its full duration completes
+        { type: "kick", dur: 2 },
         { type: "snare", dur: 2 },
         // This shortest beat defines the step length
         { type: "hihat", dur: 1 },
@@ -752,7 +752,7 @@ playBeat(beatPattern, 200);
 playMelody(melody, 100);
                     </code></pre>
 
-                    <p><button id="playSong">Play</button> a version of the above that combines different chords and beat patterns.</p>
+                    <p><button id="playSong">Play</button> music that combines different chords and beat patterns.</p>
 
                 </div>
             </div>
