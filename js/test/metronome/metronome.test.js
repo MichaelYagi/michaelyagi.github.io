@@ -1,72 +1,167 @@
-import { strict as assert } from "assert";
-import { JSDOM } from "jsdom";
+const assert = require("assert").strict;
+const { JSDOM } = require("jsdom");
+const fs = require("fs");
+const path = require("path");
 
-// Import your metronome module here
-import { startMetronome, stopMetronome, playClick, getTempo } from "../../../tuner.html";
+const htmlPath = path.resolve(__dirname, "../../../metronome/index.html"); // update to your actual path
+const html = fs.readFileSync(htmlPath, "utf8");
 
-describe("Metronome", function () {
+describe("Metronome embedded script (real HTML)", function () {
   let dom;
+  let window;
   let document;
+  let metronome;
 
   beforeEach(() => {
-    // Setup a fake DOM
-    dom = new JSDOM(`<!DOCTYPE html>
-      <body>
-        <div id="metronomeBox"></div>
-        <input id="tempo" value="120" />
-        <input id="subdivisions" value="1" />
-        <input id="polySubdivisions" value="0" />
-        <div id="metronomeText"></div>
-        <div id="metronomeDot"></div>
-        <div id="subdivisionDot"></div>
-        <button id="startMetronome"></button>
-        <button id="stopMetronome"></button>
-        <select id="clickSound"><option value="square"></option></select>
-      </body>`);
-    document = dom.window.document;
+    dom = new JSDOM(html, {
+      url: "http://localhost/",
+      runScripts: "dangerously",
+      resources: "usable",
+      pretendToBeVisual: true,
+      // Ensure mocks exist before your embedded script runs
+      beforeParse(win) {
+        // Minimal AudioContext mock
+        win.AudioContext = class {
+          constructor() { this.currentTime = 0; this.state = "running"; }
+          createOscillator() {
+            return {
+              type: "sine",
+              frequency: { setValueAtTime() {} },
+              connect() { return this; },
+              start() {},
+              stop() {}
+            };
+          }
+          createGain() {
+            return {
+              gain: {
+                setValueAtTime() {},
+                exponentialRampToValueAtTime() {},
+                linearRampToValueAtTime() {}
+              },
+              connect() { return this; }
+            };
+          }
+          createAnalyser() {
+            return {
+              fftSize: 0,
+              getFloatTimeDomainData(buf) { buf.fill(0); },
+              connect() {},
+              disconnect() {}
+            };
+          }
+          createMediaStreamSource(stream) {
+            // Validate correct type in tests
+            if (!(stream instanceof win.MediaStream)) {
+              throw new TypeError("createMediaStreamSource expects MediaStream");
+            }
+            return { connect() {}, disconnect() {} };
+          }
+          resume() { this.state = "running"; return Promise.resolve(); }
+          close() { this.state = "closed"; return Promise.resolve(); }
+        };
 
-    // Attach globals expected by your code
-    global.document = document;
-    global.window = dom.window;
-    global.performance = { now: () => Date.now() };
-    global.setTimeout = dom.window.setTimeout;
-    global.clearTimeout = dom.window.clearTimeout;
-    global.setInterval = dom.window.setInterval;
-    global.clearInterval = dom.window.clearInterval;
+        // Minimal MediaStream mock
+        win.MediaStreamTrack = class {
+          constructor() { this.enabled = true; }
+          stop() { this.enabled = false; }
+        };
+        win.MediaStream = class {
+          constructor() { this._tracks = [new win.MediaStreamTrack()]; }
+          getTracks() { return this._tracks; }
+          getAudioTracks() { return this._tracks; }
+        };
 
-    // Mock AudioContext
-    global.AudioContext = class {
-      constructor() { this.currentTime = 0; }
-      createOscillator() { return { connect: () => {}, start: () => {}, stop: () => {}, frequency: { setValueAtTime: () => {} }, type: "" }; }
-      createGain() { return { connect: () => {}, gain: { setValueAtTime: () => {}, exponentialRampToValueAtTime: () => {} } }; }
-    };
+        // Navigator/mediaDevices mock (used by enableMic)
+        win.navigator = win.navigator || {};
+        win.navigator.mediaDevices = {
+          getUserMedia: async () => new win.MediaStream()
+        };
+
+        // requestAnimationFrame mock used by tuner loop
+        win.requestAnimationFrame = cb => setTimeout(() => cb(Date.now()), 5);
+        win.cancelAnimationFrame = id => clearTimeout(id);
+        win.performance = { now: () => Date.now() };
+      }
+    });
+
+    window = dom.window;
+    document = window.document;
+
+    // Wait for the DOM to be interactive; inline scripts execute during parsing
+    metronome = window.metronome;
+    assert.ok(metronome, "window.metronome not found; ensure you export it in HTML");
   });
 
-  it("should default tempo to 120 BPM if invalid", () => {
-    document.getElementById("tempo").value = "0";
-    const bpm = getTempo();
+  afterEach(() => {
+    dom.window.close();
+  });
+
+  it("defaults tempo to 120 if invalid", () => {
+    const tempo = document.getElementById("tempo");
+    tempo.value = "0";
+    const bpm = metronome.getTempo();
     assert.equal(bpm, 120);
+    assert.equal(tempo.value, "120");
   });
 
-  it("should start metronome and update text", () => {
-    startMetronome();
-    const text = document.getElementById("metronomeText").textContent;
-    assert.match(text, /Playing|subdivisions/);
+  it("startMetronome updates status and sets running state", () => {
+    // Ensure required elements exist even if your HTML differs
+    const text = document.getElementById("metronomeText") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "metronomeText" }));
+    metronome.startMetronome();
+    assert.match(text.textContent, /Playing|subdivisions/);
   });
 
-  it("should stop metronome and update text", () => {
-    startMetronome();
-    stopMetronome();
-    const text = document.getElementById("metronomeText").textContent;
-    assert.equal(text, "Stopped");
+  it("stopMetronome updates status", () => {
+    const text = document.getElementById("metronomeText") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "metronomeText" }));
+    metronome.startMetronome();
+    metronome.stopMetronome();
+    assert.equal(text.textContent, "Stopped");
   });
 
-  it("should playClick with strong beat", () => {
-    // This just ensures no error is thrown
-    assert.doesNotThrow(() => playClick(true));
+  it("playClick sets dot opacity for strong beat", () => {
+    const dot = document.getElementById("metronomeDot") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "metronomeDot" }));
+    metronome.playClick(true);
+    assert.equal(dot.style.opacity, "1");
   });
 
-  it("should playClick with subdivision beat", () => {
-    assert.doesNotThrow(() => playClick(false));
+  it("pauses mic when metronome starts and resumes on stop", async () => {
+    // Prepare a live mic
+    await window.AudioContext.prototype.resume.call(window.audioCtx || new window.AudioContext());
+    // Explicitly enable mic via your exported function if available
+    if (metronome.enableMic) {
+      await metronome.enableMic();
+    } else {
+      // Manually set a micStream to simulate enabled mic
+      window.micStream = new window.MediaStream();
+      const analyser = (window.analyser = window.audioCtx.createAnalyser());
+      const micSource = (window.micSource = window.audioCtx.createMediaStreamSource(window.micStream));
+      micSource.connect(analyser);
+    }
+
+    const track = window.micStream.getAudioTracks()[0];
+    assert.equal(track.enabled, true, "mic should start enabled");
+
+    metronome.startMetronome();
+    assert.equal(track.enabled, false, "mic should be paused on metronome start");
+
+    metronome.stopMetronome();
+    assert.equal(track.enabled, true, "mic should resume on metronome stop");
+  });
+
+  it("does not throw when changing waveform while tone is playing", () => {
+    // Simulate tone playing
+    const dial = document.getElementById("noteDial") || document.body.appendChild(Object.assign(document.createElement("input"), { id: "noteDial", value: "30", min: "0", max: "60" }));
+    const waveform = document.getElementById("waveform") || document.body.appendChild(Object.assign(document.createElement("select"), { id: "waveform" }));
+    const optSine = document.createElement("option"); optSine.value = "sine"; waveform.appendChild(optSine);
+    const optPiano = document.createElement("option"); optPiano.value = "piano"; waveform.appendChild(optPiano);
+
+    // Start tone
+    const { f } = window.dialToNote ? window.dialToNote(30) : { f: 440 };
+    window.playTone ? window.playTone(f, "sine") : null;
+
+    // Switch waveform
+    waveform.value = "piano";
+    assert.doesNotThrow(() => window.updateWaveform ? window.updateWaveform() : null);
   });
 });

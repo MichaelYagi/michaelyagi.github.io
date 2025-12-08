@@ -1,0 +1,12 @@
+{
+    "name": "metronome",
+    "version": "1.0.0",
+    "scripts": {
+        "test:metronome": "mocha js/test/metronome/**/*.test.js"
+    },
+    "devDependencies": {
+        "mocha": "^11.0.0",
+        "jsdom": "^24.0.0",
+        "canvas": "^2.11.2"
+    }
+}
