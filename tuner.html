@@ -1341,6 +1341,11 @@ const beatPattern = [
     }
 
     function startMetronome() {
+        if (micStream) {
+            micStream.getAudioTracks().forEach(track => track.enabled = false);
+            statusElem.textContent = "Mic paused while tone is playing";
+        }
+        
         let tempoValue = tempo.value;
         if (tempoValue <= 0) {
             tempoValue = "120";
@@ -2441,6 +2446,7 @@ const beatPattern = [
         stopTone();
         startMetronome();
         syncUIState();
+        updatePauseMessages();
     });
     document.getElementById("stopMetronome").addEventListener("click", () => {
         stopMetronome();
