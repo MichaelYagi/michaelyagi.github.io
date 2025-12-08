@@ -419,20 +419,22 @@
 <!-- Metronome -->
 <div class="box" id="metronomeBox">
     <h3>Metronome</h3>
-    <label for="clickSound">Click Sound:</label>
-    <select id="clickSound">
-        <option value="square">Square</option>
-        <option value="sine">Sine</option>
-        <option value="triangle">Triangle</option>
-        <option value="sawtooth">Sawtooth</option>
-        <option value="hihat">Hi-Hat</option>
-        <option value="kick">Kick</option>
-        <option value="snare">Snare</option>
-        <option value="clap">Clap</option>
-    </select>
-    <button id="startMetronome" style="margin-left:8px;">Start</button>
+    <button id="startMetronome">Start</button>
     <button id="stopMetronome">Stop</button>
-    <div style="display:flex;align-items:center;gap:8px;position:relative;">
+    <span style="float: right">
+        <label for="clickSound">Click Sound:</label>
+        <select id="clickSound">
+            <option value="square">Square</option>
+            <option value="sine">Sine</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="hihat">Hi-Hat</option>
+            <option value="kick">Kick</option>
+            <option value="snare">Snare</option>
+            <option value="clap">Clap</option>
+        </select>
+    </span>
+    <div style="display:flex;align-items:center;gap:8px;position:relative;margin-top:5px;margin-bottom:5px;">
         <button id="decrementTempo">◀</button>
 
         <div class="sliderWrapper" style="position:relative;display:inline-block;">
@@ -487,18 +489,20 @@
 <!-- Tone Generator -->
 <div class="box" id="toneBox">
     <h3>Tone generator</h3>
-    <label for="waveform" style="margin-right:6px;">Waveform:</label>
-    <select id="waveform">
-        <option value="square">Square</option>
-        <option value="sine">Sine</option>
-        <option value="triangle">Triangle</option>
-        <option value="sawtooth">Sawtooth</option>
-        <option value="electricGuitar">Electric Guitar</option>
-        <option value="acousticGuitar">Acoustic Guitar</option>
-    </select>
-    <button id="playTone" style="margin-left:8px;">Play</button>
+    <button id="playTone">Play</button>
     <button id="stopTone">Stop</button>
-    <div style="display:flex;align-items:center;gap:8px;position:relative;">
+    <span style="float: right">
+        <label for="waveform" style="margin-right:6px;">Waveform:</label>
+        <select id="waveform">
+            <option value="square">Square</option>
+            <option value="sine">Sine</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="electricGuitar">Electric Guitar</option>
+            <option value="acousticGuitar">Acoustic Guitar</option>
+        </select>
+    </span>
+    <div style="display:flex;align-items:center;gap:8px;position:relative;margin-top:5px;margin-bottom:5px;">
         <button id="decrementNote">◀</button>
 
         <div class="sliderWrapper" style="position:relative;display:inline-block;">
