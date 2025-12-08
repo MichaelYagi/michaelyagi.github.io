@@ -763,7 +763,7 @@ playMelody(melody, 100);
 </div>
 
 <script>
-    // UI refs
+    // UI refs & constants
     const noteElem = document.getElementById("note");
     const freqElem = document.getElementById("freq");
     const centsElem = document.getElementById("cents");
@@ -788,7 +788,7 @@ playMelody(melody, 100);
 
     const NOTE_STRINGS = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 
-    // Audio + analyser
+    // Global State & Helpers: Audio + analyser
     let analyser = null;
     let yinBuffer = null;
     let toneEnabled = true;
@@ -815,6 +815,7 @@ playMelody(melody, 100);
         document.getElementById(id).disabled = !enabled;
     }
 
+    /* UI State Control */
     // Tuner control
     function setTunerActive(active) {
         tunerEnabled = active;
@@ -845,6 +846,26 @@ playMelody(melody, 100);
         clickSound.disabled = !active;
     }
 
+    function syncUIState() {
+        const tonePlaying = !!toneOscillator;
+        const metronomePlaying = !!metronomeInterval;
+
+        if (tonePlaying) {
+            setToneActive(true);
+            setMetronomeActive(false);
+            setTunerActive(false);
+        } else if (metronomePlaying) {
+            setMetronomeActive(true);
+            setToneActive(false);
+            setTunerActive(false);
+        } else {
+            setToneActive(true);
+            setMetronomeActive(true);
+            setTunerActive(true);
+        }
+    }
+
+    /* Pitch Detection */
     // Pitch mapping
     function freqToNoteData(freq) {
         const A4 = 440;
@@ -917,25 +938,7 @@ playMelody(melody, 100);
         return (freq >= minFreq && freq <= maxFreq) ? freq : null;
     }
 
-    function syncUIState() {
-        const tonePlaying = !!toneOscillator;
-        const metronomePlaying = !!metronomeInterval;
-
-        if (tonePlaying) {
-            setToneActive(true);
-            setMetronomeActive(false);
-            setTunerActive(false);
-        } else if (metronomePlaying) {
-            setMetronomeActive(true);
-            setToneActive(false);
-            setTunerActive(false);
-        } else {
-            setToneActive(true);
-            setMetronomeActive(true);
-            setTunerActive(true);
-        }
-    }
-
+    /* Waveform Visualization */
     // Tuner loop
     function drawSineWave(phase) {
         const w = toneWaveCanvas.width;
@@ -989,7 +992,7 @@ playMelody(melody, 100);
         ctx.clearRect(0, 0, toneWaveCanvas.width, toneWaveCanvas.height);
     }
 
-    // Tuner
+    /* Microphone Control */
     // Toggle mute/unmute
     document.getElementById("micToggle").addEventListener("click", async () => {
         if (micStream) {
@@ -1132,7 +1135,7 @@ playMelody(melody, 100);
         }
     }
 
-    // Tone generator
+    /* Tone generator */
     let audioCtx = null; //new (window.AudioContext || window.webkitAudioContext)();
     let toneOscillator = null;
     let toneGain = null;
@@ -1256,7 +1259,7 @@ playMelody(melody, 100);
         setTunerActive(false);
         startWaveAnimation(freq);
         syncUIState();
-        updatePauseMessages();
+        await updatePauseMessages();
     }
 
     function stopTone() {
@@ -1291,7 +1294,7 @@ playMelody(melody, 100);
         updateDialDisplay(); // reuse your existing function
     }
 
-    // Metronome
+    /* Metronome */
     let metronomeInterval = null;
     let subdivisionInterval = null;
     let tapTimes = [];
@@ -1500,7 +1503,7 @@ playMelody(melody, 100);
         return subs;
     }
 
-    // Presets
+    /* Presets */
     function initPresets() {
         if (typeof(Storage) === "undefined") {
             // localStorage not available
