@@ -1205,7 +1205,7 @@ playMelody(melody, 100);
         }
     }
 
-    function playTone(freq, type = "sine") {
+    async function playTone(freq, type = "sine") {
         stopTone();
 
         if (micStream) {
@@ -1217,6 +1217,7 @@ playMelody(melody, 100);
 
         if (validTypes.includes(type)) {
             // Standard oscillator
+            await initAudioContext();
             toneOscillator = audioCtx.createOscillator();
             toneGain = audioCtx.createGain();
 
@@ -1231,13 +1232,13 @@ playMelody(melody, 100);
             const startTime = audioCtx.currentTime;
 
             if (type === "piano") {
-                ({ osc: toneOscillator, gain: toneGain } = playPianoTone(freq, startTime));
+                ({osc: toneOscillator, gain: toneGain} = playPianoTone(freq, startTime));
             } else if (type === "strings") {
-                ({ osc: toneOscillator, gain: toneGain } = playStringTone(freq, startTime));
+                ({osc: toneOscillator, gain: toneGain} = playStringTone(freq, startTime));
             } else if (type === "electricGuitar") {
-                ({ osc: toneOscillator, gain: toneGain } = playElectricGuitarTone(freq, startTime));
+                ({osc: toneOscillator, gain: toneGain} = playElectricGuitarTone(freq, startTime));
             } else if (type === "acousticGuitar") {
-                ({ osc: toneOscillator, gain: toneGain } = playAcousticGuitarTone(freq, startTime));
+                ({osc: toneOscillator, gain: toneGain} = playAcousticGuitarTone(freq, startTime));
             } else {
                 // fallback to square
                 toneOscillator = audioCtx.createOscillator();
