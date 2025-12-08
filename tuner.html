@@ -1021,15 +1021,6 @@ playMelody(melody, 100);
     // ============================================================
     // Microphone Control & Tuner Loop
     //=============================================================
-    // Toggle mute/unmute
-    document.getElementById("micToggle").addEventListener("click", async () => {
-        if (micStream) {
-            disableMic();
-        } else {
-            await enableMic();
-        }
-    });
-
     async function enableMic() {
         if (micStream || micRequestPending) return; // already active or pending
         micRequestPending = true;
@@ -2240,51 +2231,6 @@ playMelody(melody, 100);
         });
     }
 
-    // Events
-    document.getElementById("playSimpleSong").addEventListener("click", function () {
-        if (songPlaying === false) {
-            songPlaying = true;
-            const beatPattern = [
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 }
-            ];
-
-            const melody = [
-                { note: "A5", dur: 1 },
-                { note: "rest", dur: 1 },
-                { note: "G#5", dur: 1 },
-                { note: "E5", dur: 1 },
-                { note: "rest", dur: 1 },
-                { note: "A5", dur: 1 },
-                { note: "rest", dur: 1 },
-                { note: "G#5", dur: 1 },
-                { note: "rest", dur: 3 },
-                { note: "E5", dur: 2 },
-                { note: "E5", dur: 2 },
-                { note: "D5", dur: 0.5 },
-                { note: "rest", dur: 0.5 },
-                { note: "D5", dur: 6 }
-            ];
-
-            playBeat(beatPattern);
-            playMelody(melody, 300, () => {
-                songPlaying = false;
-            });
-        }
-    });
-
     function getBeatPattern() {
         return [
             {type: "rest", dur: 2.5},
@@ -2451,6 +2397,59 @@ playMelody(melody, 100);
     // ============================================================
     // Event Listeners
     //=============================================================
+    document.getElementById("playSimpleSong").addEventListener("click", function () {
+        if (songPlaying === false) {
+            songPlaying = true;
+            const beatPattern = [
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 },
+                { type: "hihat", dur: 2 }
+            ];
+
+            const melody = [
+                { note: "A5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "G#5", dur: 1 },
+                { note: "E5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "A5", dur: 1 },
+                { note: "rest", dur: 1 },
+                { note: "G#5", dur: 1 },
+                { note: "rest", dur: 3 },
+                { note: "E5", dur: 2 },
+                { note: "E5", dur: 2 },
+                { note: "D5", dur: 0.5 },
+                { note: "rest", dur: 0.5 },
+                { note: "D5", dur: 6 }
+            ];
+
+            playBeat(beatPattern);
+            playMelody(melody, 300, () => {
+                songPlaying = false;
+            });
+        }
+    });
+
+    // Toggle mute/unmute
+    document.getElementById("micToggle").addEventListener("click", async () => {
+        if (micStream) {
+            disableMic();
+        } else {
+            await enableMic();
+        }
+    });
+
     document.getElementById("playSong").addEventListener("click", function () {
         if (songPlaying === false) {
             songPlaying = true;
