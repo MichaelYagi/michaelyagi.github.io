@@ -931,17 +931,11 @@ const beatPattern = [
     // Toggle mute/unmute
     document.getElementById("micToggle").addEventListener("click", async () => {
         if (micStream) {
-            // Disable mic
-            micStream.getAudioTracks().forEach(track => track.stop());
-            micStream = null;
-            localStorage.setItem("micEnabled", "false");
-            document.getElementById("micToggle").textContent = "Enable Mic";
-            document.getElementById("status").textContent = "Mic: disabled";
-            resetTunerUI();
-            stopLoop();
+            disableMic();
         } else {
             // Enable mic → always try getUserMedia
             try {
+                await initAudioContext();
                 micStream = await navigator.mediaDevices.getUserMedia({
                     audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
                 });
@@ -960,21 +954,28 @@ const beatPattern = [
                 startLoop();
                 updateDialDisplay();
             } catch (err) {
-                if (audioCtx && audioCtx.state !== "closed") {
-                    audioCtx.close();
-                    audioCtx = null;
-                }
-
-                micStream = null;
-                document.getElementById("micToggle").textContent = "Enable Mic";
-                document.getElementById("status").textContent = "Mic: disabled";
-                localStorage.setItem("micEnabled", "false");
-                updatePauseMessages();
-                resetTunerUI();
-                stopLoop()
+                disableMic();
             }
         }
     });
+
+    function disableMic() {
+        if (micStream) {
+            // Stop all tracks
+            micStream.getTracks().forEach(track => track.stop());
+            micStream = null;
+        }
+        if (analyser) {
+            analyser.disconnect();
+            analyser = null;
+        }
+
+        localStorage.setItem("micEnabled", "false");
+        document.getElementById("micToggle").textContent = "Enable Mic";
+        document.getElementById("status").textContent = "Mic: disabled";
+        resetTunerUI();
+        stopLoop();
+    }
 
     function resetTunerUI() {
         noteElem.textContent = "--";
@@ -1035,6 +1036,7 @@ const beatPattern = [
 
         if (micPref === "true") {
             try {
+                await initAudioContext();
                 micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 if (!audioCtx) audioCtx = new AudioContext();
                 analyser = audioCtx.createAnalyser();
@@ -1078,6 +1080,15 @@ const beatPattern = [
     let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let toneOscillator = null;
     let toneGain = null;
+
+    async function initAudioContext() {
+        if (!audioCtx || audioCtx.state === "closed") {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+            await audioCtx.resume();
+        }
+    }
 
     function setPlayButtonState(enabled) {
         document.getElementById("playTone").disabled = !enabled;
@@ -1142,6 +1153,11 @@ const beatPattern = [
     function playTone(freq, type = "sine") {
         stopTone();
 
+        if (micStream) {
+            micStream.getAudioTracks().forEach(track => track.enabled = false);
+            statusElem.textContent = "Mic paused while tone is playing";
+        }
+
         const validTypes = ["sine", "square", "triangle", "sawtooth"];
 
         if (validTypes.includes(type)) {
@@ -1195,6 +1211,12 @@ const beatPattern = [
         if (toneGain) {
             toneGain.disconnect();
             toneGain = null;
+        }
+
+        // Resume mic if it was paused
+        if (micStream) {
+            micStream.getAudioTracks().forEach(track => track.enabled = true);
+            statusElem.textContent = "Mic: enabled";
         }
 
         setPlayButtonState(true);
