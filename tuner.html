@@ -933,24 +933,27 @@ const beatPattern = [
         if (micStream) {
             disableMic();
         } else {
-            enableMic();
+            await enableMic();
         }
     });
 
-    function enableMic() {
+    async function enableMic() {
         if (micStream || micRequestPending) return; // already active or pending
         micRequestPending = true;
         try {
-            initAudioContext();
-            // micStream = navigator.mediaDevices.getUserMedia({ audio: true });
-            micStream = navigator.mediaDevices.getUserMedia({
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+            await initAudioContext();
+
+            // micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            micStream = await navigator.mediaDevices.getUserMedia({
+                audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}
             });
+
             analyser = audioCtx.createAnalyser();
             analyser.fftSize = 8192;
             yinBuffer = new Float32Array(analyser.fftSize);
-            const source = audioCtx.createMediaStreamSource(micStream);
-            source.connect(analyser);
+
+            micSource = audioCtx.createMediaStreamSource(micStream);
+            micSource.connect(analyser);
 
             document.getElementById("micToggle").textContent = "Disable Mic";
             document.getElementById("status").textContent = "Mic: enabled";
@@ -959,6 +962,7 @@ const beatPattern = [
             startLoop();
             updateDialDisplay();
         } catch (err) {
+            console.warn(err);
             disableMic();
         } finally {
             micRequestPending = false;
@@ -1034,6 +1038,7 @@ const beatPattern = [
 
     // Init audio
     let micStream = null;
+    let micSource = null;
     let micRequestPending = false;
 
     async function init() {
@@ -1063,12 +1068,12 @@ const beatPattern = [
     }
 
     // Tone generator
-    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioCtx = null; //new (window.AudioContext || window.webkitAudioContext)();
     let toneOscillator = null;
     let toneGain = null;
 
     async function initAudioContext() {
-        if (!audioCtx || audioCtx.state === "closed") {
+        if (audioCtx === null || audioCtx.state === "closed") {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
         if (audioCtx.state === "suspended") {
