@@ -962,12 +962,13 @@ playMelody(melody, 100);
             document.getElementById("micToggle").textContent = "Disable Mic";
             document.getElementById("status").textContent = "Mic: enabled";
             localStorage.setItem("micEnabled", "true");
-            updatePauseMessages();
+            await updatePauseMessages();
             startLoop();
             updateDialDisplay();
         } catch (err) {
-            console.warn(err);
-            disableMic();
+            await updatePauseMessages(err.name);
+            console.warn(err.message);
+            // disableMic();
         } finally {
             micRequestPending = false;
         }
@@ -1059,8 +1060,10 @@ playMelody(melody, 100);
         }
     }
 
-    function updatePauseMessages() {
-        if (!micStream) {
+    async function updatePauseMessages(error = "") {
+        if (error === "NotAllowedError") {
+            statusElem.textContent = "Mic: permission denied or unavailable";
+        } else if (!micStream) {
             statusElem.textContent = "Mic: disabled";
         } else if (toneOscillator) {
             statusElem.textContent = "Tuner paused while tone is playing";
