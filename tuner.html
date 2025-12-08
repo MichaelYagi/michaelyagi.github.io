@@ -1341,11 +1341,6 @@ const beatPattern = [
     }
 
     function startMetronome() {
-        if (micStream) {
-            micStream.getAudioTracks().forEach(track => track.enabled = false);
-            statusElem.textContent = "Mic paused while tone is playing";
-        }
-        
         let tempoValue = tempo.value;
         if (tempoValue <= 0) {
             tempoValue = "120";
@@ -1395,6 +1390,10 @@ const beatPattern = [
         metronomeRunning = true;
         syncUIState();
         updatePauseMessages();
+        if (micStream) {
+            micStream.getAudioTracks().forEach(track => track.enabled = false);
+            statusElem.textContent = "Mic paused while tone is playing";
+        }
     }
 
     function stopMetronome() {
@@ -1402,6 +1401,11 @@ const beatPattern = [
         if (subdivisionInterval) clearInterval(subdivisionInterval); // safe no-op now
         metronomeInterval = null;
         subdivisionInterval = null;
+
+        if (micStream) {
+            micStream.getAudioTracks().forEach(track => track.enabled = true);
+            statusElem.textContent = "Mic: enabled";
+        }
 
         document.getElementById("metronomeText").textContent = `Stopped`;
         updateBPMDialDisplay();
