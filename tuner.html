@@ -733,6 +733,7 @@ const melody = [
     { note: "B3", dur: 1 },
     { note: "B3", dur: 1 }
 ];
+
 const beatPattern = [
     { types: [
         { type: "kick", dur: 2 },
@@ -745,8 +746,8 @@ const beatPattern = [
     { type: "hihat", dur: 1 },
     { type: "hihat", dur: 1 }
 ];
-// Define BPM
-// Dfault is 300 BPM for both
+
+// Define BPM (optional) - default is 300 BPM for both
 playBeat(beatPattern, 200);
 playMelody(melody, 100);
                     </code></pre>
