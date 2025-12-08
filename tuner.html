@@ -691,6 +691,10 @@ const beatPattern = [
     { type: "hihat", dur: 1 },
     { type: "hihat", dur: 1 }
 ];
+// Define BPM
+// Dfault is 300 BPM for both
+playBeat(beatPattern, 200);
+playMelody(melody, 100);
         </code></pre>
 
         <p><button id="playSong">Play</button> a version of the above that combines different chords and beat patterns.</p>
@@ -2349,9 +2353,8 @@ const beatPattern = [
         if (songPlaying === false) {
             songPlaying = true;
 
-            const bpm = 350;
-            playBeat(getBeatPattern(), bpm/2);
-            playMelody(getMelodyPattern(), bpm, () => {
+            playBeat(getBeatPattern(), 155);
+            playMelody(getMelodyPattern(), 310, () => {
                 songPlaying = false;
             });
         }
