@@ -2349,8 +2349,9 @@ const beatPattern = [
         if (songPlaying === false) {
             songPlaying = true;
 
-            playBeat(getBeatPattern(), 150);
-            playMelody(getMelodyPattern(), 300, () => {
+            const bpm = 350;
+            playBeat(getBeatPattern(), bpm/2);
+            playMelody(getMelodyPattern(), bpm, () => {
                 songPlaying = false;
             });
         }
