@@ -933,39 +933,17 @@ const beatPattern = [
         if (micStream) {
             disableMic();
         } else {
-            // Enable mic → always try getUserMedia
-            try {
-                await initAudioContext();
-                micStream = await navigator.mediaDevices.getUserMedia({
-                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-                });
-
-                if (!audioCtx) audioCtx = new AudioContext();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 8192;
-                yinBuffer = new Float32Array(analyser.fftSize);
-                const source = audioCtx.createMediaStreamSource(micStream);
-                source.connect(analyser);
-
-                document.getElementById("micToggle").textContent = "Disable Mic";
-                document.getElementById("status").textContent = "Mic: enabled";
-                localStorage.setItem("micEnabled", "true");
-                updatePauseMessages();
-                startLoop();
-                updateDialDisplay();
-            } catch (err) {
-                disableMic();
-            }
+            enableMic();
         }
     });
 
-    async function enableMic() {
+    function enableMic() {
         if (micStream || micRequestPending) return; // already active or pending
         micRequestPending = true;
         try {
-            await initAudioContext();
-            // micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            micStream = await navigator.mediaDevices.getUserMedia({
+            initAudioContext();
+            // micStream = navigator.mediaDevices.getUserMedia({ audio: true });
+            micStream = navigator.mediaDevices.getUserMedia({
                 audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
             });
             analyser = audioCtx.createAnalyser();
