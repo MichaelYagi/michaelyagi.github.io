@@ -357,6 +357,53 @@
             margin-top: 40px;
             margin-left: 10px;
         }
+
+        /* Accordion */
+        .accordion {
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .accordion-item {
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .accordion-header {
+            margin: 0;
+            padding: 0;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            background: none;
+            border: none;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .accordion-trigger:focus-visible {
+            outline: 2px solid #4b9cff;
+            outline-offset: 2px;
+        }
+
+        .accordion-panel {
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .accordion-panel[hidden] {
+            display: none;
+        }
     </style>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V9XXZTGS4W"></script>
@@ -613,11 +660,18 @@
             <li>Shift - Reset pitch to A4</li>
         </ul>
 
-        <hr>
+        <div class="accordion" id="more" data-allow-multiple="false">
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-trigger" aria-expanded="false" aria-controls="more-panel" id="more-trigger">
+                        More
+                    </button>
+                </h3>
+                <div class="accordion-panel" id="more-panel" role="region" aria-labelledby="more-trigger" hidden>
 
-        <p>Create tunes! Configure a simple beat and melody pattern. You can use a combination of hihats, claps, kicks, or snare.</p>
+                    <p>Create tunes! Configure a simple beat and melody pattern. You can use a combination of hihats, claps, kicks, or snare.</p>
 
-        <pre class="box code"><button class="copy-btn">Copy</button><code>
+                    <pre class="box code"><button class="copy-btn">Copy</button><code>
 const beatPattern = [
     { type: "hihat", dur: 2 },
     { type: "hihat", dur: 2 },
@@ -654,13 +708,13 @@ const melody = [
 
 playBeat(beatPattern);
 playMelody(melody);
-        </code></pre>
+                    </code></pre>
 
-        <p>Copy and paste everything in the console or <button id="playSimpleSong">Play</button> now!</p>
+                    <p>Copy and paste everything in the console or <button id="playSimpleSong">Play</button> now!</p>
 
-        <p>Experiment with chords or stacked beats. The shortest value determines when the sequence advances, and any longer notes or hits will continue sounding until their full duration completes.</p>
+                    <p>Experiment with chords or stacked beats. The shortest value determines when the sequence advances, and any longer notes or hits will continue sounding until their full duration completes.</p>
 
-        <pre class="box code"><button class="copy-btn">Copy</button><code>
+                    <pre class="box code"><button class="copy-btn">Copy</button><code>
 const melody = [
     { notes: [
         // This shortest note defines the step length;
@@ -695,10 +749,13 @@ const beatPattern = [
 // Dfault is 300 BPM for both
 playBeat(beatPattern, 200);
 playMelody(melody, 100);
-        </code></pre>
+                    </code></pre>
 
-        <p><button id="playSong">Play</button> a version of the above that combines different chords and beat patterns.</p>
+                    <p><button id="playSong">Play</button> a version of the above that combines different chords and beat patterns.</p>
 
+                </div>
+            </div>
+        </div>
     </div>
 
     <a href="https://www.gnu.org/" target="_blank"><img src="./images/gplv3.png"></a>
@@ -2550,6 +2607,83 @@ playMelody(melody, 100);
             });
         });
     });
+
+    // Initialize all accordions on the page
+    document.querySelectorAll(".accordion").forEach((accordion) => {
+        initAccordion(accordion, {
+            allowMultiple:
+                accordion.getAttribute("data-allow-multiple") === "true" ? true : false,
+        });
+    });
+
+    function initAccordion(root, { allowMultiple = false } = {}) {
+        const triggers = root.querySelectorAll(".accordion-trigger");
+
+        // Click: toggle target panel; optionally close others
+        triggers.forEach((trigger) => {
+            trigger.addEventListener("click", () => {
+                const panel = getPanel(trigger);
+                const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+                if (!allowMultiple && !isOpen) {
+                    closeAllExcept(root, trigger);
+                }
+                setExpanded(trigger, panel, !isOpen);
+            });
+
+            // Keyboard nav across triggers (Up/Down/Home/End)
+            trigger.addEventListener("keydown", (e) => {
+                const list = Array.from(triggers);
+                const idx = list.indexOf(trigger);
+
+                switch (e.key) {
+                    case "ArrowUp":
+                        e.preventDefault();
+                        (list[idx - 1] || list[list.length - 1]).focus();
+                        break;
+                    case "ArrowDown":
+                        e.preventDefault();
+                        (list[idx + 1] || list[0]).focus();
+                        break;
+                    case "Home":
+                        e.preventDefault();
+                        list[0].focus();
+                        break;
+                    case "End":
+                        e.preventDefault();
+                        list[list.length - 1].focus();
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+    }
+
+    function getPanel(trigger) {
+        const id = trigger.getAttribute("aria-controls");
+        return document.getElementById(id);
+    }
+
+    function setExpanded(trigger, panel, expand) {
+        trigger.setAttribute("aria-expanded", String(expand));
+        // Use the 'hidden' attribute to ensure robust visibility control
+        if (expand) {
+            panel.hidden = false;
+        } else {
+            panel.hidden = true;
+        }
+    }
+
+    function closeAllExcept(root, exceptTrigger) {
+        const triggers = root.querySelectorAll(".accordion-trigger");
+        triggers.forEach((t) => {
+            if (t !== exceptTrigger) {
+                const p = getPanel(t);
+                setExpanded(t, p, false);
+            }
+        });
+    }
 
     document.addEventListener("keydown", (e) => {
         if (e.code === "Space") {
