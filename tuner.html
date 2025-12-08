@@ -959,6 +959,30 @@ const beatPattern = [
         }
     });
 
+    async function enableMic() {
+        if (micStream || micRequestPending) return; // already active or pending
+        micRequestPending = true;
+        try {
+            await initAudioContext();
+            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 8192;
+            yinBuffer = new Float32Array(analyser.fftSize);
+            const source = audioCtx.createMediaStreamSource(micStream);
+            source.connect(analyser);
+
+            document.getElementById("micToggle").textContent = "Disable Mic";
+            document.getElementById("status").textContent = "Mic: enabled";
+            localStorage.setItem("micEnabled", "true");
+            startLoop();
+            updateDialDisplay();
+        } catch (err) {
+            disableMic();
+        } finally {
+            micRequestPending = false;
+        }
+    }
+
     function disableMic() {
         if (micStream) {
             // Stop all tracks
@@ -1028,6 +1052,7 @@ const beatPattern = [
 
     // Init audio
     let micStream = null;
+    let micRequestPending = false;
 
     async function init() {
         updateBPMDialDisplay();
@@ -1035,30 +1060,9 @@ const beatPattern = [
         document.getElementById("micToggle").style.display = "block";
 
         if (micPref === "true") {
-            try {
-                await initAudioContext();
-                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                if (!audioCtx) audioCtx = new AudioContext();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 8192;
-                yinBuffer = new Float32Array(analyser.fftSize);
-                const source = audioCtx.createMediaStreamSource(micStream);
-                source.connect(analyser);
-
-                document.getElementById("micToggle").textContent = "Disable Mic";
-                document.getElementById("status").textContent = "Mic: enabled";
-                startLoop();
-                updateDialDisplay();
-            } catch (err) {
-                // Permission denied or error
-                micStream = null;
-                resetTunerUI();
-                document.getElementById("micToggle").textContent = "Enable Mic";
-                document.getElementById("status").textContent = "Mic: disabled";
-            }
+            document.getElementById("micToggle").textContent = "Enable Mic";
+            document.getElementById("status").textContent = "Mic: disabled";
         } else {
-            // Default: mic disabled
-            micStream = null;
             resetTunerUI();
             document.getElementById("micToggle").textContent = "Enable Mic";
         }
