@@ -424,6 +424,8 @@
         </select>
     </div>
 
+    <div id="dialBPM">BPM: --</div>
+
     <div id="metronomeStatus" class="status">
         <span id="metronomeText">&nbsp;</span>
     </div>
@@ -1027,6 +1029,7 @@ const beatPattern = [
     let micStream = null;
 
     async function init() {
+        updateBPMDialDisplay();
         const micPref = localStorage.getItem("micEnabled") || "false";
         document.getElementById("micToggle").style.display = "block";
 
@@ -1094,6 +1097,11 @@ const beatPattern = [
         const octave = Math.floor(noteIndex / 12);
         const name = NOTE_STRINGS[((noteIndex % 12) + 12) % 12];
         return { name, octave, f };
+    }
+
+    function updateBPMDialDisplay() {
+        const bpm = parseInt(document.getElementById("tempo").value, 10);
+        document.getElementById("dialBPM").textContent = `BPM: ${bpm}`;
     }
 
     function updateDialDisplay() {
@@ -1289,7 +1297,8 @@ const beatPattern = [
 
             if (bpm >= 30 && bpm <= 240) {
                 tempo.value = bpm;
-                document.getElementById("metronomeText").textContent = `Tapped tempo: ${bpm} BPM`;
+                document.getElementById("metronomeText").textContent = `Tapped tempo`;
+                updateBPMDialDisplay();
 
                 // If metronome is already running, restart with new BPM
                 if (metronomeInterval) {
@@ -1345,11 +1354,12 @@ const beatPattern = [
 
         document.getElementById("metronomeText").textContent =
             polySubs > 1
-                ? `Playing ${bpm} BPM with ${subdivisions} subdivisions + ${polySubs}-pulse polyrhythm`
+                ? `${subdivisions} subdivisions + ${polySubs}-pulse polyrhythm`
                 : (subdivisions > 1
-                    ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)`
-                    : `Playing at ${bpm} BPM`);
+                    ? `${subdivisions} subdivisions`
+                    : `Playing`);
 
+        updateBPMDialDisplay();
         setElementState("startMetronome", false);
         metronomeRunning = true;
         syncUIState();
@@ -1362,7 +1372,8 @@ const beatPattern = [
         metronomeInterval = null;
         subdivisionInterval = null;
 
-        document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+        document.getElementById("metronomeText").textContent = `Stopped`;
+        updateBPMDialDisplay();
         document.getElementById("metronomeDot").style.opacity = "0";
         document.getElementById("subdivisionDot").style.opacity = "0";
         setElementState("startMetronome", true);
@@ -1439,7 +1450,8 @@ const beatPattern = [
             if (!preset) return;
 
             document.getElementById("tempo").value = preset.bpm;
-            document.getElementById("metronomeText").textContent = `Stopped: ${preset.bpm} BPM`
+            document.getElementById("metronomeText").textContent = `Stopped`
+            updateBPMDialDisplay();
             document.getElementById("subdivisions").value = preset.subdivisions;
             document.getElementById("polySubdivisions").value = preset.polySubdivisions;
             document.getElementById("noteDial").value = preset.noteDialVal;
@@ -2433,10 +2445,12 @@ const beatPattern = [
         tempo.value = Math.min(parseInt(tempo.value, 10) + 1, parseInt(tempo.max, 10));
 
         if (metronomeRunning) {
-            document.getElementById("metronomeText").textContent = `Playing at ${tempo.value} BPM`;
+            document.getElementById("metronomeText").textContent = `Playing`;
         } else {
-            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+            document.getElementById("metronomeText").textContent = `Stopped`;
         }
+
+        updateBPMDialDisplay();
 
         if (metronomeInterval) {
             startMetronome();
@@ -2446,10 +2460,12 @@ const beatPattern = [
         tempo.value = Math.max(parseInt(tempo.value, 10) - 1, parseInt(tempo.min, 10));
 
         if (metronomeRunning) {
-            document.getElementById("metronomeText").textContent = `Playing at ${tempo.value} BPM`;
+            document.getElementById("metronomeText").textContent = `Playing`;
         } else {
-            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+            document.getElementById("metronomeText").textContent = `Stopped`;
         }
+
+        updateBPMDialDisplay();
 
         if (metronomeInterval) {
             startMetronome();
@@ -2474,10 +2490,12 @@ const beatPattern = [
     document.getElementById("tempo").addEventListener("input", () => {
         if (metronomeRunning) {
             const subdivisions = parseInt(getSubdivisions(), 10);
-            document.getElementById("metronomeText").textContent = (subdivisions > 1) ? `Playing at ${bpm} BPM (${subdivisions} subdivisions)` : `Playing at ${bpm} BPM`;
+            document.getElementById("metronomeText").textContent = (subdivisions > 1) ? `${subdivisions} subdivisions` : `Playing`;
         } else {
-            document.getElementById("metronomeText").textContent = `Stopped: ${tempo.value} BPM`;
+            document.getElementById("metronomeText").textContent = `Stopped`;
         }
+
+        updateBPMDialDisplay();
     });
     document.getElementById("noteDial").addEventListener("input", () => {
         updateDialDisplay();
@@ -2592,7 +2610,8 @@ const beatPattern = [
                 }, intervalMs);
 
                 document.getElementById("tempo").value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
+                document.getElementById("metronomeText").textContent = `Playing`;
+                updateBPMDialDisplay();
                 updatePauseMessages();
             }
         } else if (e.code === "ArrowUp") { // Increase tempo
@@ -2601,7 +2620,8 @@ const beatPattern = [
                 let bpm = getTempo();
                 bpm = Math.min(240, bpm + 1); // cap at 240
                 tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
+                document.getElementById("metronomeText").textContent = `Playing`;
+                updateBPMDialDisplay();
                 if (metronomeInterval) {
                     startMetronome(); // restart with new BPM
                 }
@@ -2612,7 +2632,8 @@ const beatPattern = [
                 let bpm = getTempo();
                 bpm = Math.max(30, bpm - 1); // floor at 30 // cap at 240
                 tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
+                document.getElementById("metronomeText").textContent = `Playing`;
+                updateBPMDialDisplay();
                 if (metronomeInterval) {
                     startMetronome(); // restart with new BPM
                 }
@@ -2623,7 +2644,8 @@ const beatPattern = [
                 let bpm = getTempo();
                 bpm = Math.min(240, bpm + 1); // cap at 240
                 tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
+                document.getElementById("metronomeText").textContent = `Playing`;
+                updateBPMDialDisplay();
                 startMetronome();
             }
         } else if (e.code === "KeyS") { // Decrease tempo
@@ -2632,7 +2654,8 @@ const beatPattern = [
                 let bpm = getTempo();
                 bpm = Math.max(30, bpm - 1); // floor at 30 // cap at 240
                 tempoInput.value = bpm;
-                document.getElementById("metronomeText").textContent = `Playing at ${bpm} BPM`;
+                document.getElementById("metronomeText").textContent = `Playing`;
+                updateBPMDialDisplay();
                 startMetronome();
             }
         }
