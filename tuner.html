@@ -1457,11 +1457,10 @@ const beatPattern = [
             document.getElementById("noteDial").value = preset.noteDialVal;
             document.getElementById("waveform").value = preset.waveformVal;
             if (preset.clickSoundVal) {
-                document.getElementById("clickSound").value = preset.clickSoundVal; // NEW
+                document.getElementById("clickSound").value = preset.clickSoundVal;
             }
 
             updateDialDisplay();
-            updateWaveform();
         }
     }
 
@@ -2501,7 +2500,9 @@ const beatPattern = [
         updateDialDisplay();
     });
     document.getElementById("waveform").addEventListener("change", () => {
-        updateWaveform();
+        if (toneOscillator) {
+            updateWaveform();
+        }
     });
     document.getElementById("playTone").addEventListener("click", () => {
         const idx = parseInt(document.getElementById("noteDial").value, 10);
