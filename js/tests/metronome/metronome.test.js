@@ -11,6 +11,13 @@ describe("Metronome embedded script tests", function () {
   let window;
   let document;
   let metronome;
+  let localStorage;
+  let safeSize;
+  let safeGet;
+  let safeCheck;
+  let safeKey;
+  let safeSet;
+  let safeRemove;
 
   beforeEach(() => {
     const vc = new VirtualConsole();
@@ -104,6 +111,16 @@ describe("Metronome embedded script tests", function () {
 
     window = dom.window;
     document = window.document;
+    localStorage = window.localStorage;
+
+    localStorage.clear();
+
+    safeSize = window.safeSize;
+    safeGet = window.safeGet;
+    safeCheck = window.safeCheck;
+    safeKey = window.safeKey;
+    safeSet = window.safeSet;
+    safeRemove = window.safeRemove;
 
     // Create a mock audioCtx instance so tests can use it
     window.audioCtx = new window.AudioContext();
@@ -305,5 +322,56 @@ describe("Metronome embedded script tests", function () {
     // Switch waveform
     waveform.value = "piano";
     assert.doesNotThrow(() => window.updateWaveform ? window.updateWaveform() : null);
+  });
+
+  it("returns 0 when localStorage is empty", () => {
+    assert.equal(safeSize(), 0);
+  });
+
+  it("counts items after safeSet", () => {
+    safeSet("foo", "bar");
+    safeSet("baz", "qux");
+    assert.equal(safeSize(), 2);
+  });
+
+  it("safeGet retrieves stored values", () => {
+    safeSet("foo", "bar");
+    assert.equal(safeGet("foo"), "bar");
+  });
+
+  it("safeRemove decreases size", () => {
+    safeSet("foo", "bar");
+    safeSet("baz", "qux");
+    safeRemove("foo");
+    assert.equal(safeSize(), 1);
+    assert.equal(safeGet("foo"), null);
+  });
+
+  it("safeKey returns key names by index", () => {
+    safeSet("foo", "bar");
+    safeSet("baz", "qux");
+    const key0 = safeKey(0);
+    const key1 = safeKey(1);
+    assert.ok([key0, key1].includes("foo"));
+    assert.ok([key0, key1].includes("baz"));
+  });
+
+  it("returns 0 if localStorage throws", () => {
+    // Monkey‑patch localStorage to throw
+    const original = global.localStorage;
+    global.localStorage = {
+      get length() { throw new Error("blocked"); },
+      getItem() { throw new Error("blocked"); },
+      setItem() { throw new Error("blocked"); },
+      removeItem() { throw new Error("blocked"); },
+      key() { throw new Error("blocked"); }
+    };
+
+    assert.equal(safeSize(), 0);
+    assert.equal(safeGet("foo"), null);
+    assert.equal(safeKey(0), null);
+
+    // Restore
+    global.localStorage = original;
   });
 });
