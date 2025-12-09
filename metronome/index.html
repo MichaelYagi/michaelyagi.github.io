@@ -990,7 +990,7 @@ playMelody(melody, 100);
         }
 
         let waveColor = "#0077ff";
-        if (typeof(Storage) !== "undefined") {
+        if (safeCheck()) {
             const theme = safeGet("theme");
             if (theme) {
                 const classTheme = 'theme-' + theme;
@@ -1538,7 +1538,7 @@ playMelody(melody, 100);
     // Presets
     //=============================================================
     function initPresets() {
-        if (typeof(Storage) === "undefined") {
+        if (safeCheck() === false) {
             return;
         }
         document.getElementById("presetsBox").style.display = "block";
@@ -1566,7 +1566,7 @@ playMelody(melody, 100);
         const key = select.value;
         if (!key) return;
 
-        if (typeof(Storage) !== "undefined") {
+        if (safeCheck()) {
             const preset = JSON.parse(safeGet(key));
             if (!preset) return;
 
@@ -2520,7 +2520,7 @@ playMelody(melody, 100);
     });
 
     window.addEventListener("DOMContentLoaded", () => {
-        if (typeof(Storage) !== "undefined") {
+        if (safeCheck()) {
             updatePauseMessages();
             document.getElementById("micToggle").textContent = "Enable Mic";
             document.getElementById("micToggle").style.display = "block";
