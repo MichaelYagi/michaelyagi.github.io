@@ -374,4 +374,47 @@ describe("Metronome embedded script tests", function () {
     // Restore
     global.localStorage = original;
   });
+
+  describe("when localStorage is not available", () => {
+    let localStorage;
+    let safeSize;
+    let safeGet;
+    let safeCheck;
+    let safeKey;
+    let safeSet;
+    let safeRemove;
+
+    beforeEach(() => {
+      localStorage = window.localStorage;
+
+      localStorage.clear();
+
+      safeSize = function() {return 0;};
+      safeGet = function() {return null;};
+      safeCheck = function() {return false;};
+      safeKey = function() {return null;};
+      safeSet = function() {};
+      safeRemove = function() {};
+    });
+
+    it("safeSize returns 0", () => {
+      assert.equal(safeSize(), 0);
+    });
+
+    it("safeGet returns null", () => {
+      assert.equal(safeGet("foo"), null);
+    });
+
+    it("safeSet does not throw", () => {
+      assert.doesNotThrow(() => safeSet("foo", "bar"));
+    });
+
+    it("safeRemove does not throw", () => {
+      assert.doesNotThrow(() => safeRemove("foo"));
+    });
+
+    it("safeKey returns null", () => {
+      assert.equal(safeKey(0), null);
+    });
+  });
 });
