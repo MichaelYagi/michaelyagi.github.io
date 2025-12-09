@@ -1137,7 +1137,7 @@ playMelody(melody, 100);
 
         document.getElementById("micToggle").textContent = "Enable Mic";
         document.getElementById("status").textContent = "Mic: disabled";
-        if (micPref !== "true") {
+        if (micPref === "false") {
             resetTunerUI();
         }
     }
