@@ -131,6 +131,38 @@ describe("Metronome embedded script (real HTML)", function () {
     assert.equal(dot.style.opacity, "1");
   });
 
+  it("getSubdivisions returns integer from #subdivisions input", () => {
+    // Ensure the element exists
+    const input = document.getElementById("subdivisions") ||
+        document.body.appendChild(Object.assign(document.createElement("input"), {
+          id: "subdivisions",
+          type: "number"
+        }));
+
+    input.value = "4";
+    const result = window.getSubdivisions ? window.getSubdivisions() : null;
+    assert.equal(result, 4, "should parse subdivisions as integer");
+
+    input.value = "1";
+    assert.equal(window.getSubdivisions(), 0, "should handle single subdivision");
+  });
+
+  it("getPolySubdivisions returns integer from #polySubdivisions input", () => {
+    // Ensure the element exists
+    const input = document.getElementById("polySubdivisions") ||
+        document.body.appendChild(Object.assign(document.createElement("input"), {
+          id: "polySubdivisions",
+          type: "number"
+        }));
+
+    input.value = "3";
+    const result = window.getPolySubdivisions ? window.getPolySubdivisions() : null;
+    assert.equal(result, 3, "should parse polyrhythm subdivisions as integer");
+
+    input.value = "0";
+    assert.equal(window.getPolySubdivisions(), 0, "should handle zero poly subdivisions");
+  });
+
   it("pauses mic when metronome starts and resumes on stop", async () => {
     // Create a fake micStream with one track
     const track = new window.MediaStreamTrack();
