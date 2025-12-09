@@ -1539,7 +1539,6 @@ playMelody(melody, 100);
     //=============================================================
     function initPresets() {
         if (typeof(Storage) === "undefined") {
-            // localStorage not available
             return;
         }
         document.getElementById("presetsBox").style.display = "block";
@@ -1591,9 +1590,7 @@ playMelody(melody, 100);
         const key = select.value;
         if (!key) return;
 
-        if (typeof(Storage) !== "undefined") {
-            localStorage.removeItem(key);
-        }
+        safeRemove(key);
         refreshPresetList();
     }
 
@@ -2456,6 +2453,8 @@ playMelody(melody, 100);
         }
     });
 
+
+
     function safeGet(key) {
         try {
             return localStorage.getItem(key);
@@ -2467,6 +2466,14 @@ playMelody(melody, 100);
     function safeSet(key, value) {
         try {
             localStorage.setItem(key, value);
+        } catch {
+            // ignore if not available
+        }
+    }
+
+    function safeRemove(key) {
+        try {
+            localStorage.removeItem(key);
         } catch {
             // ignore if not available
         }
