@@ -1637,42 +1637,41 @@ playMelody(melody, 100);
             document.documentElement.style.setProperty('--box-bg-color', custom.boxBg);
             document.documentElement.style.setProperty('--wave-color', custom.waveColor);
             adaptTextColors(custom.boxBg);
-            if (typeof(Storage) !== "undefined") {
-                localStorage.setItem('theme', 'custom'); // ensure theme is saved
-            }
+            safeSet('theme', 'custom');
+            safeSet('customTheme', JSON.stringify(custom));
         } else {
-            // Change to the theme passed
             const classTheme = 'theme-' + theme;
             document.body.classList.add(classTheme);
-            const element = document.querySelector('.'+classTheme);
-            const boxBg = getComputedStyle(element).getPropertyValue('--box-bg-color').trim();
+            const element = document.querySelector('.' + classTheme);
+            const boxBg = element
+                ? getComputedStyle(element).getPropertyValue('--box-bg-color').trim()
+                : '#ffffff';
             adaptTextColors(boxBg);
-            if (typeof(Storage) !== "undefined") {
-                localStorage.setItem('theme', theme); // save active theme
-            }
+            safeSet('theme', theme);
         }
     }
 
     function saveTheme(theme, custom = null) {
-        if (typeof(Storage) !== "undefined") {
-            localStorage.setItem("theme", theme);
-            if (custom) localStorage.setItem("customTheme", JSON.stringify(custom));
-        }
+        safeSet("theme", theme);
+        if (custom) safeSet("customTheme", JSON.stringify(custom));
     }
 
     function loadTheme() {
-        if (typeof(Storage) !== "undefined") {
-            const theme = localStorage.getItem("theme");
-            const custom = localStorage.getItem("customTheme");
-            if (theme) {
-                const parsed = custom ? JSON.parse(custom) : null;
-                applyTheme(theme, parsed);
-                highlightSwatch(theme);
-                if (theme === "custom") {
-                    document.getElementById("customThemeInputs").style.display = "block";
-                    setCustomInputs(parsed);   // populate color pickers
-                }
+        const theme = safeGet("theme");
+        const custom = safeGet("customTheme");
+        if (theme) {
+            const parsed = custom ? JSON.parse(custom) : null;
+            applyTheme(theme, parsed);
+            highlightSwatch(theme);
+            if (theme === "custom" && parsed) {
+                const inputs = document.getElementById("customThemeInputs");
+                if (inputs) inputs.style.display = "block";
+                setCustomInputs(parsed);
             }
+        } else {
+            // fallback default theme if nothing stored
+            applyTheme("light");
+            highlightSwatch("light");
         }
     }
 
@@ -1742,12 +1741,8 @@ playMelody(melody, 100);
     }
 
     function getSavedCustomTheme() {
-        if (typeof(Storage) !== "undefined") {
-            const custom = localStorage.getItem("customTheme");
-            return custom ? JSON.parse(custom) : null;
-        } else  {
-            return null;
-        }
+        const custom = safeGet("customTheme");
+        return custom ? JSON.parse(custom) : null;
     }
 
     function setCustomInputs(custom) {
@@ -2450,6 +2445,22 @@ playMelody(melody, 100);
             });
         }
     });
+
+    function safeGet(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch {
+            return null;
+        }
+    }
+
+    function safeSet(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch {
+            // ignore if not available
+        }
+    }
 
     // Toggle mute/unmute
     document.getElementById("micToggle").addEventListener("click", async () => {
