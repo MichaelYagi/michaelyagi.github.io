@@ -1045,7 +1045,7 @@ playMelody(melody, 100);
 
             document.getElementById("micToggle").textContent = "Disable Mic";
             document.getElementById("status").textContent = "Mic: enabled";
-            localStorage.setItem("micEnabled", "true");
+            safeSet("micEnabled", "true");
             await updatePauseMessages();
             startLoop();
             updateDialDisplay();
@@ -1069,7 +1069,7 @@ playMelody(melody, 100);
             analyser = null;
         }
 
-        localStorage.setItem("micEnabled", "false");
+        safeSet("micEnabled", "false");
         document.getElementById("micToggle").textContent = "Enable Mic";
         document.getElementById("status").textContent = "Mic: disabled";
         resetTunerUI();
@@ -1558,9 +1558,7 @@ playMelody(melody, 100);
         const name = prompt("Preset name:");
         if (!name) return;
 
-        if (typeof(Storage) !== "undefined") {
-            localStorage.setItem("preset_" + name, JSON.stringify(preset));
-        }
+        safeSet("preset_" + name, JSON.stringify(preset));
         refreshPresetList();
     }
 
