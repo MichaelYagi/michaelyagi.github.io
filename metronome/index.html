@@ -594,7 +594,7 @@
                     <label for="customPageBg">Page Background:</label>
                 </div>
                 <div class="col">
-                    <input type="color" id="customPageBg">
+                    <input type="color" id="customPageBg" value="#000000">
                 </div>
             </div>
 
@@ -603,7 +603,7 @@
                     <label for="customBoxBg">Box Background:</label>
                 </div>
                 <div class="col">
-                    <input type="color" id="customBoxBg">
+                    <input type="color" id="customBoxBg" value="#000000">
                 </div>
             </div>
 
@@ -621,7 +621,7 @@
                     <label for="customInputBg">Input Background:</label>
                 </div>
                 <div class="col">
-                    <input type="color" id="customInputBg">
+                    <input type="color" id="customInputBg" value="#FFFFFF">
                 </div>
             </div>
 
@@ -630,7 +630,7 @@
                     <label for="customInputFont">Input Font:</label>
                 </div>
                 <div class="col">
-                    <input type="color" id="customInputFont">
+                    <input type="color" id="customInputFont" value="#000000">
                 </div>
             </div>
 
@@ -639,7 +639,7 @@
                     <label for="customWaveColor">Wave Color:</label>
                 </div>
                 <div class="col">
-                    <input type="color" id="customWaveColor">
+                    <input type="color" id="customWaveColor" value="FFFFFF">
                 </div>
             </div>
         </div>
@@ -1742,7 +1742,19 @@ playMelody(melody, 100);
 
     function getSavedCustomTheme() {
         const custom = safeGet("customTheme");
-        return custom ? JSON.parse(custom) : null;
+        let colors = custom ? JSON.parse(custom) : null;
+        if (colors === null) {
+            // Defaults
+            colors = {
+                "boxBg": "#000000",
+                "boxHeader": "#ffffff",
+                "inputBg": "#ffffff",
+                "inputFont": "#000000",
+                "pageBg": "#000000",
+                "waveColor": "#ffffff"
+            };
+        }
+        return colors;
     }
 
     function setCustomInputs(custom) {
