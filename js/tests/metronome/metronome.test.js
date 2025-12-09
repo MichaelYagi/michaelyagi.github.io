@@ -6,7 +6,7 @@ const path = require("path");
 const htmlPath = path.resolve(__dirname, "../../../metronome/index.html"); // update to your actual path
 let html = fs.readFileSync(htmlPath, "utf8");
 
-describe("Metronome embedded script (real HTML)", function () {
+describe("Metronome embedded script tests", function () {
   let dom;
   let window;
   let document;
