@@ -131,6 +131,43 @@ describe("Metronome embedded script (real HTML)", function () {
     assert.equal(dot.style.opacity, "1");
   });
 
+  it("updateBPMDialDisplay reflects tempo value", () => {
+    const dial = document.getElementById("dialBPM") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "dialBPM" }));
+    const tempo = document.getElementById("tempo");
+    tempo.value = "90";
+    window.updateBPMDialDisplay();
+    assert.equal(dial.textContent, "BPM: 90");
+  });
+
+  it("setMetronomeActive disables tempo and buttons when inactive", () => {
+    const tempo = document.getElementById("tempo");
+    window.setMetronomeActive(false);
+    assert.equal(tempo.disabled, true);
+    window.setMetronomeActive(true);
+    assert.equal(tempo.disabled, false);
+  });
+
+  it("syncUIState dims metronomeBox when tone is playing", () => {
+    const metronomeBox = document.getElementById("metronomeBox");
+    window.toneOscillator = {}; // simulate tone playing
+    window.syncUIState();
+
+    assert.ok(metronomeBox.classList.contains("box"));
+    assert.ok(!metronomeBox.classList.contains("dimmed"));
+  });
+
+  it("registerTap updates tempo based on tap intervals", () => {
+    const tempo = document.getElementById("tempo");
+    const text = document.getElementById("metronomeText") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "metronomeText" }));
+    const e = { target: document.createElement("div"), preventDefault() {} };
+    window.registerTap(e); // first tap
+    setTimeout(() => {
+      window.registerTap(e); // second tap ~100ms later
+      assert.match(text.textContent, /Tapped tempo/);
+      assert.ok(parseInt(tempo.value, 10) >= 30 && parseInt(tempo.value, 10) <= 240);
+    }, 100);
+  });
+
   it("getSubdivisions returns integer from #subdivisions input", () => {
     // Ensure the element exists
     const input = document.getElementById("subdivisions") ||
@@ -163,6 +200,29 @@ describe("Metronome embedded script (real HTML)", function () {
     assert.equal(window.getPolySubdivisions(), 0, "should handle zero poly subdivisions");
   });
 
+  it("dialToNote maps dial index to note data", () => {
+    const { name, octave, f } = window.dialToNote(30);
+    assert.equal(name, "A");
+    assert.equal(octave, 4);
+    assert.ok(Math.abs(f - 440) < 0.01);
+  });
+
+  it("updateDialDisplay updates dialNote and dialFreq", () => {
+    const dial = document.getElementById("noteDial") || document.body.appendChild(Object.assign(document.createElement("input"), { id: "noteDial", value: "30", min: "0", max: "60" }));
+    const dialNote = document.getElementById("dialNote") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "dialNote" }));
+    const dialFreq = document.getElementById("dialFreq") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "dialFreq" }));
+    window.updateDialDisplay();
+    assert.match(dialNote.textContent, /Note: A4/);
+    assert.match(dialFreq.textContent, /Freq: 440/);
+  });
+
+  it("freqToNoteData returns cents offset for detuned frequency", () => {
+    const data = window.freqToNoteData(445); // slightly sharp A4
+    assert.equal(data.name, "A");
+    assert.equal(data.octave, 4);
+    assert.ok(data.cents > 0);
+  });
+
   it("pauses mic when metronome starts and resumes on stop", async () => {
     // Create a fake micStream with one track
     const track = new window.MediaStreamTrack();
@@ -178,6 +238,37 @@ describe("Metronome embedded script (real HTML)", function () {
 
     metronome.stopMetronome();
     assert.equal(document.getElementById("status").textContent, "Mic: enabled");
+  });
+
+  it("disableMic stops micStream and updates status", () => {
+    const status = document.getElementById("status");
+    window.disableMic();
+    assert.equal(status.textContent, "Mic: disabled");
+  });
+
+  it("updatePauseMessages shows tuner paused when metronome is running and mic enabled", async () => {
+    const status = document.getElementById("status") ||
+        document.body.appendChild(Object.assign(document.createElement("div"), { id: "status" }));
+
+    // Simulate mic enabled with a track
+    const track = new window.MediaStreamTrack();
+    window.micStream = new window.MediaStream();
+    window.micStream._tracks = [track];
+
+    // Ensure start button exists
+    const startBtn = document.getElementById("startMetronome") ||
+        document.body.appendChild(Object.assign(document.createElement("button"), { id: "startMetronome" }));
+
+    // Click start button → triggers startMetronome logic
+    startBtn.click();
+
+    // Now metronomeInterval is active and micStream is defined
+    await window.updatePauseMessages();
+
+    assert.equal(status.textContent, "Tuner paused while metronome is on");
+
+    // Clean up
+    window.stopMetronome();
   });
 
   it("does not throw when changing waveform while tone is playing", () => {
