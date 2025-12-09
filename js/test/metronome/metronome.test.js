@@ -1,10 +1,10 @@
 const assert = require("assert").strict;
-const { JSDOM } = require("jsdom");
+const { JSDOM, VirtualConsole  } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
 
 const htmlPath = path.resolve(__dirname, "../../../metronome/index.html"); // update to your actual path
-const html = fs.readFileSync(htmlPath, "utf8");
+let html = fs.readFileSync(htmlPath, "utf8");
 
 describe("Metronome embedded script (real HTML)", function () {
   let dom;
@@ -13,13 +13,30 @@ describe("Metronome embedded script (real HTML)", function () {
   let metronome;
 
   beforeEach(() => {
+    const vc = new VirtualConsole();
+    vc.on("jsdomError", (err) => {
+      const msg = String(err?.message || err);
+      // Ignore only the noisy resource errors
+      if (msg.includes("Could not load img") || msg.includes("Status code: 204")) {
+        return;
+      }
+      // Let real errors through
+      console.error(err);
+    });
+
     dom = new JSDOM(html, {
       url: "http://localhost/",
       runScripts: "dangerously",
       resources: "usable",
+      virtualConsole: vc,
       pretendToBeVisual: true,
       // Ensure mocks exist before your embedded script runs
       beforeParse(win) {
+        win.MediaStreamTrack = class {};
+        win.MediaStream = class {
+          constructor() { this._tracks = []; }
+          getTracks() { return this._tracks; }
+        };
         // Minimal AudioContext mock
         win.AudioContext = class {
           constructor() { this.currentTime = 0; this.state = "running"; }
@@ -156,16 +173,20 @@ describe("Metronome embedded script (real HTML)", function () {
     assert.ok(!metronomeBox.classList.contains("dimmed"));
   });
 
-  it("registerTap updates tempo based on tap intervals", () => {
-    const tempo = document.getElementById("tempo");
-    const text = document.getElementById("metronomeText") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "metronomeText" }));
+  it("registerTap updates tempo based on tap intervals", function (done) {
+    const tempo = document.getElementById("tempo") ||
+        document.body.appendChild(Object.assign(document.createElement("input"), { id: "tempo", type: "number", value: "120" }));
+    const text = document.getElementById("metronomeText") ||
+        document.body.appendChild(Object.assign(document.createElement("div"), { id: "metronomeText" }));
     const e = { target: document.createElement("div"), preventDefault() {} };
+
     window.registerTap(e); // first tap
     setTimeout(() => {
-      window.registerTap(e); // second tap ~100ms later
+      window.registerTap(e); // second tap ~500ms later → ~120 BPM
       assert.match(text.textContent, /Tapped tempo/);
       assert.ok(parseInt(tempo.value, 10) >= 30 && parseInt(tempo.value, 10) <= 240);
-    }, 100);
+      done();
+    }, 500);
   });
 
   it("getSubdivisions returns integer from #subdivisions input", () => {
@@ -233,7 +254,6 @@ describe("Metronome embedded script (real HTML)", function () {
     assert.equal(track.enabled, true, "mic should start enabled");
 
     metronome.startMetronome();
-    console.log(document.getElementById("status").textContent)
     assert.equal(document.getElementById("status").textContent, "Mic paused while tone is playing");
 
     metronome.stopMetronome();
