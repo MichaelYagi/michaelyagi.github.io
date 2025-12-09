@@ -1235,56 +1235,58 @@ playMelody(melody, 100);
     }
 
     async function playTone(freq, type = "sine") {
-        stopTone();
+        if (songPlaying === false) {
+            stopTone();
 
-        if (micStream) {
-            micStream.getAudioTracks().forEach(track => track.enabled = false);
-            statusElem.textContent = "Mic paused while tone is playing";
-        }
+            if (micStream) {
+                micStream.getAudioTracks().forEach(track => track.enabled = false);
+                statusElem.textContent = "Mic paused while tone is playing";
+            }
 
-        const validTypes = ["sine", "square", "triangle", "sawtooth"];
+            const validTypes = ["sine", "square", "triangle", "sawtooth"];
 
-        if (validTypes.includes(type)) {
-            // Standard oscillator
-            await initAudioContext();
-            toneOscillator = audioCtx.createOscillator();
-            toneGain = audioCtx.createGain();
-
-            toneOscillator.type = type;
-            toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-            toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            toneOscillator.connect(toneGain).connect(audioCtx.destination);
-            toneOscillator.start();
-        } else {
-            // Custom instruments
-            const startTime = audioCtx.currentTime;
-
-            if (type === "piano") {
-                ({osc: toneOscillator, gain: toneGain} = playPianoTone(freq, startTime));
-            } else if (type === "strings") {
-                ({osc: toneOscillator, gain: toneGain} = playStringTone(freq, startTime));
-            } else if (type === "electricGuitar") {
-                ({osc: toneOscillator, gain: toneGain} = playElectricGuitarTone(freq, startTime));
-            } else if (type === "acousticGuitar") {
-                ({osc: toneOscillator, gain: toneGain} = playAcousticGuitarTone(freq, startTime));
-            } else {
-                // fallback to square
+            if (validTypes.includes(type)) {
+                // Standard oscillator
+                await initAudioContext();
                 toneOscillator = audioCtx.createOscillator();
                 toneGain = audioCtx.createGain();
-                toneOscillator.type = "square";
+
+                toneOscillator.type = type;
                 toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
                 toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 toneOscillator.connect(toneGain).connect(audioCtx.destination);
                 toneOscillator.start();
-            }
-        }
+            } else {
+                // Custom instruments
+                const startTime = audioCtx.currentTime;
 
-        setPlayButtonState(false);
-        setTunerActive(false);
-        startWaveAnimation(freq);
-        syncUIState();
-        await updatePauseMessages();
+                if (type === "piano") {
+                    ({osc: toneOscillator, gain: toneGain} = playPianoTone(freq, startTime));
+                } else if (type === "strings") {
+                    ({osc: toneOscillator, gain: toneGain} = playStringTone(freq, startTime));
+                } else if (type === "electricGuitar") {
+                    ({osc: toneOscillator, gain: toneGain} = playElectricGuitarTone(freq, startTime));
+                } else if (type === "acousticGuitar") {
+                    ({osc: toneOscillator, gain: toneGain} = playAcousticGuitarTone(freq, startTime));
+                } else {
+                    // fallback to square
+                    toneOscillator = audioCtx.createOscillator();
+                    toneGain = audioCtx.createGain();
+                    toneOscillator.type = "square";
+                    toneOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    toneGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    toneOscillator.connect(toneGain).connect(audioCtx.destination);
+                    toneOscillator.start();
+                }
+            }
+
+            setPlayButtonState(false);
+            setTunerActive(false);
+            startWaveAnimation(freq);
+            syncUIState();
+            await updatePauseMessages();
+        }
     }
 
     function stopTone() {
@@ -1424,58 +1426,60 @@ playMelody(melody, 100);
     }
 
     function startMetronome() {
-        let tempoValue = tempo.value;
-        if (tempoValue <= 0) {
-            tempoValue = "120";
-            tempo.value = tempoValue;
-        }
-        const bpm = parseInt(tempoValue, 10);
-        const subdivisions = getSubdivisions();
-        let polySubs = getPolySubdivisions();
-        if (subdivisions === polySubs) {
-            polySubs = 0;
-        }
-
-        const beatMs = 60000 / bpm;
-        const subMs = beatMs / subdivisions;
-        const polyMs = polySubs > 1 ? beatMs / polySubs : null;
-
-        stopMetronome();
-
-        metronomeInterval = setInterval(() => {
-            // main beat
-            playClick(true);
-
-            // normal subdivisions
-            if (subdivisions > 1) {
-                for (let i = 1; i < subdivisions; i++) {
-                    setTimeout(() => playClick(false), i * subMs);
-                }
+        if (songPlaying === false) {
+            let tempoValue = tempo.value;
+            if (tempoValue <= 0) {
+                tempoValue = "120";
+                tempo.value = tempoValue;
+            }
+            const bpm = parseInt(tempoValue, 10);
+            const subdivisions = getSubdivisions();
+            let polySubs = getPolySubdivisions();
+            if (subdivisions === polySubs) {
+                polySubs = 0;
             }
 
-            // polyrhythm pulses (stretch across the same beat)
-            if (polyMs) {
-                for (let i = 1; i < polySubs; i++) {
-                    setTimeout(() => playClick(false, "poly"), i * polyMs);
+            const beatMs = 60000 / bpm;
+            const subMs = beatMs / subdivisions;
+            const polyMs = polySubs > 1 ? beatMs / polySubs : null;
+
+            stopMetronome();
+
+            metronomeInterval = setInterval(() => {
+                // main beat
+                playClick(true);
+
+                // normal subdivisions
+                if (subdivisions > 1) {
+                    for (let i = 1; i < subdivisions; i++) {
+                        setTimeout(() => playClick(false), i * subMs);
+                    }
                 }
+
+                // polyrhythm pulses (stretch across the same beat)
+                if (polyMs) {
+                    for (let i = 1; i < polySubs; i++) {
+                        setTimeout(() => playClick(false, "poly"), i * polyMs);
+                    }
+                }
+            }, beatMs);
+
+            document.getElementById("metronomeText").textContent =
+                polySubs > 1
+                    ? `${subdivisions} subdivisions + ${polySubs}-pulse polyrhythm`
+                    : (subdivisions > 1
+                        ? `${subdivisions} subdivisions`
+                        : `Playing`);
+
+            updateBPMDialDisplay();
+            setElementState("startMetronome", false);
+            metronomeRunning = true;
+            syncUIState();
+            updatePauseMessages();
+            if (micStream) {
+                micStream.getAudioTracks().forEach(track => track.enabled = false);
+                statusElem.textContent = "Mic paused while tone is playing";
             }
-        }, beatMs);
-
-        document.getElementById("metronomeText").textContent =
-            polySubs > 1
-                ? `${subdivisions} subdivisions + ${polySubs}-pulse polyrhythm`
-                : (subdivisions > 1
-                    ? `${subdivisions} subdivisions`
-                    : `Playing`);
-
-        updateBPMDialDisplay();
-        setElementState("startMetronome", false);
-        metronomeRunning = true;
-        syncUIState();
-        updatePauseMessages();
-        if (micStream) {
-            micStream.getAudioTracks().forEach(track => track.enabled = false);
-            statusElem.textContent = "Mic paused while tone is playing";
         }
     }
 
@@ -2403,6 +2407,8 @@ playMelody(melody, 100);
     //=============================================================
     document.getElementById("playSimpleSong").addEventListener("click", function () {
         if (songPlaying === false) {
+            stopMetronome();
+            stopTone();
             songPlaying = true;
             const beatPattern = [
                 { type: "hihat", dur: 2 },
@@ -2456,6 +2462,8 @@ playMelody(melody, 100);
 
     document.getElementById("playSong").addEventListener("click", function () {
         if (songPlaying === false) {
+            stopMetronome();
+            stopTone();
             songPlaying = true;
 
             playBeat(getBeatPattern(), 155);
