@@ -664,7 +664,7 @@
             <li>Shift - Reset pitch to A4</li>
         </ul>
 
-        <div class="accordion" id="more" data-allow-multiple="false">
+        <div class="accordion" id="more">
             <div class="accordion-item">
                 <h3 class="accordion-header">
                     <button class="accordion-trigger" aria-expanded="false" aria-controls="more-panel" id="more-trigger">
@@ -2668,54 +2668,23 @@ playMelody(melody, 100);
     });
 
     // Initialize all accordions on the page
-    document.querySelectorAll(".accordion").forEach((accordion) => {
-        initAccordion(accordion, {
-            allowMultiple:
-                accordion.getAttribute("data-allow-multiple") === "true" ? true : false,
-        });
-    });
+    initAccordion(document.getElementById("more"));
 
-    function initAccordion(root, { allowMultiple = false } = {}) {
-        const triggers = root.querySelectorAll(".accordion-trigger");
+    function initAccordion(root) {
+        const trigger = root.querySelector(".accordion-trigger");
 
         // Click: toggle target panel; optionally close others
-        triggers.forEach((trigger) => {
-            trigger.addEventListener("click", () => {
-                const panel = getPanel(trigger);
-                const isOpen = trigger.getAttribute("aria-expanded") === "true";
+        trigger.addEventListener("click", () => {
+            const panel = getPanel(trigger);
+            const isOpen = trigger.getAttribute("aria-expanded") === "true";
 
-                if (!allowMultiple && !isOpen) {
-                    closeAllExcept(root, trigger);
-                }
-                setExpanded(trigger, panel, !isOpen);
-            });
-
-            // Keyboard nav across triggers (Up/Down/Home/End)
-            trigger.addEventListener("keydown", (e) => {
-                const list = Array.from(triggers);
-                const idx = list.indexOf(trigger);
-
-                switch (e.key) {
-                    case "ArrowUp":
-                        e.preventDefault();
-                        (list[idx - 1] || list[list.length - 1]).focus();
-                        break;
-                    case "ArrowDown":
-                        e.preventDefault();
-                        (list[idx + 1] || list[0]).focus();
-                        break;
-                    case "Home":
-                        e.preventDefault();
-                        list[0].focus();
-                        break;
-                    case "End":
-                        e.preventDefault();
-                        list[list.length - 1].focus();
-                        break;
-                    default:
-                        break;
-                }
-            });
+            if (isOpen) {
+                document.getElementById("more-trigger").textContent = `More`;
+            } else {
+                closeAllExcept(root, trigger);
+                document.getElementById("more-trigger").textContent = `Less`;
+            }
+            setExpanded(trigger, panel, !isOpen);
         });
     }
 
@@ -2727,21 +2696,15 @@ playMelody(melody, 100);
     function setExpanded(trigger, panel, expand) {
         trigger.setAttribute("aria-expanded", String(expand));
         // Use the 'hidden' attribute to ensure robust visibility control
-        if (expand) {
-            panel.hidden = false;
-        } else {
-            panel.hidden = true;
-        }
+        panel.hidden = !expand;
     }
 
     function closeAllExcept(root, exceptTrigger) {
-        const triggers = root.querySelectorAll(".accordion-trigger");
-        triggers.forEach((t) => {
-            if (t !== exceptTrigger) {
-                const p = getPanel(t);
-                setExpanded(t, p, false);
-            }
-        });
+        const trigger = root.querySelector(".accordion-trigger");
+        if (trigger !== exceptTrigger) {
+            const p = getPanel(t);
+            setExpanded(t, p, false);
+        }
     }
 
     // ============================================================
