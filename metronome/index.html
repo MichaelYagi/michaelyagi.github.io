@@ -1135,12 +1135,10 @@ playMelody(melody, 100);
         const micPref = safeGet("micEnabled") || "false";
         document.getElementById("micToggle").style.display = "block";
 
-        if (micPref === "true") {
-            document.getElementById("micToggle").textContent = "Enable Mic";
-            document.getElementById("status").textContent = "Mic: disabled";
-        } else {
+        document.getElementById("micToggle").textContent = "Enable Mic";
+        document.getElementById("status").textContent = "Mic: disabled";
+        if (micPref !== "true") {
             resetTunerUI();
-            document.getElementById("micToggle").textContent = "Enable Mic";
         }
     }
 
