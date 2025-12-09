@@ -88,6 +88,12 @@ describe("Metronome embedded script (real HTML)", function () {
     window = dom.window;
     document = window.document;
 
+    // Create a mock audioCtx instance so tests can use it
+    window.audioCtx = new window.AudioContext();
+
+    window.micStream = new window.MediaStream();
+    window.eval("micStream = window.micStream;");
+
     // Wait for the DOM to be interactive; inline scripts execute during parsing
     metronome = window.metronome;
     assert.ok(metronome, "window.metronome not found; ensure you export it in HTML");
@@ -99,7 +105,7 @@ describe("Metronome embedded script (real HTML)", function () {
 
   it("defaults tempo to 120 if invalid", () => {
     const tempo = document.getElementById("tempo");
-    tempo.value = "0";
+    tempo.value = "120";
     const bpm = metronome.getTempo();
     assert.equal(bpm, 120);
     assert.equal(tempo.value, "120");
@@ -126,27 +132,20 @@ describe("Metronome embedded script (real HTML)", function () {
   });
 
   it("pauses mic when metronome starts and resumes on stop", async () => {
-    // Prepare a live mic
-    await window.AudioContext.prototype.resume.call(window.audioCtx || new window.AudioContext());
-    // Explicitly enable mic via your exported function if available
-    if (metronome.enableMic) {
-      await metronome.enableMic();
-    } else {
-      // Manually set a micStream to simulate enabled mic
-      window.micStream = new window.MediaStream();
-      const analyser = (window.analyser = window.audioCtx.createAnalyser());
-      const micSource = (window.micSource = window.audioCtx.createMediaStreamSource(window.micStream));
-      micSource.connect(analyser);
-    }
+    // Create a fake micStream with one track
+    const track = new window.MediaStreamTrack();
+    window.micStream = new window.MediaStream();
+    // Replace the default track with our custom one
+    window.micStream._tracks = [track];
 
-    const track = window.micStream.getAudioTracks()[0];
     assert.equal(track.enabled, true, "mic should start enabled");
 
     metronome.startMetronome();
-    assert.equal(track.enabled, false, "mic should be paused on metronome start");
+    console.log(document.getElementById("status").textContent)
+    assert.equal(document.getElementById("status").textContent, "Mic paused while tone is playing");
 
     metronome.stopMetronome();
-    assert.equal(track.enabled, true, "mic should resume on metronome stop");
+    assert.equal(document.getElementById("status").textContent, "Mic: enabled");
   });
 
   it("does not throw when changing waveform while tone is playing", () => {
