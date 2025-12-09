@@ -1599,9 +1599,9 @@ playMelody(melody, 100);
         select.innerHTML = "";
 
         let hasPresets = false;
-        if (typeof(Storage) !== "undefined") {
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
+        if (safeCheck()) {
+            for (let i = 0; i < safeSize(); i++) {
+                const key = safeKey(i);
                 if (key.startsWith("preset_")) {
                     const opt = document.createElement("option");
                     opt.value = key;
@@ -2453,7 +2453,17 @@ playMelody(melody, 100);
         }
     });
 
+    function safeSize() {
+        if (safeCheck()) {
+            return localStorage.length;
+        }
 
+        return 0;
+    }
+
+    function safeCheck() {
+        return typeof(Storage) !== "undefined"
+    }
 
     function safeGet(key) {
         try {
@@ -2468,6 +2478,14 @@ playMelody(melody, 100);
             localStorage.setItem(key, value);
         } catch {
             // ignore if not available
+        }
+    }
+
+    function safeKey(value) {
+        try {
+            return localStorage.key(value);
+        } catch {
+            return null;
         }
     }
 
