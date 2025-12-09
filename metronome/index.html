@@ -991,7 +991,7 @@ playMelody(melody, 100);
 
         let waveColor = "#0077ff";
         if (typeof(Storage) !== "undefined") {
-            const theme = localStorage.getItem("theme");
+            const theme = safeGet("theme");
             if (theme) {
                 const classTheme = 'theme-' + theme;
                 document.body.classList.add(classTheme);
@@ -1132,7 +1132,7 @@ playMelody(melody, 100);
 
     async function init() {
         updateBPMDialDisplay();
-        const micPref = localStorage.getItem("micEnabled") || "false";
+        const micPref = safeGet("micEnabled") || "false";
         document.getElementById("micToggle").style.display = "block";
 
         if (micPref === "true") {
@@ -1570,7 +1570,7 @@ playMelody(melody, 100);
         if (!key) return;
 
         if (typeof(Storage) !== "undefined") {
-            const preset = JSON.parse(localStorage.getItem(key));
+            const preset = JSON.parse(safeGet(key));
             if (!preset) return;
 
             document.getElementById("tempo").value = preset.bpm;
