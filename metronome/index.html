@@ -734,8 +734,12 @@ const melody = [
     // sine,square,triangle,sawtooth,piano,
     // strings,electricGuitar or acousticGuitar
     { note: "B3", dur: 1, instrument: "electricGuitar" },
-    { note: "B3", dur: 1 },
-    { note: "B3", dur: 1 }
+    // At normal volume
+    { note: "B3", dur: 1, vol: 1 },
+    // Volume at quieter volume
+    { note: "B3", dur: 1, vol: 0.2 }
+    // Volume get louder within duration - 0.1 to 1 range
+    { note: "B3", dur: 1, vol: [0.2, 1] }
 ];
 
 const beatPattern = [
@@ -747,8 +751,11 @@ const beatPattern = [
         // This shortest beat defines the step length
         { type: "hihat", dur: 1 },
     ]},
-    { type: "hihat", dur: 1 },
-    { type: "hihat", dur: 1 }
+    // At normal volume
+    { type: "hihat", dur: 1, vol: 1 },
+    // Volume get louder within duration
+    // Not applicable for clap - 0.1 to 1 range
+    { type: "hihat", dur: 1, vol: [0.2, 0.6, 1] }
 ];
 
 // Define BPM (optional) - default is 300 BPM for both
@@ -1816,7 +1823,8 @@ playMelody(melody, 100);
                             const gain = audioCtx.createGain();
                             osc.type = n.instrument || "square";
                             osc.frequency.setValueAtTime(freq, startTime);
-                            gain.gain.setValueAtTime(0.2, startTime);
+                            const volPoints = normalizeVolume(n.vol);
+                            applyVolumeRamp(gain, volPoints, startTime, noteDuration);
                             osc.connect(gain).connect(audioCtx.destination);
                             osc.start(startTime);
                             osc.stop(startTime + noteDuration);
@@ -1847,7 +1855,8 @@ playMelody(melody, 100);
                         const gain = audioCtx.createGain();
                         osc.type = step.instrument || "square";
                         osc.frequency.setValueAtTime(freq, startTime);
-                        gain.gain.setValueAtTime(0.2, startTime);
+                        const volPoints = normalizeVolume(step.vol);
+                        applyVolumeRamp(gain, volPoints, startTime, noteDuration);
                         osc.connect(gain).connect(audioCtx.destination);
                         osc.start(startTime);
                         osc.stop(startTime + noteDuration);
@@ -2030,13 +2039,14 @@ playMelody(melody, 100);
                 // single type
                 if (step.type) {
                     const dur = step.dur || stepBeats;
-                    scheduleHit(step.type, startTime, dur * beatSec);
+                    const vol = step.vol || 1;
+                    scheduleHit(step.type, startTime, dur * beatSec, vol);
                 }
 
                 // multiple types
                 if (step.types && Array.isArray(step.types)) {
                     step.types.forEach(t => {
-                        let typeName, hitDur;
+                        let typeName, hitDur, vol;
                         if (typeof t === "string") {
                             typeName = t;
                             hitDur = stepBeats; // default
@@ -2044,7 +2054,8 @@ playMelody(melody, 100);
                             typeName = t.type;
                             hitDur = t.dur || stepBeats;
                         }
-                        scheduleHit(typeName, startTime, hitDur * beatSec);
+                        vol = t.vol || 1;
+                        scheduleHit(typeName, startTime, hitDur * beatSec, vol);
                     });
                 }
             }
@@ -2063,14 +2074,14 @@ playMelody(melody, 100);
         });
     }
 
-    function scheduleHit(type, time, duration) {
-        if (type === "hihat") playHiHatBeat(time, duration);
-        else if (type === "kick") playKickBeat(time, duration);
-        else if (type === "snare") playSnareBeat(time, duration);
+    function scheduleHit(type, time, duration, vol = 1) {
+        if (type === "hihat") playHiHatBeat(time, duration, vol);
+        else if (type === "kick") playKickBeat(time, duration, vol);
+        else if (type === "snare") playSnareBeat(time, duration, vol);
         else if (type === "clap") playClapBeat(time, duration);
     }
 
-    function playHiHatBeat(time, duration = 0.2) {
+    function playHiHatBeat(time, duration = 0.2, vol = 1) {
         const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
@@ -2079,27 +2090,35 @@ playMelody(melody, 100);
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
-        // high shimmer
+        // Filters
         const highpass = audioCtx.createBiquadFilter();
         highpass.type = "highpass";
         highpass.frequency.value = 8000;
 
-        // metallic band (still noise, not pitched)
         const bandpass = audioCtx.createBiquadFilter();
         bandpass.type = "bandpass";
         bandpass.frequency.value = 9000;
         bandpass.Q.value = 1.5;
 
-        // envelope gain (boosted)
+        // Envelope gain
         const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(1.2, time); // louder start
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
+        const volPoints = normalizeVolume(vol);
 
-        // master gain stage
+        // scale by envelope peak (1.2)
+        applyVolumeRamp(gain, volPoints, time, duration, 1.2);
+
+        // safe exponential cutoff (avoid ramp from 0)
+        const startVal = volPoints[0] * 1.2;
+        if (startVal > 0) {
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
+        } else {
+            gain.gain.linearRampToValueAtTime(0.001, time + 0.25);
+        }
+
+        // Master gain stage (constant boost, not scaled by array)
         const masterGain = audioCtx.createGain();
-        masterGain.gain.value = 1.5; // global boost
+        masterGain.gain.value = 1.5;
 
-        // connect both filters to gain → master
         noise.connect(highpass).connect(gain).connect(masterGain).connect(audioCtx.destination);
         noise.connect(bandpass).connect(gain).connect(masterGain).connect(audioCtx.destination);
 
@@ -2107,7 +2126,7 @@ playMelody(melody, 100);
         noise.stop(time + duration);
     }
 
-    function playKickBeat(time, duration = 0.3) {
+    function playKickBeat(time, duration = 0.3, vol = 1) {
         // Sub-bass sine sweep
         const osc = audioCtx.createOscillator();
         osc.type = "sine";
@@ -2115,11 +2134,15 @@ playMelody(melody, 100);
         osc.frequency.exponentialRampToValueAtTime(50, time + 0.1);
 
         const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(1.5, time); // stronger fundamental
-        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+        const volPoints = normalizeVolume(vol);
+        applyVolumeRamp(gain, volPoints, time, duration, 1.5); // stronger fundamental
+
+        // FIX: safe ramp instead of unconditional exponential
+        const startVal = volPoints[0] * 1.5;
+        safeExponentialRamp(gain, startVal, 0.001, time + duration);
 
         // Attack click (short noise burst)
-        const bufferSize = audioCtx.sampleRate * 0.02; // 20ms
+        const bufferSize = audioCtx.sampleRate * 0.02;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
@@ -2127,16 +2150,23 @@ playMelody(melody, 100);
         noise.buffer = buffer;
 
         const noiseGain = audioCtx.createGain();
-        noiseGain.gain.setValueAtTime(0.8, time); // louder click
-        noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+        const noiseVol = normalizeVolume(vol);
+        applyVolumeRamp(noiseGain, noiseVol, time, 0.05);
 
-        // Harmonic layer for body
+        // FIX: safe ramp for noise click
+        const noiseStartVal = noiseVol[0];
+        safeExponentialRamp(noiseGain, noiseStartVal, 0.001, time + 0.05);
+
+        // Harmonic layer
         const osc2 = audioCtx.createOscillator();
         osc2.type = "triangle";
         osc2.frequency.value = 100;
         const gain2 = audioCtx.createGain();
-        gain2.gain.setValueAtTime(0.5, time); // adds midrange punch
-        gain2.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+        const vol2 = normalizeVolume(vol);
+        applyVolumeRamp(gain2, vol2, time, 0.15);
+
+        const osc2StartVal = vol2[0];
+        safeExponentialRamp(gain2, osc2StartVal, 0.001, time + 0.15);
 
         // Connect chains
         osc.connect(gain).connect(audioCtx.destination);
@@ -2152,7 +2182,7 @@ playMelody(melody, 100);
         osc2.stop(time + 0.15);
     }
 
-    function playSnareBeat(time, duration = 0.2) {
+    function playSnareBeat(time, duration = 0.2, vol = 1) {
         const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
@@ -2161,35 +2191,36 @@ playMelody(melody, 100);
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
-        // Crack (strong transient)
+        // Crack
         const crackFilter = audioCtx.createBiquadFilter();
         crackFilter.type = "bandpass";
         crackFilter.frequency.value = 3500;
         const crackGain = audioCtx.createGain();
-        crackGain.gain.setValueAtTime(2.0, time); // much louder
-        crackGain.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+        const crackVol = normalizeVolume(vol);
+        applyVolumeRamp(crackGain, crackVol, time, duration, 2.0);
+        safeExponentialRamp(crackGain, crackVol[0] * 2.0, 0.001, time + 0.06);
 
-        // Body (short but boosted)
+        // Body
         const bodyFilter = audioCtx.createBiquadFilter();
         bodyFilter.type = "bandpass";
         bodyFilter.frequency.value = 1200;
         const bodyGain = audioCtx.createGain();
-        bodyGain.gain.setValueAtTime(1.2, time); // louder body
-        bodyGain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+        const bodyVol = normalizeVolume(vol);
+        applyVolumeRamp(bodyGain, bodyVol, time, duration, 1.2);
+        safeExponentialRamp(bodyGain, bodyVol[0] * 1.2, 0.001, time + 0.1);
 
-        // Air (bright shimmer, boosted)
+        // Air
         const airFilter = audioCtx.createBiquadFilter();
         airFilter.type = "bandpass";
         airFilter.frequency.value = 9000;
         const airGain = audioCtx.createGain();
-        airGain.gain.setValueAtTime(0.8, time); // brighter
-        airGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+        const airVol = normalizeVolume(vol);
+        applyVolumeRamp(airGain, airVol, time, duration, 0.8);
+        safeExponentialRamp(airGain, airVol[0] * 0.8, 0.001, time + 0.12);
 
-        // Master gain stage to ensure loudness
         const masterGain = audioCtx.createGain();
-        masterGain.gain.value = 1.5; // global boost
+        masterGain.gain.value = 1.5;
 
-        // Connect chains
         noise.connect(crackFilter).connect(crackGain).connect(masterGain).connect(audioCtx.destination);
         noise.connect(bodyFilter).connect(bodyGain).connect(masterGain).connect(audioCtx.destination);
         noise.connect(airFilter).connect(airGain).connect(masterGain).connect(audioCtx.destination);
@@ -2213,7 +2244,6 @@ playMelody(melody, 100);
             data[i] = b0 + b1 + b2 + white * 0.05;
         }
 
-        // Filters
         const bandpass = audioCtx.createBiquadFilter();
         bandpass.type = "bandpass";
         bandpass.frequency.value = 2000; // slightly lower
@@ -2223,7 +2253,6 @@ playMelody(melody, 100);
         highpass.type = "highpass";
         highpass.frequency.value = 800;  // remove low rumble
 
-        // Burst offsets (simulate multiple hands)
         const bursts = [0, 0.02, 0.04];
         bursts.forEach((offset, idx) => {
             const noise = audioCtx.createBufferSource();
@@ -2237,6 +2266,42 @@ playMelody(melody, 100);
             noise.start(time + offset);
             noise.stop(time + offset + 0.1);
         });
+    }
+
+    function safeExponentialRamp(gainNode, startValue, endValue, endTime) {
+        if (startValue <= 0) {
+            gainNode.gain.linearRampToValueAtTime(endValue, endTime);
+        } else {
+            gainNode.gain.exponentialRampToValueAtTime(endValue, endTime);
+        }
+    }
+
+    function normalizeVolume(vol) {
+        if (Array.isArray(vol)) return vol;
+        if (typeof vol === "number") return [vol];
+        return [1]; // default full volume
+    }
+
+    function normalizeVolumeNum(vol) {
+        if (Array.isArray(vol)) return vol[0];
+        if (typeof vol === "number") return vol;
+        return 1; // default full volume
+    }
+
+    function applyVolumeRamp(gainNode, volPoints, startTime, dur, envelopePeak = 1.0) {
+        const points = Array.isArray(volPoints) ? volPoints : [volPoints];
+
+        // Always set the starting value
+        const v0 = (points[0] ?? 1) * envelopePeak;
+        gainNode.gain.setValueAtTime(v0, startTime);
+
+        if (points.length === 1) return;
+
+        // Ramp through subsequent points
+        for (let i = 1; i < points.length; i++) {
+            const t = startTime + (i / (points.length - 1)) * dur;
+            gainNode.gain.linearRampToValueAtTime(points[i] * envelopePeak, t);
+        }
     }
 
     function getBeatPattern() {
