@@ -677,20 +677,20 @@
 
                     <pre class="box code"><button class="copy-btn">Copy</button><code>
 const beatPattern = [
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 },
-    { type: "hihat", dur: 2 }
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 },
+    { beat: "hihat", dur: 2 }
 ];
 
 const melody = [
@@ -743,19 +743,19 @@ const melody = [
 ];
 
 const beatPattern = [
-    { types: [
+    { beats: [
         // Sustains across the next step until
         // its full duration completes
-        { type: "kick", dur: 2 },
-        { type: "snare", dur: 2 },
+        { beat: "kick", dur: 2 },
+        { beat: "snare", dur: 2 },
         // This shortest beat defines the step length
-        { type: "hihat", dur: 1 },
+        { beat: "hihat", dur: 1 },
     ]},
     // At normal volume
-    { type: "hihat", dur: 1, vol: 1 },
+    { beat: "hihat", dur: 1, vol: 1 },
     // Volume get louder within duration
     // Not applicable for clap - 0.1 to 1 range
-    { type: "hihat", dur: 1, vol: [0.2, 0.6, 1] }
+    { beat: "hihat", dur: 1, vol: [0.2, 0.6, 1] }
 ];
 
 // Define BPM (optional) - default is 300 BPM for both
@@ -1840,7 +1840,7 @@ playMelody(melody, 100);
                     freq = noteToFrequency(step.note);
                 }
 
-                if (step.type !== "rest" && freq) {
+                if (step.beat !== "rest" && freq) {
                     const noteDuration = beatSec * step.dur;
                     if (step.instrument === "piano") {
                         playPianoTone(freq, startTime, noteDuration);
@@ -2019,9 +2019,9 @@ playMelody(melody, 100);
             if (typeof step.dur === "number" && isFinite(step.dur)) {
                 // explicit duration
                 stepBeats = step.dur;
-            } else if (step.types && Array.isArray(step.types) && step.types.length > 0) {
+            } else if (step.beats && Array.isArray(step.beats) && step.beats.length > 0) {
                 // compound types → shortest duration
-                stepBeats = Math.min(...step.types.map(t => {
+                stepBeats = Math.min(...step.beats.map(t => {
                     if (typeof t === "string") return 1;
                     if (typeof t === "object" && typeof t.dur === "number" && isFinite(t.dur)) {
                         return t.dur;
@@ -2035,23 +2035,23 @@ playMelody(melody, 100);
 
             const stepDuration = beatSec * stepBeats;
 
-            if (step.type !== "rest") {
+            if (step.beat !== "rest") {
                 // single type
-                if (step.type) {
+                if (step.beat) {
                     const dur = step.dur || stepBeats;
                     const vol = step.vol || 1;
-                    scheduleHit(step.type, startTime, dur * beatSec, vol);
+                    scheduleHit(step.beat, startTime, dur * beatSec, vol);
                 }
 
                 // multiple types
-                if (step.types && Array.isArray(step.types)) {
-                    step.types.forEach(t => {
+                if (step.beats && Array.isArray(step.beats)) {
+                    step.beats.forEach(t => {
                         let typeName, hitDur, vol;
                         if (typeof t === "string") {
                             typeName = t;
                             hitDur = stepBeats; // default
                         } else if (typeof t === "object") {
-                            typeName = t.type;
+                            typeName = t.beat;
                             hitDur = t.dur || stepBeats;
                         }
                         vol = t.vol || 1;
@@ -2306,65 +2306,65 @@ playMelody(melody, 100);
 
     function getBeatPattern() {
         return [
-            {type: "rest", dur: 2.5},
-            {types: [
-                {type: "snare", dur: 0.5},
-                {type: "clap", dur: 0.5}
+            {beat: "rest", dur: 2.5},
+            {beats: [
+                {beat: "snare", dur: 0.5},
+                {beat: "clap", dur: 0.5}
             ]},
-            {types: [
-                {type: "kick", dur: 1},
-                {type: "hihat", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 2}
+            {beats: [
+                {beat: "kick", dur: 1},
+                {beat: "hihat", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 2}
             ]},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1}
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1}
             ]},
-            {type: "hihat", dur: 1},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1},
+            {beat: "hihat", dur: 1},
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1},
             ]},
-            {type: "hihat", dur: 1},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1},
+            {beat: "hihat", dur: 1},
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1},
             ]},
-            {type: "hihat", dur: 1},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1},
+            {beat: "hihat", dur: 1},
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1},
             ]},
-            {type: "hihat", dur: 1},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1},
+            {beat: "hihat", dur: 1},
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1},
             ]},
-            {type: "hihat", dur: 1},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1},
+            {beat: "hihat", dur: 1},
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1},
             ]},
-            {type: "hihat", dur: 1},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1},
+            {beat: "hihat", dur: 1},
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1},
             ]},
-            {type: "hihat", dur: 1},
-            {types: [
-                {type: "kick", dur: 2},
-                {type: "snare", dur: 2},
-                {type: "clap", dur: 1},
+            {beat: "hihat", dur: 1},
+            {beats: [
+                {beat: "kick", dur: 2},
+                {beat: "snare", dur: 2},
+                {beat: "clap", dur: 1},
             ]},
-            {type: "hihat", dur: 1}
+            {beat: "hihat", dur: 1}
         ];
     }
 
@@ -2476,20 +2476,20 @@ playMelody(melody, 100);
             stopTone();
             songPlaying = true;
             const beatPattern = [
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 },
-                { type: "hihat", dur: 2 }
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 },
+                { beat: "hihat", dur: 2 }
             ];
 
             const melody = [
