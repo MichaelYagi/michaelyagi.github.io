@@ -710,8 +710,8 @@ const melody = [
     { note: "D5", dur: 6 }
 ];
 
-playBeat(beatPattern);
-playMelody(melody);
+playBeatPattern(beatPattern);
+playMelodyPattern(melody);
                     </code></pre>
 
                     <p>Copy and paste everything in the console or <button id="playSimpleSong">Play</button> now!</p>
@@ -759,8 +759,8 @@ const beatPattern = [
 ];
 
 // Define BPM (optional) - default is 300 BPM for both
-playBeat(beatPattern, 200);
-playMelody(melody, 100);
+playBeatPattern(beatPattern, 200);
+playMelodyPattern(melody, 100);
                     </code></pre>
 
                     <p><button id="playSong">Play</button> music that combines different chords and beat patterns.</p>
@@ -1775,7 +1775,7 @@ playMelody(melody, 100);
     // ============================================================
     // Music Player & Sounds
     //=============================================================
-    function playMelody(melody = [], bpm = 300, onFinished) {
+    function playMelodyPattern(melody = [], bpm = 300, onFinished) {
         if (!audioCtx) audioCtx = new AudioContext();
 
         const beatMs = 60000 / bpm;
@@ -2006,7 +2006,7 @@ playMelody(melody, 100);
     }
 
     // hihat, kick, clap or snare
-    function playBeat(beatPattern = [], bpm = 300) {
+    function playBeatPattern(beatPattern = [], bpm = 300) {
         if (!audioCtx) audioCtx = new AudioContext();
 
         const beatMs = 60000 / bpm;
@@ -2362,7 +2362,7 @@ playMelody(melody, 100);
         ];
     }
 
-    function getMelodyPattern() {
+    function playMelodyPattern() {
         return [
             {note: "F#6", dur: 0.5, instrument: "electricGuitar"}, // Intro - 16ths
             {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
@@ -2503,8 +2503,8 @@ playMelody(melody, 100);
                 { note: "D5", dur: 6 }
             ];
 
-            playBeat(beatPattern);
-            playMelody(melody, 300, () => {
+            playBeatPattern(beatPattern);
+            playMelodyPattern(melody, 300, () => {
                 songPlaying = false;
             });
         }
@@ -2569,8 +2569,8 @@ playMelody(melody, 100);
             stopTone();
             songPlaying = true;
 
-            playBeat(getBeatPattern(), 155);
-            playMelody(getMelodyPattern(), 310, () => {
+            playBeatPattern(getBeatPattern(), 155);
+            playMelodyPattern(playMelodyPattern(), 310, () => {
                 songPlaying = false;
             });
         }
