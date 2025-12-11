@@ -2282,12 +2282,6 @@ playMelody(melody, 100);
         return [1]; // default full volume
     }
 
-    function normalizeVolumeNum(vol) {
-        if (Array.isArray(vol)) return vol[0];
-        if (typeof vol === "number") return vol;
-        return 1; // default full volume
-    }
-
     function applyVolumeRamp(gainNode, volPoints, startTime, dur, envelopePeak = 1.0) {
         const points = Array.isArray(volPoints) ? volPoints : [volPoints];
 
