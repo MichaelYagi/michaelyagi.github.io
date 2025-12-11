@@ -2362,7 +2362,7 @@ playMelodyPattern(melody, 100);
         ];
     }
 
-    function playMelodyPattern() {
+    function getMelodyPattern() {
         return [
             {note: "F#6", dur: 0.5, instrument: "electricGuitar"}, // Intro - 16ths
             {note: "C#6", dur: 0.5, instrument: "electricGuitar"},
@@ -2486,7 +2486,7 @@ playMelodyPattern(melody, 100);
                 { beat: "hihat", dur: 2 }
             ];
 
-            const melody = [
+            const melodyPattern = [
                 { note: "A5", dur: 1 },
                 { note: "rest", dur: 1 },
                 { note: "G#5", dur: 1 },
@@ -2504,7 +2504,7 @@ playMelodyPattern(melody, 100);
             ];
 
             playBeatPattern(beatPattern);
-            playMelodyPattern(melody, 300, () => {
+            playMelodyPattern(melodyPattern, 300, () => {
                 songPlaying = false;
             });
         }
@@ -2570,7 +2570,7 @@ playMelodyPattern(melody, 100);
             songPlaying = true;
 
             playBeatPattern(getBeatPattern(), 155);
-            playMelodyPattern(playMelodyPattern(), 310, () => {
+            playMelodyPattern(getMelodyPattern(), 310, () => {
                 songPlaying = false;
             });
         }
