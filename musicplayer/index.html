@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Copyright (C) 2025 Michael Yagi -->
+<!-- This program is free software: you can redistribute it and/or modify -->
+<!-- it under the terms of the GNU General Public License as published by -->
+<!-- the Free Software Foundation, either version 3 of the License, or -->
+<!-- (at your option) any later version. -->
+<!-- This program is distributed in the hope that it will be useful, -->
+<!-- but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!-- GNU General Public License for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <main class="music-player">
+        <header>
+            <h1>Music Player</h1>
+        </header>
+        
+        <section class="controls">
+
+            <div class="tempo-control">
+                <label for="tempo-slider">Tempo (BPM):</label>
+                <input type="range" id="tempo-slider" min="60" max="400" value="120" step="5">
+                <span id="tempo-display">120</span>
+            </div>
+
+            <div class="volume-controls">
+                <div class="volume-item">
+                    <label for="master-volume">Master Volume:</label>
+                    <input type="range" id="master-volume" min="0" max="100" value="70">
+                    <span id="master-volume-display">70%</span>
+                </div>
+                <div class="track-controls">
+                    <div class="track-item">
+                        <label>Beat Track</label>
+                        <div class="track-buttons">
+                            <button id="beat-mute-btn" class="track-btn mute-btn">Mute</button>
+                            <button id="beat-solo-btn" class="track-btn solo-btn">Solo</button>
+                        </div>
+                    </div>
+                    <div class="track-item">
+                        <label>Melody Track</label>
+                        <div class="track-buttons">
+                            <button id="melody-mute-btn" class="track-btn mute-btn">Mute</button>
+                            <button id="melody-solo-btn" class="track-btn solo-btn">Solo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="playback-buttons">
+                <button id="play-btn" aria-label="Play music">Play</button>
+                <button id="stop-btn" aria-label="Stop music" disabled>Stop</button>
+                <button id="autoscroll-btn" class="toggle-btn" aria-label="Toggle auto-scroll">Auto-Scroll: ON</button>
+            </div>
+        </section>
+        
+        <section class="pattern-management">
+            <div class="pattern-controls">
+                <button id="save-project-btn" aria-label="Save current project">Save Project</button>
+                <button id="load-project-btn" aria-label="Load saved project">Load Project</button>
+                <button id="manage-data-btn" aria-label="Manage saved data">Manage Data</button>
+                <button id="export-data-btn" aria-label="Export all data">Export All</button>
+                <button id="import-data-btn" aria-label="Import data">Import</button>
+            </div>
+        </section>
+        
+        <section class="pattern-inputs">
+            <div class="pattern-tabs">
+                <button id="json-tab-btn" class="tab-btn active">JSON Editor</button>
+                <button id="midi-tab-btn" class="tab-btn">MIDI Import</button>
+            </div>
+            
+            <div id="json-editor" class="pattern-editor active">
+                <div class="input-group">
+                    <label for="melody-input">Melody Pattern:</label>
+                    <textarea id="melody-input" rows="10" cols="50" placeholder="Enter melody pattern JSON..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="beat-input">Beat Pattern:</label>
+                    <textarea id="beat-input" rows="10" cols="50" placeholder="Enter beat pattern JSON..."></textarea>
+                </div>
+            </div>
+
+            <div id="midi-editor" class="pattern-editor">
+                <div class="midi-container">
+                    <h4>MIDI File Import</h4>
+                    <div class="midi-controls">
+                        <input type="file" id="midi-file-input" accept=".mid,.midi" style="display: none;">
+                        <button id="midi-upload-btn">Choose MIDI File</button>
+                        <button id="convert-midi-btn">Convert to Pattern</button>
+                    </div>
+                    <div id="midi-info" class="midi-info">
+                        <p>No MIDI file loaded</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="playback-visualization">
+            <div class="visualization-container">
+                <div class="melody-visualization">
+                    <h4>Melody Pattern</h4>
+                    <div id="melody-viz" class="pattern-viz"></div>
+                </div>
+                <div class="beat-visualization">
+                    <h4>Beat Pattern</h4>
+                    <div id="beat-viz" class="pattern-viz"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="status">
+            <div id="status-box" role="status" aria-live="polite">
+                Ready to play
+            </div>
+        </section>
+    </main>
+    
+    <script src="./js/audio-engine.js"></script>
+    <script src="./js/storage.js"></script>
+    <script src="./js/midi-parser.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
