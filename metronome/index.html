@@ -1412,9 +1412,13 @@ playMelodyPattern(melody, 100);
         tappingActive = true;
 
         if (tapTimes.length >= 2) {
-            // Only update BPM if there are at least 2 taps
-            const lastInterval = tapTimes[tapTimes.length - 1] - tapTimes[tapTimes.length - 2];
-            const bpm = Math.round(60000 / lastInterval);
+            let intervals = [];
+            for (let i = 1; i < tapTimes.length; i++) {
+                intervals.push(tapTimes[i] - tapTimes[i - 1]);
+            }
+
+            const avg = intervals.reduce((a,b) => a + b, 0) / intervals.length;
+            const bpm = Math.round(60000 / avg);
 
             if (bpm >= 30 && bpm <= 240) {
                 tempo.value = bpm;
