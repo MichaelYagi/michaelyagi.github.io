@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+/*
+88P'888'Y88                               d8     Y88b Y88
+P'  888  'Y  ,e e,  888 888 8e   ,e e,   d88      Y88b Y8  e88 88e   dP"Y  e88'888  ,e e,
+    888     d88 88b 888 888 88b d88 88b d88888   b Y88b Y d888 888b C88b  d888  '8 d88 88b
+    888     888   , 888 888 888 888   ,  888     8b Y88b  Y888 888P  Y88D Y888   , 888   ,
+    888      "YeeP" 888 888 888  "YeeP"  888     88b Y88b  "88 88"  d,dP   "88,e8'  "YeeP"
+*/ 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Rain — Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            color: #00ff41;
+            font-family: "Courier New", monospace;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #rain { position: fixed; inset: 0; }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 2rem;
+            pointer-events: none;
+        }
+
+        /* ── Event log ─────────────────────────────────── */
+        #eventLog {
+            position: fixed;
+            top: 0.6rem;
+            right: 0.8rem;
+            z-index: 10001;
+            font-size: 0.62rem;
+            color: rgba(0,255,65,0.5);
+            text-align: right;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .evt { animation: fadeEvt 3s forwards; }
+        @keyframes fadeEvt { 0%{opacity:1} 60%{opacity:1} 100%{opacity:0} }
+
+        /* ── Panel shell ───────────────────────────────── */
+        #panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Drawer ────────────────────────────────────── */
+        #drawer {
+            background: rgba(0,0,0,0.95);
+            border-top: 1px solid rgba(0,255,65,0.12);
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.28s ease;
+        }
+        #drawer.open { max-height: 60vh; }
+
+        /* ── Tab bar ───────────────────────────────────── */
+        #tabBar {
+            display: flex;
+            border-bottom: 1px solid rgba(0,255,65,0.12);
+        }
+        .tab {
+            flex: 1;
+            padding: 0.4rem 0.5rem;
+            font-family: "Courier New", monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            color: rgba(0,255,65,0.4);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 2px solid transparent;
+            transition: color 0.1s, border-color 0.1s;
+            white-space: nowrap;
+        }
+        .tab:hover  { color: rgba(0,255,65,0.7); }
+        .tab.active { color: #00ff41; border-bottom-color: #00ff41; }
+
+        /* ── Tab panels ────────────────────────────────── */
+        .tab-panel {
+            display: none;
+            padding: 0.65rem 0.85rem 0.75rem;
+            overflow-y: auto;
+            max-height: calc(60vh - 2.5rem);
+        }
+        .tab-panel.active { display: flex; flex-wrap: wrap; gap: 0.8rem 1.6rem; align-items: flex-start; }
+
+        /* ── Control primitives ────────────────────────── */
+        .ctrl-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .ctrl-label {
+            font-size: 0.58rem;
+            letter-spacing: 0.1em;
+            color: rgba(0,255,65,0.45);
+            margin-bottom: 0.1rem;
+        }
+
+        .sl-row {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .sl-lbl {
+            font-size: 0.58rem;
+            color: rgba(0,255,65,0.4);
+            width: 4.4rem;
+            flex-shrink: 0;
+        }
+
+        .arr {
+            background: none;
+            border: none;
+            color: rgba(0,255,65,0.45);
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 0 0.1rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .arr:hover { color: #00ff41; }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 72px;
+            height: 2px;
+            background: rgba(0,255,65,0.2);
+            outline: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: #00ff41;
+            cursor: pointer;
+        }
+        input[type=range]::-moz-range-thumb {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: #00ff41;
+            border: none;
+        }
+
+        .val {
+            font-size: 0.62rem;
+            color: #00ff41;
+            min-width: 2.5ch;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* Pill buttons (theme / charset / preset) */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .pill {
+            background: rgba(0,255,65,0.06);
+            color: rgba(0,255,65,0.7);
+            border: 1px solid rgba(0,255,65,0.2);
+            padding: 0.2rem 0.55rem;
+            font-family: "Courier New", monospace;
+            font-size: 0.64rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.1s, border-color 0.1s, color 0.1s;
+        }
+        .pill:hover  { background: rgba(0,255,65,0.14); border-color: rgba(0,255,65,0.6); color: #00ff41; }
+        .pill.active { background: rgba(0,255,65,0.2);  border-color: #00ff41; color: #00ff41; }
+
+        /* ── Toolbar (always visible) ──────────────────── */
+        #toolbar {
+            background: rgba(0,0,0,0.92);
+            border-top: 1px solid rgba(0,255,65,0.2);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            padding: 0.4rem 0.7rem;
+        }
+
+        .tb-btn {
+            background: rgba(0,255,65,0.06);
+            color: rgba(0,255,65,0.8);
+            border: 1px solid rgba(0,255,65,0.22);
+            padding: 0.28rem 0.6rem;
+            font-family: "Courier New", monospace;
+            font-size: 0.68rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.1s, border-color 0.1s, color 0.1s;
+            line-height: 1.4;
+        }
+        .tb-btn:hover  { background: rgba(0,255,65,0.15); border-color: #00ff41; color: #00ff41; }
+        .tb-btn.active { background: rgba(0,255,65,0.2);  border-color: #00ff41; color: #00ff41; }
+
+        .tb-sep { display: none; }
+
+        #tabToggle { margin-left: auto; }
+    </style>
+</head>
+<body>
+
+<div id="eventLog"></div>
+
+<div id="rain">
+    <div class="content">
+        <h1>DIGITAL RAIN</h1>
+        <p>The canvas renders above this text.</p>
+    </div>
+</div>
+
+<div id="panel">
+
+    <!-- ── Drawer (slides up) ── -->
+    <div id="drawer">
+        <div id="tabBar">
+            <button class="tab active" onclick="showTab('rain',this)">RAIN</button>
+            <button class="tab" onclick="showTab('burst',this)">BURST</button>
+            <button class="tab" onclick="showTab('tiers',this)">TIERS</button>
+            <button class="tab" onclick="showTab('style',this)">STYLE</button>
+        </div>
+
+        <!-- RAIN tab -->
+        <div id="tab-rain" class="tab-panel active">
+            <div class="ctrl-col">
+                <div class="ctrl-label">SPEED</div>
+                <div class="sl-row">
+                    <button class="arr" onclick="step('rSpeed',-1,'vSpeed',0,100,v=>rain.configure({dropSpeed:v}))">◀</button>
+                    <input type="range" id="rSpeed" min="0" max="100" value="98"
+                           oninput="setVal('vSpeed',this.value); rain.configure({dropSpeed:+this.value})">
+                    <button class="arr" onclick="step('rSpeed',+1,'vSpeed',0,100,v=>rain.configure({dropSpeed:v}))">▶</button>
+                    <span class="val" id="vSpeed">98</span>
+                </div>
+                <div class="ctrl-label" style="margin-top:0.3rem">DUAL FREQ</div>
+                <div class="sl-row">
+                    <button class="arr" onclick="step('rDual',-1,'vDual',0,100,v=>rain.configure({dualFrequency:v}))">◀</button>
+                    <input type="range" id="rDual" min="0" max="100" value="50"
+                           oninput="setVal('vDual',this.value); rain.configure({dualFrequency:+this.value})">
+                    <button class="arr" onclick="step('rDual',+1,'vDual',0,100,v=>rain.configure({dualFrequency:v}))">▶</button>
+                    <span class="val" id="vDual">50</span>
+                </div>
+            </div>
+
+            <div class="ctrl-col">
+                <div class="ctrl-label">TRAIL</div>
+                <div class="sl-row">
+                    <span class="sl-lbl">short</span>
+                    <button class="arr" onclick="step('rTF',-1,'vTF',5,100,v=>rain.configure({trailLengthFast:v}))">◀</button>
+                    <input type="range" id="rTF" min="5" max="100" value="28"
+                           oninput="setVal('vTF',this.value); rain.configure({trailLengthFast:+this.value})">
+                    <button class="arr" onclick="step('rTF',+1,'vTF',5,100,v=>rain.configure({trailLengthFast:v}))">▶</button>
+                    <span class="val" id="vTF">28</span>
+                </div>
+                <div class="sl-row">
+                    <span class="sl-lbl">long</span>
+                    <button class="arr" onclick="step('rTS',-1,'vTS',5,150,v=>rain.configure({trailLengthSlow:v}))">◀</button>
+                    <input type="range" id="rTS" min="5" max="150" value="70"
+                           oninput="setVal('vTS',this.value); rain.configure({trailLengthSlow:+this.value})">
+                    <button class="arr" onclick="step('rTS',+1,'vTS',5,150,v=>rain.configure({trailLengthSlow:v}))">▶</button>
+                    <span class="val" id="vTS">70</span>
+                </div>
+            </div>
+
+            <div class="ctrl-col">
+                <div class="ctrl-label">INTRO</div>
+                <div class="sl-row">
+                    <span class="sl-lbl">depth</span>
+                    <button class="arr" onclick="step('rIDepth',-1,'vIDepth',0,100,v=>rain.configure({introDepth:v}))">◀</button>
+                    <input type="range" id="rIDepth" min="0" max="100" value="50"
+                           oninput="setVal('vIDepth',this.value); rain.configure({introDepth:+this.value})">
+                    <button class="arr" onclick="step('rIDepth',+1,'vIDepth',0,100,v=>rain.configure({introDepth:v}))">▶</button>
+                    <span class="val" id="vIDepth">50</span>
+                </div>
+                <div class="sl-row">
+                    <span class="sl-lbl">speed</span>
+                    <button class="arr" onclick="step('rISpeed',-1,'vISpeed',0,100,v=>rain.configure({introSpeed:v}))">◀</button>
+                    <input type="range" id="rISpeed" min="0" max="100" value="98"
+                           oninput="setVal('vISpeed',this.value); rain.configure({introSpeed:+this.value})">
+                    <button class="arr" onclick="step('rISpeed',+1,'vISpeed',0,100,v=>rain.configure({introSpeed:v}))">▶</button>
+                    <span class="val" id="vISpeed">98</span>
+                </div>
+                <div class="ctrl-label" style="margin-top:0.3rem">FADE OUT (s)</div>
+                <div class="sl-row">
+                    <button class="arr" onclick="step('rFade',-1,'vFade',0,5,v=>rain.configure({fadeOutDuration:v}))">◀</button>
+                    <input type="range" id="rFade" min="0" max="5" step="0.5" value="0"
+                           oninput="setVal('vFade',this.value); rain.configure({fadeOutDuration:+this.value})">
+                    <button class="arr" onclick="step('rFade',+1,'vFade',0,5,v=>rain.configure({fadeOutDuration:v}))">▶</button>
+                    <span class="val" id="vFade">0</span>
+                </div>
+            </div>
+
+            <div class="ctrl-col">
+                <div class="ctrl-label">OPACITY</div>
+                <div class="sl-row">
+                    <button class="arr" onclick="stepF('rOpacity',-0.05,'vOpacity',0,1,v=>rain.configure({opacity:v}))">◀</button>
+                    <input type="range" id="rOpacity" min="0" max="1" step="0.05" value="1"
+                           oninput="setVal('vOpacity',parseFloat(this.value).toFixed(2)); rain.configure({opacity:+this.value})">
+                    <button class="arr" onclick="stepF('rOpacity',+0.05,'vOpacity',0,1,v=>rain.configure({opacity:v}))">▶</button>
+                    <span class="val" id="vOpacity">1</span>
+                </div>
+                <div class="ctrl-label" style="margin-top:0.3rem">DENSITY</div>
+                <div class="sl-row">
+                    <button class="arr" onclick="step('rDensity',-1,'vDensity',0,100,v=>rain.configure({density:v}))">◀</button>
+                    <input type="range" id="rDensity" min="0" max="100" value="100"
+                           oninput="setVal('vDensity',this.value); rain.configure({density:+this.value})">
+                    <button class="arr" onclick="step('rDensity',+1,'vDensity',0,100,v=>rain.configure({density:v}))">▶</button>
+                    <span class="val" id="vDensity">100</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BURST tab -->
+        <div id="tab-burst" class="tab-panel">
+            <div class="ctrl-col">
+                <div class="ctrl-label">DURATION (s)</div>
+                <div class="sl-row">
+                    <span class="sl-lbl">min</span>
+                    <button class="arr" onclick="step('rBDMin',-1,'vBDMin',1,20,v=>rain.configure({burstDurationMin:v}))">◀</button>
+                    <input type="range" id="rBDMin" min="1" max="20" value="3"
+                           oninput="setVal('vBDMin',this.value); rain.configure({burstDurationMin:+this.value})">
+                    <button class="arr" onclick="step('rBDMin',+1,'vBDMin',1,20,v=>rain.configure({burstDurationMin:v}))">▶</button>
+                    <span class="val" id="vBDMin">3</span>
+                </div>
+                <div class="sl-row">
+                    <span class="sl-lbl">max</span>
+                    <button class="arr" onclick="step('rBDMax',-1,'vBDMax',1,30,v=>rain.configure({burstDurationMax:v}))">◀</button>
+                    <input type="range" id="rBDMax" min="1" max="30" value="7"
+                           oninput="setVal('vBDMax',this.value); rain.configure({burstDurationMax:+this.value})">
+                    <button class="arr" onclick="step('rBDMax',+1,'vBDMax',1,30,v=>rain.configure({burstDurationMax:v}))">▶</button>
+                    <span class="val" id="vBDMax">7</span>
+                </div>
+            </div>
+            <div class="ctrl-col">
+                <div class="ctrl-label">INTERVAL (s)</div>
+                <div class="sl-row">
+                    <span class="sl-lbl">min</span>
+                    <button class="arr" onclick="step('rBIMin',-1,'vBIMin',1,300,v=>rain.configure({burstIntervalMin:v}))">◀</button>
+                    <input type="range" id="rBIMin" min="1" max="300" value="30"
+                           oninput="setVal('vBIMin',this.value); rain.configure({burstIntervalMin:+this.value})">
+                    <button class="arr" onclick="step('rBIMin',+1,'vBIMin',1,300,v=>rain.configure({burstIntervalMin:v}))">▶</button>
+                    <span class="val" id="vBIMin">30</span>
+                </div>
+                <div class="sl-row">
+                    <span class="sl-lbl">max</span>
+                    <button class="arr" onclick="step('rBIMax',-1,'vBIMax',1,600,v=>rain.configure({burstIntervalMax:v}))">◀</button>
+                    <input type="range" id="rBIMax" min="1" max="600" value="60"
+                           oninput="setVal('vBIMax',this.value); rain.configure({burstIntervalMax:+this.value})">
+                    <button class="arr" onclick="step('rBIMax',+1,'vBIMax',1,600,v=>rain.configure({burstIntervalMax:v}))">▶</button>
+                    <span class="val" id="vBIMax">60</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIERS tab -->
+        <div id="tab-tiers" class="tab-panel">
+            <div class="ctrl-col">
+                <div class="ctrl-label">SPEED TIER WEIGHTS</div>
+                <div class="sl-row">
+                    <span class="sl-lbl">fast (2)</span>
+                    <button class="arr" onclick="step('rT0',-1,'vT0',0,100,updateTiers)">◀</button>
+                    <input type="range" id="rT0" min="0" max="100" value="50" oninput="setVal('vT0',this.value); updateTiers()">
+                    <button class="arr" onclick="step('rT0',+1,'vT0',0,100,updateTiers)">▶</button>
+                    <span class="val" id="vT0">50</span>
+                </div>
+                <div class="sl-row">
+                    <span class="sl-lbl">med (4)</span>
+                    <button class="arr" onclick="step('rT1',-1,'vT1',0,100,updateTiers)">◀</button>
+                    <input type="range" id="rT1" min="0" max="100" value="42" oninput="setVal('vT1',this.value); updateTiers()">
+                    <button class="arr" onclick="step('rT1',+1,'vT1',0,100,updateTiers)">▶</button>
+                    <span class="val" id="vT1">42</span>
+                </div>
+                <div class="sl-row">
+                    <span class="sl-lbl">slow (10)</span>
+                    <button class="arr" onclick="step('rT2',-1,'vT2',0,100,updateTiers)">◀</button>
+                    <input type="range" id="rT2" min="0" max="100" value="4" oninput="setVal('vT2',this.value); updateTiers()">
+                    <button class="arr" onclick="step('rT2',+1,'vT2',0,100,updateTiers)">▶</button>
+                    <span class="val" id="vT2">4</span>
+                </div>
+                <div class="sl-row">
+                    <span class="sl-lbl">v.slow (13)</span>
+                    <button class="arr" onclick="step('rT3',-1,'vT3',0,100,updateTiers)">◀</button>
+                    <input type="range" id="rT3" min="0" max="100" value="4" oninput="setVal('vT3',this.value); updateTiers()">
+                    <button class="arr" onclick="step('rT3',+1,'vT3',0,100,updateTiers)">▶</button>
+                    <span class="val" id="vT3">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STYLE tab -->
+        <div id="tab-style" class="tab-panel">
+            <div class="ctrl-col">
+                <div class="ctrl-label">THEME</div>
+                <div class="btn-group">
+                    <button class="pill active" id="themeGreen" onclick="setTheme('green',this)">Green</button>
+                    <button class="pill" id="themeRed"   onclick="setTheme('red',this)">Red</button>
+                    <button class="pill" id="themeBlue"  onclick="setTheme('blue',this)">Blue</button>
+                    <button class="pill" id="themeWhite" onclick="setTheme('white',this)">White</button>
+                    <button class="pill" id="themeAmber" onclick="setTheme('amber',this)">Amber</button>
+                </div>
+            </div>
+            <div class="ctrl-col">
+                <div class="ctrl-label">CHARSET</div>
+                <div class="btn-group">
+                    <button class="pill active" id="charKatakana" onclick="setChars('katakana',this)">Katakana</button>
+                    <button class="pill" id="charBinary"  onclick="setChars('binary',this)">Binary</button>
+                    <button class="pill" id="charLatin"   onclick="setChars('latin',this)">Latin</button>
+                    <button class="pill" id="charBraille" onclick="setChars('braille',this)">Braille</button>
+                </div>
+            </div>
+            <div class="ctrl-col">
+                <div class="ctrl-label">DIRECTION</div>
+                <div class="btn-group">
+                    <button class="pill active" id="dirDown" onclick="setDirection('down',this)">↓ Down</button>
+                    <button class="pill" id="dirUp" onclick="setDirection('up',this)">↑ Up</button>
+                </div>
+            </div>
+            <div class="ctrl-col">
+                <div class="ctrl-label">FONT SIZE</div>
+                <div class="sl-row">
+                    <button class="arr" onclick="step('rFontSize',-1,'vFontSize',8,32,v=>rain.configure({fontSize:v}))">◀</button>
+                    <input type="range" id="rFontSize" min="8" max="32" value="14"
+                           oninput="setVal('vFontSize',this.value); rain.configure({fontSize:+this.value})">
+                    <button class="arr" onclick="step('rFontSize',+1,'vFontSize',8,32,v=>rain.configure({fontSize:v}))">▶</button>
+                    <span class="val" id="vFontSize">14</span>
+                </div>
+            </div>
+            <div class="ctrl-col">
+                <div class="ctrl-label">FONT</div>
+                <div class="btn-group">
+                    <button class="pill active" id="fontMono"    onclick="setFont('mono',this)">Mono</button>
+                    <button class="pill" id="fontShareTech"      onclick="setFont('sharetech',this)">Share Tech</button>
+                    <button class="pill" id="fontSerif"          onclick="setFont('serif',this)">Serif</button>
+                    <button class="pill" id="fontSansSerif"      onclick="setFont('sans',this)">Sans</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Toolbar ── -->
+    <div id="toolbar">
+        <button class="tb-btn" id="playToggle" onclick="togglePlay()">▶</button>
+        <button class="tb-btn" onclick="restartRain()">↺</button>
+        <button class="tb-btn" onclick="rain.stop()">■</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" id="burstToggle"        onclick="toggleBurst()">⚡ Burst</button>
+        <button class="tb-btn" id="tapToggle"          onclick="toggleTap()">👆 Tap</button>
+        <button class="tb-btn active" id="hideChildrenToggle" onclick="toggleHideChildren()">👁 Content</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="randomizeAll()">⚄ Rnd</button>
+        <button class="tb-btn" id="tabToggle" onclick="toggleDrawer()">⚙ ▲</button>
+    </div>
+
+</div>
+
+<script src="digital-rain.js"></script>
+<script>
+    // Use the library's built-in charset map
+    const CHARSETS = DigitalRain.CHARSETS;
+
+    const rain = new DigitalRain('#rain', {
+        dropSpeed:       98,
+        speedTiers: [
+            { frameSkip: 2,  weight: 50 },
+            { frameSkip: 4,  weight: 42 },
+            { frameSkip: 10, weight: 4  },
+            { frameSkip: 13, weight: 4  },
+        ],
+        dualFrequency:   50,
+        dualMinGap:      10,
+        trailLengthFast: 28,
+        trailLengthSlow: 70,
+        tapToBurst:      true,
+        burstDurationMin:3,
+        burstDurationMax:7,
+        burstIntervalMin:30,
+        burstIntervalMax:60,
+        introDepth:      50,
+        introSpeed:      98,
+        theme:           'green',
+        fadeOutDuration: 0,
+        on: {
+            start:         () => { logEvent('▶ started');  updatePlayBtn(); },
+            stop:          () => { logEvent('■ stopped');  updatePlayBtn(); },
+            introComplete: () => logEvent('✓ intro done'),
+            burstStart:    (d) => logEvent(`⚡ burst col ${d.epicenter}`),
+            burstEnd:      () => logEvent('⚡ burst end'),
+            pause:         () => { logEvent('⏸ paused');   updatePlayBtn(); },
+            resume:        () => { logEvent('▶ resumed');  updatePlayBtn(); },
+        },
+    });
+
+    rain.start();
+
+    // ── Drawer / tabs ──────────────────────────────────────────────────────
+    let drawerOpen = false;
+    function toggleDrawer() {
+        drawerOpen = !drawerOpen;
+        document.getElementById('drawer').classList.toggle('open', drawerOpen);
+        document.getElementById('tabToggle').textContent = drawerOpen ? '⚙ ▼' : '⚙ ▲';
+    }
+
+    function showTab(name, btn) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    // ── Event log ──────────────────────────────────────────────────────────
+    function logEvent(msg) {
+        const log = document.getElementById('eventLog');
+        const el  = document.createElement('div');
+        el.className = 'evt';
+        el.textContent = msg;
+        log.prepend(el);
+        setTimeout(() => el.remove(), 3100);
+    }
+
+    // ── Playback ───────────────────────────────────────────────────────────
+    function updatePlayBtn() {
+        const btn = document.getElementById('playToggle');
+        btn.textContent = (rain.isRunning() && !rain.isPaused()) ? '⏸' : '▶';
+    }
+
+    function togglePlay() {
+        if (!rain.isRunning())  { rain.start();  return; }
+        if (rain.isPaused())    { rain.resume(); return; }
+        rain.pause();
+    }
+
+    function restartRain() { rain.stop(); rain.start(); }
+
+    function toggleBurst() {
+        const on = !rain.getConfig().burst;
+        rain.configure({ burst: on });
+        document.getElementById('burstToggle').classList.toggle('active', on);
+    }
+
+    function toggleTap() {
+        const on = !rain.getConfig().tapToBurst;
+        rain.configure({ tapToBurst: on });
+        if (on) {
+            rain._canvas.style.pointerEvents = 'auto';
+            rain._canvas.addEventListener('click',      rain._boundTap);
+            rain._canvas.addEventListener('touchstart', rain._boundTap, { passive: true });
+        } else {
+            rain._canvas.style.pointerEvents = 'none';
+            rain._canvas.removeEventListener('click',      rain._boundTap);
+            rain._canvas.removeEventListener('touchstart', rain._boundTap);
+        }
+        document.getElementById('tapToggle').classList.toggle('active', on);
+    }
+
+    function toggleHideChildren() {
+        const on = !rain.getConfig().hideChildren;
+        rain.configure({ hideChildren: on });
+        rain.stop();
+        rain.start();
+        document.getElementById('hideChildrenToggle').classList.toggle('active', !on);
+    }
+
+    // ── Style ──────────────────────────────────────────────────────────────
+    function setTheme(theme, btn) {
+        rain.configure({ theme });
+        rain.stop(); rain.start();
+        document.querySelectorAll('[id^=theme]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function setChars(key, btn) {
+        rain.configure({ chars: CHARSETS[key] });
+        document.querySelectorAll('[id^=char]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function setDirection(dir, btn) {
+        rain.configure({ direction: dir });
+        document.querySelectorAll('[id^=dir]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    const FONTS = {
+        mono:      '"Courier New", "Lucida Console", monospace',
+        sharetech: '"Share Tech Mono", "Courier New", monospace',
+        serif:     '"Georgia", "Times New Roman", serif',
+        sans:      '"Arial", "Helvetica", sans-serif',
+    };
+
+    function setFont(key, btn) {
+        rain.configure({ fontFamily: FONTS[key] });
+        document.querySelectorAll('[id^=font]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // stepF: like step() but for float sliders
+    function stepF(sliderId, delta, valId, min, max, callback) {
+        const el  = document.getElementById(sliderId);
+        const val = Math.min(max, Math.max(min, Math.round((+el.value + delta) * 100) / 100));
+        el.value  = val;
+        setVal(valId, val.toFixed(2));
+        callback(val);
+    }
+
+    // ── Randomize ──────────────────────────────────────────────────────────
+    function randomizeAll() {
+        const p = rain.randomize();
+
+        function setSlider(id, valId, val) { const el = document.getElementById(id); if(el){ el.value = val; setVal(valId, val); } }
+
+        // Sync sliders
+        setSlider('rDual',    'vDual',    p.dualFrequency);
+        setSlider('rTF',      'vTF',      p.trailLengthFast);
+        setSlider('rTS',      'vTS',      p.trailLengthSlow);
+        setSlider('rBDMin',   'vBDMin',   p.burstDurationMin);
+        setSlider('rBDMax',   'vBDMax',   p.burstDurationMax);
+        setSlider('rBIMin',   'vBIMin',   p.burstIntervalMin);
+        setSlider('rBIMax',   'vBIMax',   p.burstIntervalMax);
+        setSlider('rOpacity', 'vOpacity', p.opacity);
+        setSlider('rDensity', 'vDensity', p.density);
+        setSlider('rIDepth',  'vIDepth',  p.introDepth);
+        setSlider('rFade',    'vFade',    p.fadeOutDuration);
+
+        // Sync burst toggle
+        document.getElementById('burstToggle').classList.toggle('active', p.burst);
+
+        // Sync tap toggle
+        document.getElementById('tapToggle').classList.toggle('active', p.tapToBurst);
+
+        // Sync direction pills
+        document.querySelectorAll('[id^=dir]').forEach(b => b.classList.remove('active'));
+        const dirBtn = document.getElementById(p.direction === 'up' ? 'dirUp' : 'dirDown');
+        if (dirBtn) dirBtn.classList.add('active');
+
+        // Theme is HSL — clear all named pills
+        document.querySelectorAll('[id^=theme]').forEach(b => b.classList.remove('active'));
+
+        // Charset — match picked string back to a key and activate its pill
+        document.querySelectorAll('[id^=char]').forEach(b => b.classList.remove('active'));
+        const matchedKey = Object.keys(CHARSETS).find(k => CHARSETS[k] === p.chars);
+        if (matchedKey) {
+            const charBtn = document.getElementById('char' + matchedKey.charAt(0).toUpperCase() + matchedKey.slice(1));
+            if (charBtn) charBtn.classList.add('active');
+        }
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    function setVal(id, v) { document.getElementById(id).textContent = v; }
+
+    function step(sliderId, delta, valId, min, max, callback) {
+        const el  = document.getElementById(sliderId);
+        const val = Math.min(max, Math.max(min, +el.value + delta));
+        el.value  = val;
+        setVal(valId, val);
+        callback(val);
+    }
+
+    function updateTiers() {
+        rain.configure({ speedTiers: [
+                { frameSkip: 2,  weight: +document.getElementById('rT0').value },
+                { frameSkip: 4,  weight: +document.getElementById('rT1').value },
+                { frameSkip: 10, weight: +document.getElementById('rT2').value },
+                { frameSkip: 13, weight: +document.getElementById('rT3').value },
+            ]});
+    }
+
+    // Sync initial toggle states
+    document.getElementById('burstToggle').classList.toggle('active', rain.getConfig().burst);
+    document.getElementById('tapToggle').classList.toggle('active',   rain.getConfig().tapToBurst);
+    updatePlayBtn();
+</script>
+</body>
+</html>
