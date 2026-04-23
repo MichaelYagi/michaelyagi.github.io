@@ -14,7 +14,7 @@
   <link href="../css/bootstrap.min.css" rel="stylesheet">
   <link href="../css/bootstrap-icons.css" rel="stylesheet">
   <script src="../js/jquery-3.7.1.min.js"></script>
-  <script src="../js/showdown.min.js"></script>
+  <script src="../js/md_to_html.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-V9XXZTGS4W"></script>
   <script>
@@ -102,8 +102,7 @@
           $("#shashinVersionLinkButton").attr("href", shashinVersionLinkButton);
 
           $("#releaseNotesTitle").html("<hr><h2 class='mb-4'>"+latestTag+" Release Notes</h2>");
-          const converter = new showdown.Converter()
-          const html = converter.makeHtml(latestNotes);
+          const html = formatMessage(latestNotes);
           $("#releaseNotesBody").html(html);
         }
       });
