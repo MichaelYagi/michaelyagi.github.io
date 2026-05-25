@@ -12,6 +12,38 @@ function formatMessage(text) {
     });
     text=text.replace(/'''([\s\S]*?)'''/g,(m,code)=>{const i=blocks.length;blocks.push({lang:"code",code});return`@@CODEBLOCK_${i}@@`;});
     text=text.replace(/`([^`]+)`/g,(m,code)=>{const i=inline.length;inline.push(code);return`@@INLINE_${i}@@`;});
+
+    // ── Bare LaTeX sanitizer ─────────────────────────────────────────────
+    // Runs after math/code placeholders are extracted, so it only touches
+    // prose text — not properly-delimited math blocks.
+    // Order matters: multi-token patterns (\frac, \sqrt, \text) before symbols.
+    text=text.replace(/\\frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g,'($1)/($2)');
+    text=text.replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^}]+)\}/g,'<sup>$1</sup>√($2)');
+    text=text.replace(/\\sqrt\s*\{([^}]*)\}/g,'√($1)');
+    text=text.replace(/\\text\s*\{([^}]*)\}/g,'$1');
+    text=text.replace(/\\left\s*\(/g,'(').replace(/\\right\s*\)/g,')');
+    text=text.replace(/\\left\s*\[/g,'[').replace(/\\right\s*\]/g,']');
+    text=text.replace(/\\left\s*\{/g,'{').replace(/\\right\s*\}/g,'}');
+    text=text.replace(/\^\{([^}]+)\}/g,'^$1');
+    text=text.replace(/_\{([^}]+)\}/g,'_$1');
+    (function(){
+        const syms={
+            '\\\\times':'×','\\\\cdot':'·','\\\\div':'÷','\\\\pm':'±',
+            '\\\\approx':'≈','\\\\neq':'≠','\\\\leq':'≤','\\\\geq':'≥',
+            '\\\\infty':'∞','\\\\pi':'π','\\\\omega':'ω','\\\\alpha':'α',
+            '\\\\beta':'β','\\\\gamma':'γ','\\\\theta':'θ','\\\\sigma':'σ',
+            '\\\\lambda':'λ','\\\\mu':'μ','\\\\Delta':'Δ','\\\\Sigma':'Σ',
+            '\\\\Omega':'Ω','\\\\phi':'φ','\\\\Phi':'Φ','\\\\psi':'ψ',
+            '\\\\rightarrow':'→','\\\\leftarrow':'←','\\\\Rightarrow':'⇒',
+            '\\\\Leftarrow':'⇐','\\\\forall':'∀','\\\\exists':'∃',
+            '\\\\degree':'°','\\\\circ':'°',
+        };
+        Object.entries(syms).forEach(([pat,sym])=>{
+            text=text.replace(new RegExp(pat+'(?![a-zA-Z])','g'),sym);
+        });
+    })();
+    // ────────────────────────────────────────────────────────────────────
+
     const images=[];
     text=text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g,(m,alt,url)=>{const i=images.length;images.push({alt,url});return`@@IMAGE_${i}@@`;});
     text=text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,(m,label,url)=>{const i=links.length;links.push({label,url});return`@@LINK_${i}@@`;});
