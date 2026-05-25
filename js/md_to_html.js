@@ -1,74 +1,122 @@
 function formatMessage(text) {
     const blocks = [], inline = [], links = [], mathInline = [], mathBlock = [];
 
-    // Extract delimited math FIRST — before any unescape or sanitization,
-    // so \t inside math delimiters is preserved and handled by processMath.
+    // Extract delimited math FIRST so its content is protected from sanitization.
     text = text.replace(/\$\$([\s\S]*?)\$\$/g, (m, math) => { const i = mathBlock.length; mathBlock.push(math); return `@@MATHBLOCK_${i}@@`; });
     text = text.replace(/\\\[([\s\S]*?)\\\]/g, (m, math) => { const i = mathBlock.length; mathBlock.push(math); return `@@MATHBLOCK_${i}@@`; });
     text = text.replace(/\\\(([\s\S]*?)\\\)/g, (m, math) => { const i = mathInline.length; mathInline.push(math); return `@@MATHINLINE_${i}@@`; });
 
-    // Extract code blocks before unescape so \t inside code is not mangled.
+    // Extract code blocks and inline code before sanitizer.
     text = text.replace(/([ \t]*)```(\w+)?\s*\n?([\s\S]*?)```/g, (m, indent, lang, code) => {
         const indentLen = indent.length, lines = code.split('\n');
         const dedented = lines.map(l => l.trim().length === 0 ? '' : l.startsWith(indent) ? l.slice(indentLen) : l.trimStart()).join('\n').trim();
         const i = blocks.length; blocks.push({ lang: lang || "code", code: dedented }); return `@@CODEBLOCK_${i}@@`;
     });
     text = text.replace(/'''([\s\S]*?)'''/g, (m, code) => { const i = blocks.length; blocks.push({ lang: "code", code }); return `@@CODEBLOCK_${i}@@`; });
-
-    // Extract inline code before sanitizer so \times inside backticks is protected.
     text = text.replace(/`([^`]+)`/g, (m, code) => { const i = inline.length; inline.push(code); return `@@INLINE_${i}@@`; });
 
-    // Unescape literal \n and \t sequences from tool output (prose only — placeholders are safe).
+    // Unescape literal \n and \t from tool output (placeholders are already safe).
     text = text.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
 
     // -- Bare LaTeX sanitizer --------------------------------------------
-    // At this point: math/code/inline placeholders are extracted.
-    // Models emit LaTeX two ways:
-    //   a) Proper backslash: \times (backslash = \x5c)
-    //   b) Tab-corrupted:   tab+imes  (because \t was consumed as tab)
-    // The char class [\x5c\t] matches either prefix in one pass.
-    // Multi-char patterns (\frac, \sqrt, \text) before single symbols.
-    text = text.replace(/[\x5c\t]ext\s*\{([^}]*)\}/g, '$1');
-    text = text.replace(/[\x5c\t]frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g, '($1)/($2)');
-    text = text.replace(/[\x5c\t]sqrt\s*\[([^\]]+)\]\s*\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)');
-    text = text.replace(/[\x5c\t]sqrt\s*\{([^}]*)\}/g, '\u221a($1)');
-    text = text.replace(/[\x5c\t]left\s*\(/g, '(').replace(/[\x5c\t]right\s*\)/g, ')');
-    text = text.replace(/[\x5c\t]left\s*\[/g, '[').replace(/[\x5c\t]right\s*\]/g, ']');
-    text = text.replace(/[\x5c\t]left\s*\{/g, '{').replace(/[\x5c\t]right\s*\}/g, '}');
+    // Models emit LaTeX in two forms:
+    //   a) Proper backslash:  \text{...}  -- matched by /\\text\s*\{/
+    //   b) Tab-corrupted:     tab+ext{...} -- matched by /\text\s*\{/ (\t=tab in regex)
+    // Each symbol therefore gets two replace calls: one for each form.
+    // \text and \frac run first (before single-char symbols) to avoid inner collisions.
+    // \text also runs before \frac so nested \text{} inside \frac braces is cleared first.
+
+    // \text{...} -> content  (both forms)
+    text = text.replace(/\\text\s*\{([^}]*)\}/g, '$1');
+    text = text.replace(/\text\s*\{([^}]*)\}/g, '$1');
+
+    // \frac{a}{b} -> (a)/(b)
+    text = text.replace(/\\frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g, '($1)/($2)');
+    text = text.replace(/\frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g, '($1)/($2)');
+
+    // \sqrt
+    text = text.replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)');
+    text = text.replace(/\sqrt\s*\[([^\]]+)\]\s*\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)');
+    text = text.replace(/\\sqrt\s*\{([^}]*)\}/g, '\u221a($1)');
+    text = text.replace(/\sqrt\s*\{([^}]*)\}/g, '\u221a($1)');
+
+    // \left / \right
+    text = text.replace(/\\left\s*\(/g, '(').replace(/\\right\s*\)/g, ')');
+    text = text.replace(/\left\s*\(/g,  '(').replace(/\right\s*\)/g,  ')');
+    text = text.replace(/\\left\s*\[/g, '[').replace(/\\right\s*\]/g, ']');
+    text = text.replace(/\left\s*\[/g,  '[').replace(/\right\s*\]/g,  ']');
+    text = text.replace(/\\left\s*\{/g, '{').replace(/\\right\s*\}/g, '}');
+    text = text.replace(/\left\s*\{/g,  '{').replace(/\right\s*\}/g,  '}');
+
     text = text.replace(/\^\{([^}]+)\}/g, '^$1');
     text = text.replace(/_\{([^}]+)\}/g, '_$1');
-    text = text.replace(/[\x5c\t]imes(?![a-zA-Z])/g,    '\u00d7');
-    text = text.replace(/[\x5c\t]cdot(?![a-zA-Z])/g,    '\u00b7');
-    text = text.replace(/[\x5c\t]div(?![a-zA-Z])/g,     '\u00f7');
-    text = text.replace(/[\x5c\t]pm(?![a-zA-Z])/g,      '\u00b1');
-    text = text.replace(/[\x5c\t]approx(?![a-zA-Z])/g,  '\u2248');
-    text = text.replace(/[\x5c\t]neq(?![a-zA-Z])/g,     '\u2260');
-    text = text.replace(/[\x5c\t]leq(?![a-zA-Z])/g,     '\u2264');
-    text = text.replace(/[\x5c\t]geq(?![a-zA-Z])/g,     '\u2265');
-    text = text.replace(/[\x5c\t]infty(?![a-zA-Z])/g,   '\u221e');
-    text = text.replace(/[\x5c\t]pi(?![a-zA-Z])/g,      '\u03c0');
-    text = text.replace(/[\x5c\t]omega(?![a-zA-Z])/g,   '\u03c9');
-    text = text.replace(/[\x5c\t]alpha(?![a-zA-Z])/g,   '\u03b1');
-    text = text.replace(/[\x5c\t]beta(?![a-zA-Z])/g,    '\u03b2');
-    text = text.replace(/[\x5c\t]gamma(?![a-zA-Z])/g,   '\u03b3');
-    text = text.replace(/[\x5c\t]heta(?![a-zA-Z])/g,    '\u03b8');
-    text = text.replace(/[\x5c\t]sigma(?![a-zA-Z])/g,   '\u03c3');
-    text = text.replace(/[\x5c\t]lambda(?![a-zA-Z])/g,  '\u03bb');
-    text = text.replace(/[\x5c\t]mu(?![a-zA-Z])/g,      '\u03bc');
-    text = text.replace(/[\x5c\t]Delta(?![a-zA-Z])/g,   '\u0394');
-    text = text.replace(/[\x5c\t]Sigma(?![a-zA-Z])/g,   '\u03a3');
-    text = text.replace(/[\x5c\t]Omega(?![a-zA-Z])/g,   '\u03a9');
-    text = text.replace(/[\x5c\t]phi(?![a-zA-Z])/g,     '\u03c6');
-    text = text.replace(/[\x5c\t]Phi(?![a-zA-Z])/g,     '\u03a6');
-    text = text.replace(/[\x5c\t]psi(?![a-zA-Z])/g,     '\u03c8');
-    text = text.replace(/[\x5c\t]rightarrow(?![a-zA-Z])/g, '\u2192');
-    text = text.replace(/[\x5c\t]leftarrow(?![a-zA-Z])/g,  '\u2190');
-    text = text.replace(/[\x5c\t]Rightarrow(?![a-zA-Z])/g, '\u21d2');
-    text = text.replace(/[\x5c\t]Leftarrow(?![a-zA-Z])/g,  '\u21d0');
-    text = text.replace(/[\x5c\t]forall(?![a-zA-Z])/g,  '\u2200');
-    text = text.replace(/[\x5c\t]exists(?![a-zA-Z])/g,  '\u2203');
-    text = text.replace(/[\x5c\t]degree(?![a-zA-Z])/g,  '\u00b0');
-    text = text.replace(/[\x5c\t]circ(?![a-zA-Z])/g,    '\u00b0');
+
+    // Single symbols — each with proper-backslash and tab-corrupted form.
+    // Lookbehind (?<![a-zA-Z0-9]) prevents firing inside words (e.g. rpm -> r\pm).
+    text = text.replace(/(?<![a-zA-Z0-9])\\times(?![a-zA-Z])/g,     '\u00d7');
+    text = text.replace(/(?<![a-zA-Z0-9])\times(?![a-zA-Z])/g,      '\u00d7');
+    text = text.replace(/(?<![a-zA-Z0-9])\\cdot(?![a-zA-Z])/g,      '\u00b7');
+    text = text.replace(/(?<![a-zA-Z0-9])\cdot(?![a-zA-Z])/g,       '\u00b7');
+    text = text.replace(/(?<![a-zA-Z0-9])\\div(?![a-zA-Z])/g,       '\u00f7');
+    text = text.replace(/(?<![a-zA-Z0-9])\div(?![a-zA-Z])/g,        '\u00f7');
+    text = text.replace(/(?<![a-zA-Z0-9])\\pm(?![a-zA-Z])/g,        '\u00b1');
+    text = text.replace(/(?<![a-zA-Z0-9])\pm(?![a-zA-Z])/g,         '\u00b1');
+    text = text.replace(/(?<![a-zA-Z0-9])\\approx(?![a-zA-Z])/g,    '\u2248');
+    text = text.replace(/(?<![a-zA-Z0-9])\approx(?![a-zA-Z])/g,     '\u2248');
+    text = text.replace(/(?<![a-zA-Z0-9])\\neq(?![a-zA-Z])/g,       '\u2260');
+    text = text.replace(/(?<![a-zA-Z0-9])\neq(?![a-zA-Z])/g,        '\u2260');
+    text = text.replace(/(?<![a-zA-Z0-9])\\leq(?![a-zA-Z])/g,       '\u2264');
+    text = text.replace(/(?<![a-zA-Z0-9])\leq(?![a-zA-Z])/g,        '\u2264');
+    text = text.replace(/(?<![a-zA-Z0-9])\\geq(?![a-zA-Z])/g,       '\u2265');
+    text = text.replace(/(?<![a-zA-Z0-9])\geq(?![a-zA-Z])/g,        '\u2265');
+    text = text.replace(/(?<![a-zA-Z0-9])\\infty(?![a-zA-Z])/g,     '\u221e');
+    text = text.replace(/(?<![a-zA-Z0-9])\infty(?![a-zA-Z])/g,      '\u221e');
+    text = text.replace(/(?<![a-zA-Z0-9])\\pi(?![a-zA-Z])/g,        '\u03c0');
+    text = text.replace(/(?<![a-zA-Z0-9])\pi(?![a-zA-Z])/g,         '\u03c0');
+    text = text.replace(/(?<![a-zA-Z0-9])\\omega(?![a-zA-Z])/g,     '\u03c9');
+    text = text.replace(/(?<![a-zA-Z0-9])\omega(?![a-zA-Z])/g,      '\u03c9');
+    text = text.replace(/(?<![a-zA-Z0-9])\\alpha(?![a-zA-Z])/g,     '\u03b1');
+    text = text.replace(/(?<![a-zA-Z0-9])\alpha(?![a-zA-Z])/g,      '\u03b1');
+    text = text.replace(/(?<![a-zA-Z0-9])\\beta(?![a-zA-Z])/g,      '\u03b2');
+    text = text.replace(/(?<![a-zA-Z0-9])\beta(?![a-zA-Z])/g,       '\u03b2');
+    text = text.replace(/(?<![a-zA-Z0-9])\\gamma(?![a-zA-Z])/g,     '\u03b3');
+    text = text.replace(/(?<![a-zA-Z0-9])\gamma(?![a-zA-Z])/g,      '\u03b3');
+    text = text.replace(/(?<![a-zA-Z0-9])\\theta(?![a-zA-Z])/g,     '\u03b8');
+    text = text.replace(/(?<![a-zA-Z0-9])\theta(?![a-zA-Z])/g,      '\u03b8');
+    text = text.replace(/(?<![a-zA-Z0-9])\\sigma(?![a-zA-Z])/g,     '\u03c3');
+    text = text.replace(/(?<![a-zA-Z0-9])\sigma(?![a-zA-Z])/g,      '\u03c3');
+    text = text.replace(/(?<![a-zA-Z0-9])\\lambda(?![a-zA-Z])/g,    '\u03bb');
+    text = text.replace(/(?<![a-zA-Z0-9])\lambda(?![a-zA-Z])/g,     '\u03bb');
+    text = text.replace(/(?<![a-zA-Z0-9])\\mu(?![a-zA-Z])/g,        '\u03bc');
+    text = text.replace(/(?<![a-zA-Z0-9])\mu(?![a-zA-Z])/g,         '\u03bc');
+    text = text.replace(/(?<![a-zA-Z0-9])\\Delta(?![a-zA-Z])/g,     '\u0394');
+    text = text.replace(/(?<![a-zA-Z0-9])\Delta(?![a-zA-Z])/g,      '\u0394');
+    text = text.replace(/(?<![a-zA-Z0-9])\\Sigma(?![a-zA-Z])/g,     '\u03a3');
+    text = text.replace(/(?<![a-zA-Z0-9])\Sigma(?![a-zA-Z])/g,      '\u03a3');
+    text = text.replace(/(?<![a-zA-Z0-9])\\Omega(?![a-zA-Z])/g,     '\u03a9');
+    text = text.replace(/(?<![a-zA-Z0-9])\Omega(?![a-zA-Z])/g,      '\u03a9');
+    text = text.replace(/(?<![a-zA-Z0-9])\\phi(?![a-zA-Z])/g,       '\u03c6');
+    text = text.replace(/(?<![a-zA-Z0-9])\phi(?![a-zA-Z])/g,        '\u03c6');
+    text = text.replace(/(?<![a-zA-Z0-9])\\Phi(?![a-zA-Z])/g,       '\u03a6');
+    text = text.replace(/(?<![a-zA-Z0-9])\Phi(?![a-zA-Z])/g,        '\u03a6');
+    text = text.replace(/(?<![a-zA-Z0-9])\\psi(?![a-zA-Z])/g,       '\u03c8');
+    text = text.replace(/(?<![a-zA-Z0-9])\psi(?![a-zA-Z])/g,        '\u03c8');
+    text = text.replace(/(?<![a-zA-Z0-9])\\rightarrow(?![a-zA-Z])/g,'\u2192');
+    text = text.replace(/(?<![a-zA-Z0-9])\rightarrow(?![a-zA-Z])/g, '\u2192');
+    text = text.replace(/(?<![a-zA-Z0-9])\\leftarrow(?![a-zA-Z])/g, '\u2190');
+    text = text.replace(/(?<![a-zA-Z0-9])\leftarrow(?![a-zA-Z])/g,  '\u2190');
+    text = text.replace(/(?<![a-zA-Z0-9])\\Rightarrow(?![a-zA-Z])/g,'\u21d2');
+    text = text.replace(/(?<![a-zA-Z0-9])\Rightarrow(?![a-zA-Z])/g, '\u21d2');
+    text = text.replace(/(?<![a-zA-Z0-9])\\Leftarrow(?![a-zA-Z])/g, '\u21d0');
+    text = text.replace(/(?<![a-zA-Z0-9])\Leftarrow(?![a-zA-Z])/g,  '\u21d0');
+    text = text.replace(/(?<![a-zA-Z0-9])\\forall(?![a-zA-Z])/g,    '\u2200');
+    text = text.replace(/(?<![a-zA-Z0-9])\forall(?![a-zA-Z])/g,     '\u2200');
+    text = text.replace(/(?<![a-zA-Z0-9])\\exists(?![a-zA-Z])/g,    '\u2203');
+    text = text.replace(/(?<![a-zA-Z0-9])\exists(?![a-zA-Z])/g,     '\u2203');
+    text = text.replace(/(?<![a-zA-Z0-9])\\degree(?![a-zA-Z])/g,    '\u00b0');
+    text = text.replace(/(?<![a-zA-Z0-9])\degree(?![a-zA-Z])/g,     '\u00b0');
+    text = text.replace(/(?<![a-zA-Z0-9])\\circ(?![a-zA-Z])/g,      '\u00b0');
+    text = text.replace(/(?<![a-zA-Z0-9])\circ(?![a-zA-Z])/g,       '\u00b0');
     // --------------------------------------------------------------------
 
     const images = [];
@@ -101,15 +149,13 @@ function formatMessage(text) {
     text = text.replace(/\n\s*\n/g, "<br><br>").replace(/\n/g, "<br>").replace(/(<\/h[1-6]>)(<br>){2}/g, "$1<br>");
     const processMath = (math) => {
         math = math.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        // processMath receives content that may have tab-corrupted keywords
-        // (because it was extracted before the \t unescape). Handle both forms.
-        math = math.replace(/[\x5c\t]ext\s*\{([^}]*)\}/g, '$1');
+        math = math.replace(/\\text\{([^}]+)\}/g, '$1');
+        math = math.replace(/\text\{([^}]+)\}/g, '$1');
         const symbols = { '\u005cpm': '\u00b1', '\u005ctimes': '\u00d7', '\u005cdiv': '\u00f7', '\u005ccdot': '\u00b7', '\u005cneq': '\u2260', '\u005cleq': '\u2264', '\u005cgeq': '\u2265', '\u005capprox': '\u2248', '\u005cinfty': '\u221e', '\u005cpi': '\u03c0', '\u005crightarrow': '\u2192', '\u005cforall': '\u2200', '\u005cexists': '\u2203', '\u005cdegree': '\u00b0', '\u005cphi': '\u03a6' };
-        // Also handle tab-corrupted forms in math
         const tabSymbols = { '\times': '\u00d7', '\div': '\u00f7', '\cdot': '\u00b7', '\pm': '\u00b1', '\neq': '\u2260', '\leq': '\u2264', '\geq': '\u2265', '\approx': '\u2248', '\infty': '\u221e', '\pi': '\u03c0' };
         Object.entries(symbols).forEach(([t, s]) => { math = math.split(t).join(s); });
         Object.entries(tabSymbols).forEach(([t, s]) => { math = math.split(t).join(s); });
-        math = math.replace(/[\x5c\t]sqrt\[([^\]]+)\]\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)').replace(/[\x5c\t]sqrt\{([^}]+)\}/g, '\u221a($1)').replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>').replace(/\^([a-zA-Z0-9+-]+)/g, '<sup>$1</sup>').replace(/_\{([^}]+)\}/g, '<sub>$1</sub>').replace(/_([a-zA-Z0-9+-]+)/g, '<sub>$1</sub>').replace(/[\x5c\t]frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)');
+        math = math.replace(/\\sqrt\[([^\]]+)\]\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)').replace(/\\sqrt\{([^}]+)\}/g, '\u221a($1)').replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>').replace(/\^([a-zA-Z0-9+-]+)/g, '<sup>$1</sup>').replace(/_\{([^}]+)\}/g, '<sub>$1</sub>').replace(/_([a-zA-Z0-9+-]+)/g, '<sub>$1</sub>').replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)');
         return `<strong>${math}</strong>`;
     };
     text = text.replace(/@@INLINE_(\d+)@@/g, (m, i) => `<code class="code-inline">${inline[i].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>`);
