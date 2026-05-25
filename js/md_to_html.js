@@ -19,104 +19,78 @@ function formatMessage(text) {
     text = text.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
 
     // -- Bare LaTeX sanitizer --------------------------------------------
-    // Models emit LaTeX in two forms:
-    //   a) Proper backslash:  \text{...}  -- matched by /\\text\s*\{/
-    //   b) Tab-corrupted:     tab+ext{...} -- matched by /\text\s*\{/ (\t=tab in regex)
-    // Each symbol therefore gets two replace calls: one for each form.
-    // \text and \frac run first (before single-char symbols) to avoid inner collisions.
-    // \text also runs before \frac so nested \text{} inside \frac braces is cleared first.
+    // Models emit LaTeX two ways:
+    //   a) Proper backslash: \times  -- matched by /\\times/ (two backslashes in regex literal)
+    //   b) Tab-corrupted:   tab+imes -- matched by /\times/ (\t=tab in JS regex)
+    //
+    // IMPORTANT: tab-corrupted patterns are only safe for keywords beginning with 't',
+    // because only \t produces a meaningful JS regex escape (tab char). Other letters
+    // produce regex literals that match normal English words (\omega -> /omega/, etc.)
+    // So tab patterns are used ONLY for: \text, \times, \theta.
+    //
+    // All patterns use (?<![a-zA-Z]) lookbehind to avoid firing inside words.
 
-    // \text{...} -> content  (both forms)
-    text = text.replace(/\\text\s*\{([^}]*)\}/g, '$1');
-    text = text.replace(/\text\s*\{([^}]*)\}/g, '$1');
+    // \text{...} -> content  (\text and tab-corrupted tab+ext)
+    text = text.replace(/(?<![a-zA-Z])\\text\s*\{([^}]*)\}/g, '$1');
+    text = text.replace(/(?<![a-zA-Z])\text\s*\{([^}]*)\}/g, '$1');
 
-    // \frac{a}{b} -> (a)/(b)
-    text = text.replace(/\\frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g, '($1)/($2)');
-    text = text.replace(/\frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g, '($1)/($2)');
+    // \frac{a}{b} -> (a)/(b)  (proper backslash only — \f=formfeed so tab form unreliable)
+    text = text.replace(/(?<![a-zA-Z])\\frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g, '($1)/($2)');
+    // Second pass: resolve symbols that survived inside \frac braces
+    text = text.replace(/(?<![a-zA-Z])\\pi(?![a-zA-Z])/g,    '\u03c0');
+    text = text.replace(/(?<![a-zA-Z])\\omega(?![a-zA-Z])/g, '\u03c9');
+    text = text.replace(/(?<![a-zA-Z])\\alpha(?![a-zA-Z])/g, '\u03b1');
+    text = text.replace(/(?<![a-zA-Z])\\beta(?![a-zA-Z])/g,  '\u03b2');
 
     // \sqrt
-    text = text.replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)');
-    text = text.replace(/\sqrt\s*\[([^\]]+)\]\s*\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)');
-    text = text.replace(/\\sqrt\s*\{([^}]*)\}/g, '\u221a($1)');
-    text = text.replace(/\sqrt\s*\{([^}]*)\}/g, '\u221a($1)');
+    text = text.replace(/(?<![a-zA-Z])\\sqrt\s*\[([^\]]+)\]\s*\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)');
+    text = text.replace(/(?<![a-zA-Z])\\sqrt\s*\{([^}]*)\}/g, '\u221a($1)');
 
-    // \left / \right
+    // \left / \right  (proper backslash only — /\left/ matches "left" in prose)
     text = text.replace(/\\left\s*\(/g, '(').replace(/\\right\s*\)/g, ')');
-    text = text.replace(/\left\s*\(/g,  '(').replace(/\right\s*\)/g,  ')');
     text = text.replace(/\\left\s*\[/g, '[').replace(/\\right\s*\]/g, ']');
-    text = text.replace(/\left\s*\[/g,  '[').replace(/\right\s*\]/g,  ']');
     text = text.replace(/\\left\s*\{/g, '{').replace(/\\right\s*\}/g, '}');
-    text = text.replace(/\left\s*\{/g,  '{').replace(/\right\s*\}/g,  '}');
 
     text = text.replace(/\^\{([^}]+)\}/g, '^$1');
     text = text.replace(/_\{([^}]+)\}/g, '_$1');
 
-    // Single symbols — each with proper-backslash and tab-corrupted form.
-    // Lookbehind (?<![a-zA-Z0-9]) prevents firing inside words (e.g. rpm -> r\pm).
-    text = text.replace(/(?<![a-zA-Z0-9])\\times(?![a-zA-Z])/g,     '\u00d7');
-    text = text.replace(/(?<![a-zA-Z0-9])\times(?![a-zA-Z])/g,      '\u00d7');
-    text = text.replace(/(?<![a-zA-Z0-9])\\cdot(?![a-zA-Z])/g,      '\u00b7');
-    text = text.replace(/(?<![a-zA-Z0-9])\cdot(?![a-zA-Z])/g,       '\u00b7');
-    text = text.replace(/(?<![a-zA-Z0-9])\\div(?![a-zA-Z])/g,       '\u00f7');
-    text = text.replace(/(?<![a-zA-Z0-9])\div(?![a-zA-Z])/g,        '\u00f7');
-    text = text.replace(/(?<![a-zA-Z0-9])\\pm(?![a-zA-Z])/g,        '\u00b1');
-    text = text.replace(/(?<![a-zA-Z0-9])\pm(?![a-zA-Z])/g,         '\u00b1');
-    text = text.replace(/(?<![a-zA-Z0-9])\\approx(?![a-zA-Z])/g,    '\u2248');
-    text = text.replace(/(?<![a-zA-Z0-9])\approx(?![a-zA-Z])/g,     '\u2248');
-    text = text.replace(/(?<![a-zA-Z0-9])\\neq(?![a-zA-Z])/g,       '\u2260');
-    text = text.replace(/(?<![a-zA-Z0-9])\neq(?![a-zA-Z])/g,        '\u2260');
-    text = text.replace(/(?<![a-zA-Z0-9])\\leq(?![a-zA-Z])/g,       '\u2264');
-    text = text.replace(/(?<![a-zA-Z0-9])\leq(?![a-zA-Z])/g,        '\u2264');
-    text = text.replace(/(?<![a-zA-Z0-9])\\geq(?![a-zA-Z])/g,       '\u2265');
-    text = text.replace(/(?<![a-zA-Z0-9])\geq(?![a-zA-Z])/g,        '\u2265');
-    text = text.replace(/(?<![a-zA-Z0-9])\\infty(?![a-zA-Z])/g,     '\u221e');
-    text = text.replace(/(?<![a-zA-Z0-9])\infty(?![a-zA-Z])/g,      '\u221e');
-    text = text.replace(/(?<![a-zA-Z0-9])\\pi(?![a-zA-Z])/g,        '\u03c0');
-    text = text.replace(/(?<![a-zA-Z0-9])\pi(?![a-zA-Z])/g,         '\u03c0');
-    text = text.replace(/(?<![a-zA-Z0-9])\\omega(?![a-zA-Z])/g,     '\u03c9');
-    text = text.replace(/(?<![a-zA-Z0-9])\omega(?![a-zA-Z])/g,      '\u03c9');
-    text = text.replace(/(?<![a-zA-Z0-9])\\alpha(?![a-zA-Z])/g,     '\u03b1');
-    text = text.replace(/(?<![a-zA-Z0-9])\alpha(?![a-zA-Z])/g,      '\u03b1');
-    text = text.replace(/(?<![a-zA-Z0-9])\\beta(?![a-zA-Z])/g,      '\u03b2');
-    text = text.replace(/(?<![a-zA-Z0-9])\beta(?![a-zA-Z])/g,       '\u03b2');
-    text = text.replace(/(?<![a-zA-Z0-9])\\gamma(?![a-zA-Z])/g,     '\u03b3');
-    text = text.replace(/(?<![a-zA-Z0-9])\gamma(?![a-zA-Z])/g,      '\u03b3');
-    text = text.replace(/(?<![a-zA-Z0-9])\\theta(?![a-zA-Z])/g,     '\u03b8');
-    text = text.replace(/(?<![a-zA-Z0-9])\theta(?![a-zA-Z])/g,      '\u03b8');
-    text = text.replace(/(?<![a-zA-Z0-9])\\sigma(?![a-zA-Z])/g,     '\u03c3');
-    text = text.replace(/(?<![a-zA-Z0-9])\sigma(?![a-zA-Z])/g,      '\u03c3');
-    text = text.replace(/(?<![a-zA-Z0-9])\\lambda(?![a-zA-Z])/g,    '\u03bb');
-    text = text.replace(/(?<![a-zA-Z0-9])\lambda(?![a-zA-Z])/g,     '\u03bb');
-    text = text.replace(/(?<![a-zA-Z0-9])\\mu(?![a-zA-Z])/g,        '\u03bc');
-    text = text.replace(/(?<![a-zA-Z0-9])\mu(?![a-zA-Z])/g,         '\u03bc');
-    text = text.replace(/(?<![a-zA-Z0-9])\\Delta(?![a-zA-Z])/g,     '\u0394');
-    text = text.replace(/(?<![a-zA-Z0-9])\Delta(?![a-zA-Z])/g,      '\u0394');
-    text = text.replace(/(?<![a-zA-Z0-9])\\Sigma(?![a-zA-Z])/g,     '\u03a3');
-    text = text.replace(/(?<![a-zA-Z0-9])\Sigma(?![a-zA-Z])/g,      '\u03a3');
-    text = text.replace(/(?<![a-zA-Z0-9])\\Omega(?![a-zA-Z])/g,     '\u03a9');
-    text = text.replace(/(?<![a-zA-Z0-9])\Omega(?![a-zA-Z])/g,      '\u03a9');
-    text = text.replace(/(?<![a-zA-Z0-9])\\phi(?![a-zA-Z])/g,       '\u03c6');
-    text = text.replace(/(?<![a-zA-Z0-9])\phi(?![a-zA-Z])/g,        '\u03c6');
-    text = text.replace(/(?<![a-zA-Z0-9])\\Phi(?![a-zA-Z])/g,       '\u03a6');
-    text = text.replace(/(?<![a-zA-Z0-9])\Phi(?![a-zA-Z])/g,        '\u03a6');
-    text = text.replace(/(?<![a-zA-Z0-9])\\psi(?![a-zA-Z])/g,       '\u03c8');
-    text = text.replace(/(?<![a-zA-Z0-9])\psi(?![a-zA-Z])/g,        '\u03c8');
-    text = text.replace(/(?<![a-zA-Z0-9])\\rightarrow(?![a-zA-Z])/g,'\u2192');
-    text = text.replace(/(?<![a-zA-Z0-9])\rightarrow(?![a-zA-Z])/g, '\u2192');
-    text = text.replace(/(?<![a-zA-Z0-9])\\leftarrow(?![a-zA-Z])/g, '\u2190');
-    text = text.replace(/(?<![a-zA-Z0-9])\leftarrow(?![a-zA-Z])/g,  '\u2190');
-    text = text.replace(/(?<![a-zA-Z0-9])\\Rightarrow(?![a-zA-Z])/g,'\u21d2');
-    text = text.replace(/(?<![a-zA-Z0-9])\Rightarrow(?![a-zA-Z])/g, '\u21d2');
-    text = text.replace(/(?<![a-zA-Z0-9])\\Leftarrow(?![a-zA-Z])/g, '\u21d0');
-    text = text.replace(/(?<![a-zA-Z0-9])\Leftarrow(?![a-zA-Z])/g,  '\u21d0');
-    text = text.replace(/(?<![a-zA-Z0-9])\\forall(?![a-zA-Z])/g,    '\u2200');
-    text = text.replace(/(?<![a-zA-Z0-9])\forall(?![a-zA-Z])/g,     '\u2200');
-    text = text.replace(/(?<![a-zA-Z0-9])\\exists(?![a-zA-Z])/g,    '\u2203');
-    text = text.replace(/(?<![a-zA-Z0-9])\exists(?![a-zA-Z])/g,     '\u2203');
-    text = text.replace(/(?<![a-zA-Z0-9])\\degree(?![a-zA-Z])/g,    '\u00b0');
-    text = text.replace(/(?<![a-zA-Z0-9])\degree(?![a-zA-Z])/g,     '\u00b0');
-    text = text.replace(/(?<![a-zA-Z0-9])\\circ(?![a-zA-Z])/g,      '\u00b0');
-    text = text.replace(/(?<![a-zA-Z0-9])\circ(?![a-zA-Z])/g,       '\u00b0');
+    // Single symbols — proper backslash form only, except \times and \theta which also
+    // get the tab-corrupted form (safe because \t in regex = tab, not a common substring).
+    // All use (?<![a-zA-Z]) lookbehind to avoid collisions inside words.
+    text = text.replace(/(?<![a-zA-Z])\\times(?![a-zA-Z])/g,     '\u00d7');
+    text = text.replace(/(?<![a-zA-Z])\times(?![a-zA-Z])/g,      '\u00d7');
+    text = text.replace(/(?<![a-zA-Z])\\theta(?![a-zA-Z])/g,     '\u03b8');
+    text = text.replace(/(?<![a-zA-Z])\theta(?![a-zA-Z])/g,      '\u03b8');
+    text = text.replace(/(?<![a-zA-Z])\\cdot(?![a-zA-Z])/g,      '\u00b7');
+    text = text.replace(/(?<![a-zA-Z])\\div(?![a-zA-Z])/g,       '\u00f7');
+    text = text.replace(/(?<![a-zA-Z])\\pm(?![a-zA-Z])/g,        '\u00b1');
+    text = text.replace(/(?<![a-zA-Z])\\approx(?![a-zA-Z])/g,    '\u2248');
+    text = text.replace(/(?<![a-zA-Z])\\neq(?![a-zA-Z])/g,       '\u2260');
+    text = text.replace(/(?<![a-zA-Z])\\leq(?![a-zA-Z])/g,       '\u2264');
+    text = text.replace(/(?<![a-zA-Z])\\geq(?![a-zA-Z])/g,       '\u2265');
+    text = text.replace(/(?<![a-zA-Z])\\infty(?![a-zA-Z])/g,     '\u221e');
+    text = text.replace(/(?<![a-zA-Z])\\pi(?![a-zA-Z])/g,        '\u03c0');
+    text = text.replace(/(?<![a-zA-Z])\\omega(?![a-zA-Z])/g,     '\u03c9');
+    text = text.replace(/(?<![a-zA-Z])\\alpha(?![a-zA-Z])/g,     '\u03b1');
+    text = text.replace(/(?<![a-zA-Z])\\beta(?![a-zA-Z])/g,      '\u03b2');
+    text = text.replace(/(?<![a-zA-Z])\\gamma(?![a-zA-Z])/g,     '\u03b3');
+    text = text.replace(/(?<![a-zA-Z])\\sigma(?![a-zA-Z])/g,     '\u03c3');
+    text = text.replace(/(?<![a-zA-Z])\\lambda(?![a-zA-Z])/g,    '\u03bb');
+    text = text.replace(/(?<![a-zA-Z])\\mu(?![a-zA-Z])/g,        '\u03bc');
+    text = text.replace(/(?<![a-zA-Z])\\Delta(?![a-zA-Z])/g,     '\u0394');
+    text = text.replace(/(?<![a-zA-Z])\\Sigma(?![a-zA-Z])/g,     '\u03a3');
+    text = text.replace(/(?<![a-zA-Z])\\Omega(?![a-zA-Z])/g,     '\u03a9');
+    text = text.replace(/(?<![a-zA-Z])\\phi(?![a-zA-Z])/g,       '\u03c6');
+    text = text.replace(/(?<![a-zA-Z])\\Phi(?![a-zA-Z])/g,       '\u03a6');
+    text = text.replace(/(?<![a-zA-Z])\\psi(?![a-zA-Z])/g,       '\u03c8');
+    text = text.replace(/(?<![a-zA-Z])\\rightarrow(?![a-zA-Z])/g,'\u2192');
+    text = text.replace(/(?<![a-zA-Z])\\leftarrow(?![a-zA-Z])/g, '\u2190');
+    text = text.replace(/(?<![a-zA-Z])\\Rightarrow(?![a-zA-Z])/g,'\u21d2');
+    text = text.replace(/(?<![a-zA-Z])\\Leftarrow(?![a-zA-Z])/g, '\u21d0');
+    text = text.replace(/(?<![a-zA-Z])\\forall(?![a-zA-Z])/g,    '\u2200');
+    text = text.replace(/(?<![a-zA-Z])\\exists(?![a-zA-Z])/g,    '\u2203');
+    text = text.replace(/(?<![a-zA-Z])\\degree(?![a-zA-Z])/g,    '\u00b0');
+    text = text.replace(/(?<![a-zA-Z])\\circ(?![a-zA-Z])/g,      '\u00b0');
     // --------------------------------------------------------------------
 
     const images = [];
@@ -152,7 +126,7 @@ function formatMessage(text) {
         math = math.replace(/\\text\{([^}]+)\}/g, '$1');
         math = math.replace(/\text\{([^}]+)\}/g, '$1');
         const symbols = { '\u005cpm': '\u00b1', '\u005ctimes': '\u00d7', '\u005cdiv': '\u00f7', '\u005ccdot': '\u00b7', '\u005cneq': '\u2260', '\u005cleq': '\u2264', '\u005cgeq': '\u2265', '\u005capprox': '\u2248', '\u005cinfty': '\u221e', '\u005cpi': '\u03c0', '\u005crightarrow': '\u2192', '\u005cforall': '\u2200', '\u005cexists': '\u2203', '\u005cdegree': '\u00b0', '\u005cphi': '\u03a6' };
-        const tabSymbols = { '\times': '\u00d7', '\div': '\u00f7', '\cdot': '\u00b7', '\pm': '\u00b1', '\neq': '\u2260', '\leq': '\u2264', '\geq': '\u2265', '\approx': '\u2248', '\infty': '\u221e', '\pi': '\u03c0' };
+        const tabSymbols = { '\times': '\u00d7', '\pi': '\u03c0' };
         Object.entries(symbols).forEach(([t, s]) => { math = math.split(t).join(s); });
         Object.entries(tabSymbols).forEach(([t, s]) => { math = math.split(t).join(s); });
         math = math.replace(/\\sqrt\[([^\]]+)\]\{([^}]+)\}/g, '<sup>$1</sup>\u221a($2)').replace(/\\sqrt\{([^}]+)\}/g, '\u221a($1)').replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>').replace(/\^([a-zA-Z0-9+-]+)/g, '<sup>$1</sup>').replace(/_\{([^}]+)\}/g, '<sub>$1</sub>').replace(/_([a-zA-Z0-9+-]+)/g, '<sub>$1</sub>').replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)');
