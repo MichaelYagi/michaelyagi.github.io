@@ -1,0 +1,52 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Zoom | Shoji API Reference</title><meta name="description" content="Documentation for Shoji API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">Shoji API Reference</a>
+<div id="tsd-toolbar-links"><a href="../index.html">Guides</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/plugins_zoom.html">plugins/zoom</a></li>
+<li><a href="" aria-current="page">Zoom</a></li></ul>
+<h1>Variable Zoom<code class="tsd-tag">Const</code></h1></div>
+<div class="tsd-signature"><span class="tsd-kind-variable">Zoom</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/index.ShojiPlugin.html" class="tsd-signature-type tsd-kind-interface">ShojiPlugin</a><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p><a href="http://DESIGN.md">DESIGN.md</a> §4-zoom — pinch, double-tap/click, wheel+ctrl, and three toolbar
+buttons (zoom in/out/actual-size) all drive a single <code>scale</code>/pan state on
+the active slide's <code>&lt;img&gt;</code> — never <code>.shoji-slide-media</code> itself, which the
+rotateFlip plugin (§4) already transforms; nesting on the inner element
+instead of fighting over the same transform string means a rotated <em>and</em>
+zoomed photo behaves correctly for free (the outer rotate carries the
+inner pan/scale along with it as a rigid unit, which is also the visually
+expected result — see <a href="http://DESIGN.md">DESIGN.md</a>'s note on this plugin for the full
+reasoning). Pinch/double-tap/wheel are core's own gesture relay (§2.4) —
+scaffolding that existed specifically for this plugin to consume, not
+reimplemented here. Pan (single-pointer drag while zoomed) is the one
+piece core's relay doesn't cover — core's own drag-to-navigate/
+drag-to-close would otherwise fight over the same drag — so this plugin
+registers a zoom gate (<code>Gallery.registerZoomGate</code>, §4-zoom) that suspends
+core's drag handling entirely while zoomed, and tracks pan with its own
+minimal raw pointer listeners instead of reusing <code>GestureEngine</code> (whose
+axis-locked model — pick horizontal <em>or</em> vertical per gesture — is the
+wrong shape for a 2D pan that needs both at once).</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/zoom/index.ts#L49">plugins/zoom/index.ts:49</a></li></ul></aside></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="../index.html" class="tsd-nav-link">Guides</a></nav>
+<nav class="tsd-navigation"><a href="../index.html">Shoji API Reference</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer></footer>
+<div class="overlay"></div></body></html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>LayoutOptions | Shoji API Reference</title><meta name="description" content="Documentation for Shoji API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">Shoji API Reference</a>
+<div id="tsd-toolbar-links"><a href="../index.html">Guides</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/plugins_layout.html">plugins/layout</a></li>
+<li><a href="" aria-current="page">LayoutOptions</a></li></ul>
+<h1>Interface LayoutOptions</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p><a href="http://DESIGN.md">DESIGN.md</a> §5 — <code>type: 'grid' | 'masonry' | 'justified'</code>; masonry supports
+both <code>orientation</code>s, <code>breakpoints</code> (§5.4), and <code>groupBy</code>/headings (§5.2;
+see that option's own doc comment for the v1 scope cuts vs. the full
+spec, including why <code>groupBy</code> itself is excluded from <code>orientation: 'horizontal'</code>). Deliberately still
+deferred: jump-free <em>prepend</em> coordination (§5.2's scroll-anchoring
+handoff needs the not-yet-built scroll plugin on the other end —
+prepending today triggers a full relayout, which can shift scroll
+position if content above the fold grew).</p>
+</div></section>
+<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">LayoutOptions</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#type">type</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;grid&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;masonry&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;justified&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#gutter">gutter</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">y</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#aspectratio">aspectRatio</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#orientation">orientation</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;horizontal&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;vertical&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#columns">columns</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;auto&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#columnwidth">columnWidth</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#mincolumnwidth">minColumnWidth</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#maxcolumnwidth">maxColumnWidth</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#fill">fill</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;shortest&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ordered&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#rowheight">rowHeight</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#minrowheight">minRowHeight</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#maxrowheight">maxRowHeight</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#lastrow">lastRow</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;left&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;justify&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;hide&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#animate">animate</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#breakpoints">breakpoints</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><br/>        <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-signature-type">Omit</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-interface">LayoutOptions</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">&quot;type&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;orientation&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;breakpoints&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#groupby">groupBy</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">item</span><span class="tsd-signature-symbol">:</span> <a href="index.GalleryItem.html" class="tsd-signature-type tsd-kind-interface">GalleryItem</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#renderheading">renderHeading</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">items</span><span class="tsd-signature-symbol">:</span> <a href="index.GalleryItem.html" class="tsd-signature-type tsd-kind-interface">GalleryItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">HTMLElement</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">title</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">subtitle</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#headingoverflow">headingOverflow</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;show&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;fit&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;wrap&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#stickyheadings">stickyHeadings</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#automeasure">autoMeasure</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L18">plugins/layout/index.ts:18</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#type" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>type?</span></a>
+<a href="#gutter" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>gutter?</span></a>
+<a href="#aspectratio" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>aspect<wbr/>Ratio?</span></a>
+<a href="#orientation" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>orientation?</span></a>
+<a href="#columns" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>columns?</span></a>
+<a href="#columnwidth" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>column<wbr/>Width?</span></a>
+<a href="#mincolumnwidth" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>min<wbr/>Column<wbr/>Width?</span></a>
+<a href="#maxcolumnwidth" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Column<wbr/>Width?</span></a>
+<a href="#fill" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>fill?</span></a>
+<a href="#rowheight" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>row<wbr/>Height?</span></a>
+<a href="#minrowheight" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>min<wbr/>Row<wbr/>Height?</span></a>
+<a href="#maxrowheight" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Row<wbr/>Height?</span></a>
+<a href="#lastrow" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>last<wbr/>Row?</span></a>
+<a href="#animate" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>animate?</span></a>
+<a href="#breakpoints" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>breakpoints?</span></a>
+<a href="#groupby" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>group<wbr/>By?</span></a>
+<a href="#renderheading" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>render<wbr/>Heading?</span></a>
+<a href="#headingoverflow" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>heading<wbr/>Overflow?</span></a>
+<a href="#stickyheadings" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sticky<wbr/>Headings?</span></a>
+<a href="#automeasure" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>auto<wbr/>Measure?</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="type"><code class="tsd-tag">Optional</code><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;grid&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;masonry&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;justified&quot;</span></div>
+<div class="tsd-comment tsd-typography"><p>Default <code>'justified'</code>.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L20">plugins/layout/index.ts:20</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="gutter"><code class="tsd-tag">Optional</code><span>gutter</span><a href="#gutter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">gutter</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">y</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L21">plugins/layout/index.ts:21</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="aspectratio"><code class="tsd-tag">Optional</code><span>aspect<wbr/>Ratio</span><a href="#aspectratio" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">aspectRatio</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p><code>type: 'grid'</code> only — every cell's shape, cropped to fit via
+<code>object-fit: cover</code>; default 1 (square). Deliberately <em>not</em> each
+photo's own aspect ratio: plain CSS grid sizes a row's height to its
+tallest cell, so per-item ratios leave a visible blank gap under every
+shorter tile sharing a row with a taller one. Masonry/justified are
+the two types that preserve true per-photo aspect ratios instead (via
+their own JS packing, which doesn't have this row-height problem).</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L31">plugins/layout/index.ts:31</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="orientation"><code class="tsd-tag">Optional</code><span>orientation</span><a href="#orientation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">orientation</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;horizontal&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;vertical&quot;</span></div>
+<div class="tsd-comment tsd-typography"><p><code>type: 'masonry'</code> only. <code>'vertical'</code> (default): fixed-width columns,
+tiles stack top-to-bottom, ragged <em>bottom</em> edge. <code>'horizontal'</code>: fixed-
+height rows, tiles pack left-to-right, ragged <em>right</em> edge — the direct
+transpose. Both wrap/grow within the container and scroll vertically
+only, same as every other layout type; neither ever needs horizontal
+scroll. See <code>rowHeight</code> for <code>'horizontal'</code>'s one fixed input, and
+<code>justified</code> (a different <code>type</code> entirely) for the <em>opposite</em> tradeoff —
+width forced flush, height left to solve for.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L42">plugins/layout/index.ts:42</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="columns"><code class="tsd-tag">Optional</code><span>columns</span><a href="#columns" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">columns</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;auto&quot;</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L43">plugins/layout/index.ts:43</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="columnwidth"><code class="tsd-tag">Optional</code><span>column<wbr/>Width</span><a href="#columnwidth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">columnWidth</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L44">plugins/layout/index.ts:44</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="mincolumnwidth"><code class="tsd-tag">Optional</code><span>min<wbr/>Column<wbr/>Width</span><a href="#mincolumnwidth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">minColumnWidth</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L45">plugins/layout/index.ts:45</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="maxcolumnwidth"><code class="tsd-tag">Optional</code><span>max<wbr/>Column<wbr/>Width</span><a href="#maxcolumnwidth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">maxColumnWidth</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L46">plugins/layout/index.ts:46</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="fill"><code class="tsd-tag">Optional</code><span>fill</span><a href="#fill" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">fill</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;shortest&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ordered&quot;</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L47">plugins/layout/index.ts:47</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="rowheight"><code class="tsd-tag">Optional</code><span>row<wbr/>Height</span><a href="#rowheight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">rowHeight</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p><code>type: 'justified'</code>, or <code>type: 'masonry', orientation: 'horizontal'</code>. For horizontal masonry this is the row's exact, fixed height (see <code>orientation</code>'s doc comment) — <code>minRowHeight</code>/<code>maxRowHeight</code> don't apply there, since nothing is solved/clamped, only for justified, where it's a <em>target</em> a solved-for height converges near.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L49">plugins/layout/index.ts:49</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="minrowheight"><code class="tsd-tag">Optional</code><span>min<wbr/>Row<wbr/>Height</span><a href="#minrowheight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">minRowHeight</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L50">plugins/layout/index.ts:50</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="maxrowheight"><code class="tsd-tag">Optional</code><span>max<wbr/>Row<wbr/>Height</span><a href="#maxrowheight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">maxRowHeight</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L51">plugins/layout/index.ts:51</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="lastrow"><code class="tsd-tag">Optional</code><span>last<wbr/>Row</span><a href="#lastrow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">lastRow</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;left&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;justify&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;hide&quot;</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L52">plugins/layout/index.ts:52</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="animate"><code class="tsd-tag">Optional</code><span>animate</span><a href="#animate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">animate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L53">plugins/layout/index.ts:53</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="breakpoints"><code class="tsd-tag">Optional</code><span>breakpoints</span><a href="#breakpoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">breakpoints</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><br/>    <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-type">Omit</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-interface">LayoutOptions</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">&quot;type&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;orientation&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;breakpoints&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span></div>
+<div class="tsd-comment tsd-typography"><p>Container-width → partial overrides, applied on top of the base options
+above whenever the container's current width is &lt;= that key (the
+<em>narrowest</em> matching key wins if more than one applies). Re-evaluated on
+every relayout, so crossing a threshold while resizing takes effect
+live. Cannot override <code>type</code> or <code>orientation</code> — swapping the DOM
+structure/positioning strategy live is a bigger feature than a sizing
+tweak; use a media query + two <code>Shoji</code> instances if that's genuinely
+needed.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L64">plugins/layout/index.ts:64</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="groupby"><code class="tsd-tag">Optional</code><span>group<wbr/>By</span><a href="#groupby" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">groupBy</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">item</span><span class="tsd-signature-symbol">:</span> <a href="index.GalleryItem.html" class="tsd-signature-type tsd-kind-interface">GalleryItem</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>Derives a section key per item (e.g. a formatted date) — a heading is
+inserted whenever the key changes between consecutive items, real
+&quot;Today / Yesterday / March 2024&quot; (Google Photos-style) sectioning.
+Items must already be grouped consecutively; a key reappearing later
+after a different key started a new section anyway.</p>
+<p>Section boundaries behave differently per <code>type</code>: <code>grid</code>'s heading is a
+full-span (<code>grid-column: 1 / -1</code>) element, native CSS grid gives it its
+own row for free. <code>masonry</code>'s heading is a full-width blocking element
+too — each section is its own fresh column-packing pass, no two
+sections ever share visual space. <code>justified</code> is the odd one out, by
+design (this is the actual Google Photos behavior, not a simplified
+approximation of it): sections do <strong>not</strong> force a row break. Row
+<em>composition</em> ignores section boundaries entirely — one continuous
+<code>layoutJustified</code> pass packs every item regardless of section, so a
+section with too few items to reach a full row's target width (a
+single lone photo, say) shares that row with whatever comes right
+after it, instead of getting stretched into its own awkward
+almost-empty row. A heading only marks <em>where</em> a new section starts:
+a compact, inline label sized to its own content (not full width),
+positioned at the x-coordinate of the tile that starts its section,
+in a slim label-band above whichever row that tile landed on — more
+than one label can share the same band if more than one section
+happens to start within the same row (see <code>renderHeading</code>'s
+<code>{title, subtitle}</code> form for exactly this — that's what the reference
+behavior actually looks like).</p>
+<p>v1 scope cuts vs. <a href="http://DESIGN.md">DESIGN.md</a> §5.2's full spec: (1) any items change
+while <code>groupBy</code> is set does a full relayout, same simplification
+justified's non-grouped path already makes for appends (§5.4) — the
+&quot;merge across load boundaries&quot; incremental optimization is deferred;
+(2) headings are always <code>&lt;h2&gt;</code>, not a configurable level; (3) not
+supported with <code>orientation: 'horizontal'</code> (warns, ignored) —
+<a href="http://DESIGN.md">DESIGN.md</a> itself calls that pairing rare.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L101">plugins/layout/index.ts:101</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="renderheading"><code class="tsd-tag">Optional</code><span>render<wbr/>Heading</span><a href="#renderheading" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">renderHeading</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">items</span><span class="tsd-signature-symbol">:</span> <a href="index.GalleryItem.html" class="tsd-signature-type tsd-kind-interface">GalleryItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">HTMLElement</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">title</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">subtitle</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span></div>
+<div class="tsd-comment tsd-typography"><p>Customizes a heading's content; default renders the key as plain text.
+Three return shapes:</p>
+<ul>
+<li><code>string</code> — plain text (default behavior, just with custom content).</li>
+<li><code>HTMLElement</code> — full control, own tag/children; the plugin adds its
+own class/positioning on top of whatever's returned, nothing else.</li>
+<li><code>{ title: string; subtitle?: string }</code> — the built-in structured
+form (bold title + a smaller, muted <code>subtitle</code>, e.g. a date + a
+location) — the only form the plugin can apply automatic overflow
+handling to (see <code>headingOverflow</code>), since it owns the DOM structure
+(a raw <code>HTMLElement</code> is opaque to it, no safe way to guess what's
+droppable).</li>
+</ul>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L115">plugins/layout/index.ts:115</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="headingoverflow"><code class="tsd-tag">Optional</code><span>heading<wbr/>Overflow</span><a href="#headingoverflow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">headingOverflow</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;show&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;fit&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;wrap&quot;</span></div>
+<div class="tsd-comment tsd-typography"><p><code>type: 'justified'</code> + the <code>{ title, subtitle }</code> structured heading
+form only — controls what happens when a compact label doesn't fit
+its available width (the gap until the next section's label sharing
+its row, or the container edge). Ignored otherwise: <code>grid</code>/<code>masonry</code>
+headings are full-width and this kind of squeeze can't happen there;
+a raw <code>renderHeading</code>-returned <code>HTMLElement</code>/<code>string</code> is left exactly
+as returned regardless, since the plugin has no safe way to guess
+what's droppable in an opaque element.</p>
+<ul>
+<li><code>'show'</code> (default) — always render the full title + subtitle, one
+line, however wide; a label can visually run past the next
+section's label or the container edge if the content is long
+enough. The simple, predictable default — nothing gets silently
+dropped or reflowed.</li>
+<li><code>'fit'</code> — never wraps a label's text. First the subtitle is dropped
+if title+subtitle together don't fit; if the title <em>alone</em> still
+doesn't fit next to whatever's sharing its row, that section is
+pushed to start a fresh row instead, giving its label the room it
+needs — row <em>composition</em> responds to label width, not just label
+content. Real Google Photos behavior; opt in when labels regularly
+need to share tight row space. The one unavoidable exception is a
+single label wider than the entire container even alone on its own
+row — there, nothing left to break onto, so the label is
+ellipsis-truncated (still one line, never wrapped, never
+overflowing).</li>
+<li><code>'wrap'</code> — the in-between: same continuous row-packing as <code>'show'</code>
+(row <em>composition</em> never reacts to label width, unlike <code>'fit'</code> — no
+section is ever pushed to a fresh row), but a label that doesn't fit
+its available width (same gap <code>'fit'</code> measures) wraps its own text
+onto additional lines instead of running past it. Height is capped
+at <code>maxRowHeight</code> (or its default, 360) — a label tall enough to hit
+that cap ellipsis-truncates its last visible line rather than
+growing the row further. Real Google Photos behavior for its date
+headers; pick this over <code>'fit'</code> when you'd rather a label take an
+extra line than shove a whole section onto its own row.</li>
+</ul>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L155">plugins/layout/index.ts:155</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="stickyheadings"><code class="tsd-tag">Optional</code><span>sticky<wbr/>Headings</span><a href="#stickyheadings" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">stickyHeadings</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Pins the active section's heading via <code>position: sticky</code>. Only
+implemented for <code>type: 'grid'</code>, where headings sit in normal document
+flow — masonry/justified headings are absolutely positioned by JS (like
+their tiles), and <code>position: sticky</code> doesn't do anything meaningful
+layered onto an already explicitly-positioned element. Warns and is
+ignored for those two types.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L164">plugins/layout/index.ts:164</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="automeasure"><code class="tsd-tag">Optional</code><span>auto<wbr/>Measure</span><a href="#automeasure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">autoMeasure</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>When an item is missing <code>width</code>/<code>height</code>, measure its tile's own <code>&lt;img&gt;</code>
+once it loads (<code>naturalWidth</code>/<code>naturalHeight</code>) and correct that tile's
+aspect ratio in place, rather than leaving it at the permanent 4:3
+placeholder fallback. Default <code>true</code>.</p>
+<p>The <em>first</em> layout pass never waits on this — it always uses the 4:3
+placeholder immediately, same as before this option existed, so opening
+the gallery is never blocked on image loads (<a href="http://DESIGN.md">DESIGN.md</a> §5.2's
+never-measure-mid-layout-pass rule still holds for that first pass).
+This only ever <em>corrects</em> a placeholder after the fact, once a real
+measurement lands — the same &quot;async correction after an initial
+synchronous pass&quot; pattern already used for a <code>containerWidth &lt;= 0</code>
+container (§5.4) and the zoom transition's origin-rect race (§2.3b),
+extended to per-item dimensions. Multiple corrections landing close
+together (e.g. several cached images resolving in the same tick) are
+coalesced into one relayout via <code>requestAnimationFrame</code>, not one
+relayout per image.</p>
+<p>Effectively does automatically, for <code>thumb</code>/<code>poster</code>/<code>src</code>, what a host
+would otherwise have to do by hand before constructing the gallery
+(<code>new Image(); img.onload = () =&gt; ...</code>) — set <code>false</code> to keep the old
+behavior (permanent 4:3 fallback, no self-correction) if you'd rather
+guarantee zero extra relayouts under any circumstance.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/9d7ed13db1a14f70069d93a56568ca28bbbf62e5/src/plugins/layout/index.ts#L190">plugins/layout/index.ts:190</a></li></ul></aside></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#type"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>type</span></a><a href="#gutter"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>gutter</span></a><a href="#aspectratio"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>aspect<wbr/>Ratio</span></a><a href="#orientation"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>orientation</span></a><a href="#columns"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>columns</span></a><a href="#columnwidth"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>column<wbr/>Width</span></a><a href="#mincolumnwidth"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>min<wbr/>Column<wbr/>Width</span></a><a href="#maxcolumnwidth"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Column<wbr/>Width</span></a><a href="#fill"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>fill</span></a><a href="#rowheight"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>row<wbr/>Height</span></a><a href="#minrowheight"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>min<wbr/>Row<wbr/>Height</span></a><a href="#maxrowheight"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Row<wbr/>Height</span></a><a href="#lastrow"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>last<wbr/>Row</span></a><a href="#animate"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>animate</span></a><a href="#breakpoints"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>breakpoints</span></a><a href="#groupby"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>group<wbr/>By</span></a><a href="#renderheading"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>render<wbr/>Heading</span></a><a href="#headingoverflow"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>heading<wbr/>Overflow</span></a><a href="#stickyheadings"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sticky<wbr/>Headings</span></a><a href="#automeasure"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>auto<wbr/>Measure</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="../index.html" class="tsd-nav-link">Guides</a></nav>
+<nav class="tsd-navigation"><a href="../index.html">Shoji API Reference</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer></footer>
+<div class="overlay"></div></body></html>
