@@ -92,14 +92,14 @@ class <a href="http://CLAUDE.md">CLAUDE.md</a> calls out by name.</p>
 </div></li>
 <li class="tsd-parameter">
 <h5><span class="tsd-kind-property">Video</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/index.ShojiPlugin.html" class="tsd-signature-type tsd-kind-interface">ShojiPlugin</a></h5>
-<div class="tsd-comment tsd-typography"><p><a href="http://DESIGN.md">DESIGN.md</a> §4-video — renders <code>{ video: { provider: 'youtube', id } }</code>
+<div class="tsd-comment tsd-typography"><p><a href="http://DESIGN.md">DESIGN.md</a> §4-video — renders <code>{ video: { provider: 'youtube' | 'vimeo', id } }</code>
 items (produced by <code>scan.ts</code>'s <code>data-shoji-video</code> host detection, or
-authored directly in dynamic mode) as a real YouTube embed instead of
-<code>SlideManager</code>'s native-<code>&lt;video&gt;</code> fallback, which can't play a YouTube
-URL at all. Purely a renderer: no options, no toolbar button, no poster/
+authored directly in dynamic mode) as a real embed instead of
+<code>SlideManager</code>'s native-<code>&lt;video&gt;</code> fallback, which can't play either URL at
+all. Purely a renderer: no options, no toolbar button, no poster/
 thumbnail handling — the slide shows nothing until the embed itself is
 ready, same as every other slide type. Autoplay (§4-autoplay) picks up
-real play/pause/ended sync automatically; see <code>youtube.ts</code>'s
+real play/pause/ended sync automatically; see <code>youtube.ts</code>'s/<code>vimeo.ts</code>'s
 <code>wirePlayableContract</code>.</p>
 </div></li>
 <li class="tsd-parameter">
@@ -128,7 +128,7 @@ wrong shape for a 2D pan that needs both at once).</p>
 <div class="tsd-comment tsd-typography"><p><code>package.json</code>'s own version — the single source of truth, read via a named JSON import so a bundler can tree-shake away everything else in package.json (devDependencies, scripts, ...) rather than embedding the whole file.</p>
 </div></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/2ceffdd9a80363a8702f8ce97fb7fbb417c9b57e/src/index.ts#L40">index.ts:40</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/7a5ba16d3538197e4d7dd5394c2e8bd458f5df68/src/index.ts#L40">index.ts:40</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
