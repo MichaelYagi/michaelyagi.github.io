@@ -196,6 +196,10 @@ its own id) rather than a real function input.
             <label>index <input type="number" id="opt-index" value="0" min="0" /></label>
             <label>preload <input type="number" id="opt-preload" value="1" min="0" /></label>
             <label
+              >minPinnedToolbarButtons
+              <input type="number" id="opt-minPinnedToolbarButtons" value="2" min="0"
+            /></label>
+            <label
               >backdropOpacity
               <input type="number" id="opt-backdropOpacity" value="1" min="0" max="1" step="0.05"
             /></label>
@@ -211,17 +215,6 @@ its own id) rather than a real function input.
               >mode
               <select id="opt-mode"></select
             ></label>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>mobileSettings (coarse pointer only)</legend>
-          <div class="row">
-            <label
-              >mode
-              <select id="opt-mobileMode"></select
-            ></label>
-            <label><input type="checkbox" id="opt-mobileControls" checked /> controls</label>
           </div>
         </fieldset>
 
@@ -720,19 +713,14 @@ its own id) rather than a real function input.
       };
 
       function populatePresetSelects() {
-        for (const select of [
-          document.getElementById('opt-mode'),
-          document.getElementById('opt-mobileMode'),
-        ]) {
-          for (const preset of TRANSITION_PRESETS) {
-            const option = document.createElement('option');
-            option.value = preset;
-            option.textContent = preset;
-            select.appendChild(option);
-          }
+        const select = document.getElementById('opt-mode');
+        for (const preset of TRANSITION_PRESETS) {
+          const option = document.createElement('option');
+          option.value = preset;
+          option.textContent = preset;
+          select.appendChild(option);
         }
-        document.getElementById('opt-mode').value = 'rotateLeft';
-        document.getElementById('opt-mobileMode').value = 'rotate';
+        select.value = 'rotateLeft';
       }
 
       const $ = (id) => document.getElementById(id);
@@ -785,15 +773,12 @@ its own id) rather than a real function input.
           openOnInit: checked('opt-openOnInit'),
           index: Number($('opt-index').value) || 0,
           preload: Number($('opt-preload').value) || 0,
+          minPinnedToolbarButtons: Number($('opt-minPinnedToolbarButtons').value) || 0,
           backdropOpacity: Number($('opt-backdropOpacity').value),
           autoHideDelay: checked('opt-autoHideDelayFalse')
             ? false
             : Number($('opt-autoHideDelay').value),
           mode: $('opt-mode').value,
-          mobileSettings: {
-            mode: $('opt-mobileMode').value,
-            controls: checked('opt-mobileControls'),
-          },
           plugins,
           zoom: {
             maxScale: Number($('opt-zoom-maxScale').value),
