@@ -5,6 +5,8 @@ function formatMessage(text) {
     text = text.replace(/\$\$([\s\S]*?)\$\$/g, (m, math) => { const i = mathBlock.length; mathBlock.push(math); return `@@MATHBLOCK_${i}@@`; });
     text = text.replace(/\\\[([\s\S]*?)\\\]/g, (m, math) => { const i = mathBlock.length; mathBlock.push(math); return `@@MATHBLOCK_${i}@@`; });
     text = text.replace(/\\\(([\s\S]*?)\\\)/g, (m, math) => { const i = mathInline.length; mathInline.push(math); return `@@MATHINLINE_${i}@@`; });
+    // Single $...$ inline math — extracted after $$ so double-dollar is already consumed
+    text = text.replace(/(?<!\$)\$(?!\$)([^$\n]+?)\$(?!\$)/g, (m, math) => { const i = mathInline.length; mathInline.push(math); return `@@MATHINLINE_${i}@@`; });
 
     // Extract code blocks and inline code before sanitizer.
     text = text.replace(/([ \t]*)```(\w+)?\s*\n?([\s\S]*?)```/g, (m, indent, lang, code) => {
@@ -125,6 +127,7 @@ function formatMessage(text) {
         math = math.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         math = math.replace(/\\text\{([^}]+)\}/g, '$1');
         math = math.replace(/\text\{([^}]+)\}/g, '$1');
+        math = math.replace(/\\boxed\{([^}]+)\}/g, '[$1]');
         const symbols = { '\u005cpm': '\u00b1', '\u005ctimes': '\u00d7', '\u005cdiv': '\u00f7', '\u005ccdot': '\u00b7', '\u005cneq': '\u2260', '\u005cleq': '\u2264', '\u005cgeq': '\u2265', '\u005capprox': '\u2248', '\u005cinfty': '\u221e', '\u005cpi': '\u03c0', '\u005crightarrow': '\u2192', '\u005cforall': '\u2200', '\u005cexists': '\u2203', '\u005cdegree': '\u00b0', '\u005cphi': '\u03a6' };
         const tabSymbols = { '\times': '\u00d7', '\pi': '\u03c0' };
         Object.entries(symbols).forEach(([t, s]) => { math = math.split(t).join(s); });
