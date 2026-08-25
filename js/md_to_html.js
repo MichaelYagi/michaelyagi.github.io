@@ -7,6 +7,8 @@ function formatMessage(text) {
     text = text.replace(/\\\(([\s\S]*?)\\\)/g, (m, math) => { const i = mathInline.length; mathInline.push(math); return `@@MATHINLINE_${i}@@`; });
     // Single $...$ inline math — extracted after $$ so double-dollar is already consumed
     text = text.replace(/(?<!\$)\$(?!\$)([^$\n]+?)\$(?!\$)/g, (m, math) => { const i = mathInline.length; mathInline.push(math); return `@@MATHINLINE_${i}@@`; });
+    // \begin{env}...\end{env} — treat any LaTeX environment as a display math block
+    text = text.replace(/\\begin\{([a-zA-Z*]+)\}([\s\S]*?)\\end\{\1\}/g, (m, env, content) => { const i = mathBlock.length; mathBlock.push(content); return `@@MATHBLOCK_${i}@@`; });
 
     // Extract code blocks and inline code before sanitizer.
     text = text.replace(/([ \t]*)```(\w+)?\s*\n?([\s\S]*?)```/g, (m, indent, lang, code) => {
@@ -93,6 +95,40 @@ function formatMessage(text) {
     text = text.replace(/(?<![a-zA-Z])\\exists(?![a-zA-Z])/g,    '\u2203');
     text = text.replace(/(?<![a-zA-Z])\\degree(?![a-zA-Z])/g,    '\u00b0');
     text = text.replace(/(?<![a-zA-Z])\\circ(?![a-zA-Z])/g,      '\u00b0');
+
+    // Calculus / set / logic operators
+    text = text.replace(/(?<![a-zA-Z])\\sum(?![a-zA-Z])/g,       '\u2211');
+    text = text.replace(/(?<![a-zA-Z])\\prod(?![a-zA-Z])/g,      '\u220f');
+    text = text.replace(/(?<![a-zA-Z])\\iiint(?![a-zA-Z])/g,     '\u222d');
+    text = text.replace(/(?<![a-zA-Z])\\iint(?![a-zA-Z])/g,      '\u222c');
+    text = text.replace(/(?<![a-zA-Z])\\oint(?![a-zA-Z])/g,      '\u222e');
+    text = text.replace(/(?<![a-zA-Z])\\int(?![a-zA-Z])/g,       '\u222b');
+    text = text.replace(/(?<![a-zA-Z])\\partial(?![a-zA-Z])/g,   '\u2202');
+    text = text.replace(/(?<![a-zA-Z])\\nabla(?![a-zA-Z])/g,     '\u2207');
+    text = text.replace(/(?<![a-zA-Z])\\to(?![a-zA-Z])/g,        '\u2192');
+    text = text.replace(/(?<![a-zA-Z])\\notin(?![a-zA-Z])/g,     '\u2209');
+    text = text.replace(/(?<![a-zA-Z])\\in(?![a-zA-Z])/g,        '\u2208');
+    text = text.replace(/(?<![a-zA-Z])\\subseteq(?![a-zA-Z])/g,  '\u2286');
+    text = text.replace(/(?<![a-zA-Z])\\subset(?![a-zA-Z])/g,    '\u2282');
+    text = text.replace(/(?<![a-zA-Z])\\supseteq(?![a-zA-Z])/g,  '\u2287');
+    text = text.replace(/(?<![a-zA-Z])\\supset(?![a-zA-Z])/g,    '\u2283');
+    text = text.replace(/(?<![a-zA-Z])\\cup(?![a-zA-Z])/g,       '\u222a');
+    text = text.replace(/(?<![a-zA-Z])\\cap(?![a-zA-Z])/g,       '\u2229');
+    text = text.replace(/(?<![a-zA-Z])\\equiv(?![a-zA-Z])/g,     '\u2261');
+    text = text.replace(/(?<![a-zA-Z])\\hbar(?![a-zA-Z])/g,      '\u210f');
+
+    // Boxed result and decorators (strip command, keep content with combining mark)
+    text = text.replace(/(?<![a-zA-Z])\\boxed\{([^}]*)\}/g,      '[$1]');
+    text = text.replace(/(?<![a-zA-Z])\\widehat\{([^}]*)\}/g,    '$1\u0302');
+    text = text.replace(/(?<![a-zA-Z])\\hat\{([^}]*)\}/g,        '$1\u0302');
+    text = text.replace(/(?<![a-zA-Z])\\widetilde\{([^}]*)\}/g,  '$1\u0303');
+    text = text.replace(/(?<![a-zA-Z])\\tilde\{([^}]*)\}/g,      '$1\u0303');
+    text = text.replace(/(?<![a-zA-Z])\\vec\{([^}]*)\}/g,        '$1\u20d7');
+    text = text.replace(/(?<![a-zA-Z])\\overline\{([^}]*)\}/g,   '$1\u0305');
+    text = text.replace(/(?<![a-zA-Z])\\bar\{([^}]*)\}/g,        '$1\u0305');
+    text = text.replace(/(?<![a-zA-Z])\\ddot\{([^}]*)\}/g,       '$1\u0308');
+    text = text.replace(/(?<![a-zA-Z])\\dot\{([^}]*)\}/g,        '$1\u0307');
+    text = text.replace(/(?<![a-zA-Z])\\underline\{([^}]*)\}/g,  '$1');
     // --------------------------------------------------------------------
 
     const images = [];
@@ -117,6 +153,14 @@ function formatMessage(text) {
     text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     text = text.replace(/^######\s+(.+)$/gm, "<h6>$1</h6>").replace(/^#####\s+(.+)$/gm, "<h5>$1</h5>").replace(/^####\s+(.+)$/gm, "<h4>$1</h4>").replace(/^###\s+(.+)$/gm, "<h3>$1</h3>").replace(/^##\s+(.+)$/gm, "<h2>$1</h2>").replace(/^#\s+(.+)$/gm, "<h1>$1</h1>");
     text = text.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>").replace(/~~(.+?)~~/g, "<del>$1</del>");
+    // Task lists (before bullet rule so - [x] isn't consumed as a plain bullet)
+    text = text.replace(/^- \[x\]\s+(.+)$/gim, '&#9745; $1');
+    text = text.replace(/^- \[ \]\s+(.+)$/gm,  '&#9744; $1');
+    // Ordered lists — group consecutive numbered lines into <ol>
+    text = text.replace(/((?:^\d+\. .+\n?)+)/gm, (block) => {
+        const items = block.trim().split('\n').filter(l => /^\d+\./.test(l.trim())).map(l => `<li>${l.replace(/^\d+\.\s+/, '').trim()}</li>`).join('');
+        return `<ol>${items}</ol>`;
+    });
     text = text.replace(/^>\s+(.+)$/gm, "<blockquote>$1</blockquote>").replace(/^([-*_]){3,}$/gm, "<hr>").replace(/^- /gm, "&bull; ").replace(/^\* /gm, "&bull; ");
     text = text.replace(/^(\|.+\|)\s*\n(\|[-:\s|]+\|)\s*\n((?:\|.*\|\s*\n?)*)/gm, (match, header, divider, rows) => {
         const makeRow = row => "<tr>" + row.trim().slice(1, -1).split("|").map(cell => `<td>${cell.trim()}</td>`).join("") + "</tr>";
@@ -128,6 +172,36 @@ function formatMessage(text) {
         math = math.replace(/\\text\{([^}]+)\}/g, '$1');
         math = math.replace(/\text\{([^}]+)\}/g, '$1');
         math = math.replace(/\\boxed\{([^}]+)\}/g, '[$1]');
+        math = math.replace(/\\\\/g, '<br>');
+        math = math.replace(/(?<![a-zA-Z])\\sum(?![a-zA-Z])/g,      '∑');
+        math = math.replace(/(?<![a-zA-Z])\\prod(?![a-zA-Z])/g,     '∏');
+        math = math.replace(/(?<![a-zA-Z])\\iiint(?![a-zA-Z])/g,    '∭');
+        math = math.replace(/(?<![a-zA-Z])\\iint(?![a-zA-Z])/g,     '∬');
+        math = math.replace(/(?<![a-zA-Z])\\oint(?![a-zA-Z])/g,     '∮');
+        math = math.replace(/(?<![a-zA-Z])\\int(?![a-zA-Z])/g,      '∫');
+        math = math.replace(/(?<![a-zA-Z])\\partial(?![a-zA-Z])/g,  '∂');
+        math = math.replace(/(?<![a-zA-Z])\\nabla(?![a-zA-Z])/g,    '∇');
+        math = math.replace(/(?<![a-zA-Z])\\to(?![a-zA-Z])/g,       '→');
+        math = math.replace(/(?<![a-zA-Z])\\notin(?![a-zA-Z])/g,    '∉');
+        math = math.replace(/(?<![a-zA-Z])\\in(?![a-zA-Z])/g,       '∈');
+        math = math.replace(/(?<![a-zA-Z])\\subseteq(?![a-zA-Z])/g, '⊆');
+        math = math.replace(/(?<![a-zA-Z])\\subset(?![a-zA-Z])/g,   '⊂');
+        math = math.replace(/(?<![a-zA-Z])\\supseteq(?![a-zA-Z])/g, '⊇');
+        math = math.replace(/(?<![a-zA-Z])\\supset(?![a-zA-Z])/g,   '⊃');
+        math = math.replace(/(?<![a-zA-Z])\\cup(?![a-zA-Z])/g,      '∪');
+        math = math.replace(/(?<![a-zA-Z])\\cap(?![a-zA-Z])/g,      '∩');
+        math = math.replace(/(?<![a-zA-Z])\\equiv(?![a-zA-Z])/g,    '≡');
+        math = math.replace(/(?<![a-zA-Z])\\hbar(?![a-zA-Z])/g,     'ℏ');
+        math = math.replace(/(?<![a-zA-Z])\\widehat\{([^}]*)\}/g,   '$1̂');
+        math = math.replace(/(?<![a-zA-Z])\\hat\{([^}]*)\}/g,       '$1̂');
+        math = math.replace(/(?<![a-zA-Z])\\widetilde\{([^}]*)\}/g, '$1̃');
+        math = math.replace(/(?<![a-zA-Z])\\tilde\{([^}]*)\}/g,     '$1̃');
+        math = math.replace(/(?<![a-zA-Z])\\vec\{([^}]*)\}/g,       '$1⃗');
+        math = math.replace(/(?<![a-zA-Z])\\overline\{([^}]*)\}/g,  '$1̅');
+        math = math.replace(/(?<![a-zA-Z])\\bar\{([^}]*)\}/g,       '$1̅');
+        math = math.replace(/(?<![a-zA-Z])\\ddot\{([^}]*)\}/g,      '$1̈');
+        math = math.replace(/(?<![a-zA-Z])\\dot\{([^}]*)\}/g,       '$1̇');
+        math = math.replace(/(?<![a-zA-Z])\\underline\{([^}]*)\}/g, '$1');
         const symbols = { '\u005cpm': '\u00b1', '\u005ctimes': '\u00d7', '\u005cdiv': '\u00f7', '\u005ccdot': '\u00b7', '\u005cneq': '\u2260', '\u005cleq': '\u2264', '\u005cgeq': '\u2265', '\u005capprox': '\u2248', '\u005cinfty': '\u221e', '\u005cpi': '\u03c0', '\u005crightarrow': '\u2192', '\u005cforall': '\u2200', '\u005cexists': '\u2203', '\u005cdegree': '\u00b0', '\u005cphi': '\u03a6' };
         const tabSymbols = { '\times': '\u00d7', '\pi': '\u03c0' };
         Object.entries(symbols).forEach(([t, s]) => { math = math.split(t).join(s); });
