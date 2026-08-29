@@ -13,7 +13,7 @@
 <h1>Interface AutoplayOptions</h1></div>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">AutoplayOptions</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#interval">interval</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#showprogress">showProgress</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#autostart">autoStart</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#pauseonzoom">pauseOnZoom</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#pauseonrotateflip">pauseOnRotateFlip</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#pauseoncaptionexpand">pauseOnCaptionExpand</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#pauseonmanualnavigate">pauseOnManualNavigate</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L45">plugins/autoplay/index.ts:45</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L45">plugins/autoplay/index.ts:45</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -38,49 +38,49 @@
 <div class="tsd-comment tsd-typography"><p>Milliseconds between advances for timed (photo) slides. Default <code>5000</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L47">plugins/autoplay/index.ts:47</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L47">plugins/autoplay/index.ts:47</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="showprogress"><code class="tsd-tag">Optional</code><span>show<wbr/>Progress</span><a href="#showprogress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">showProgress</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Shows the thin progress bar (<code>--shoji-progress</code>) tracking time-to-next-advance along the dialog's bottom edge, for timed slides only — never shown during video slides, whose own runtime drives advancement instead. Default <code>true</code>. Purely presentational: turning it off doesn't change any timing, only whether it's drawn.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L49">plugins/autoplay/index.ts:49</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L49">plugins/autoplay/index.ts:49</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="autostart"><code class="tsd-tag">Optional</code><span>auto<wbr/>Start</span><a href="#autostart" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">autoStart</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Starts the slideshow automatically as soon as the gallery opens — every <code>open()</code>, not just the first — instead of waiting for the toolbar button/<code>Space</code>. Default <code>false</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L51">plugins/autoplay/index.ts:51</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L51">plugins/autoplay/index.ts:51</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="pauseonzoom"><code class="tsd-tag">Optional</code><span>pause<wbr/>On<wbr/>Zoom</span><a href="#pauseonzoom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">pauseOnZoom</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Pauses the slideshow while the viewer is zoomed in on the active slide (Zoom plugin) — stays paused until Play is pressed again, even once un-zoomed back to neutral (no auto-resume). A no-op if Zoom isn't loaded. Default <code>true</code> — a viewer actively examining a zoomed-in detail is a clear signal the slideshow shouldn't advance out from under them; set <code>false</code> to let it keep running regardless.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L53">plugins/autoplay/index.ts:53</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L53">plugins/autoplay/index.ts:53</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="pauseonrotateflip"><code class="tsd-tag">Optional</code><span>pause<wbr/>On<wbr/>Rotate<wbr/>Flip</span><a href="#pauseonrotateflip" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">pauseOnRotateFlip</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Pauses the slideshow on any RotateFlip interaction — including one that lands back on the original orientation, since the click itself is still an active interruption, not just its end state. Stays paused until Play is pressed again. A no-op if RotateFlip isn't loaded. Default <code>true</code>, same reasoning as <code>pauseOnZoom</code> above — a viewer reaching for a rotate/flip control is actively engaging with the current slide, not passively watching a slideshow; set <code>false</code> to let it keep running regardless.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L55">plugins/autoplay/index.ts:55</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L55">plugins/autoplay/index.ts:55</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="pauseoncaptionexpand"><code class="tsd-tag">Optional</code><span>pause<wbr/>On<wbr/>Caption<wbr/>Expand</span><a href="#pauseoncaptionexpand" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">pauseOnCaptionExpand</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Pauses the slideshow when the viewer expands a truncated caption to read the rest (core's own caption modal, <a href="http://DESIGN.md">DESIGN.md</a> §2.3a) — stays paused until Play is pressed again, same as <code>pauseOnZoom</code>/<code>pauseOnRotateFlip</code>. No re-check on Play needed the way those two need one: the modal traps both pointer and keyboard input while open (core blocks every key, not just Escape), so Play is physically unreachable until the modal is already closed. Default <code>true</code>, same reasoning as the other two — expanding a caption to read the rest is a request for time, not an idle moment to advance past; set <code>false</code> to let it keep running regardless.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L57">plugins/autoplay/index.ts:57</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L57">plugins/autoplay/index.ts:57</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="pauseonmanualnavigate"><code class="tsd-tag">Optional</code><span>pause<wbr/>On<wbr/>Manual<wbr/>Navigate</span><a href="#pauseonmanualnavigate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">pauseOnManualNavigate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Pauses the slideshow the moment the viewer navigates manually — arrow keys/buttons, a completed swipe, a thumbnail click, or any other <code>goTo()</code> not caused by Autoplay's own <code>advance()</code> — instead of silently re-timing itself on whatever slide they land on. Stays paused until Play is pressed again, same as the other <code>pauseOn*</code> options. Default <code>true</code>, same reasoning as <code>pauseOnZoom</code>/<code>pauseOnRotateFlip</code>/<code>pauseOnCaptionExpand</code> above — reaching for the navigation controls at all is a clear signal of active engagement, and a slideshow that keeps ticking underneath that reads as broken, not helpful. Set <code>false</code> to restore the original &quot;manual nav just re-times the current slide&quot; behavior.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/011e92aab02ff7631af11e31c142be3c62eecc3a/src/plugins/autoplay/index.ts#L59">plugins/autoplay/index.ts:59</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/852f5eeef4a7412d544dab939961ab6a730be4a5/src/plugins/autoplay/index.ts#L59">plugins/autoplay/index.ts:59</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
