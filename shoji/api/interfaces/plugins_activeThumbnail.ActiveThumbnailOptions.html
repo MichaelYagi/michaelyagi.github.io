@@ -13,7 +13,7 @@
 <h1>Interface ActiveThumbnailOptions</h1></div>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">ActiveThumbnailOptions</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#activeclass">activeClass</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#scrollintoview">scrollIntoView</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#highlight">highlight</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#bordercolor">borderColor</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#highlightduration">highlightDuration</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#highlightfadeduration">highlightFadeDuration</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/48b3e8da8c30f90146e02c13c2fb3417bc656629/src/plugins/activeThumbnail/index.ts#L4">plugins/activeThumbnail/index.ts:4</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/35d621d13c2c8458fb42fdf380694dd069c660d4/src/plugins/activeThumbnail/index.ts#L4">plugins/activeThumbnail/index.ts:4</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -37,42 +37,42 @@
 <div class="tsd-comment tsd-typography"><p>CSS class applied to the origin thumbnail for whichever slide is currently active. Default <code>'shoji-thumb-active'</code> — Shoji ships no default styling for this class itself (the host's own thumbnail markup, or the layout plugin's tiles, define what &quot;active&quot; looks like); see <code>highlight</code> below for Shoji's own opt-in styling.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/48b3e8da8c30f90146e02c13c2fb3417bc656629/src/plugins/activeThumbnail/index.ts#L6">plugins/activeThumbnail/index.ts:6</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/35d621d13c2c8458fb42fdf380694dd069c660d4/src/plugins/activeThumbnail/index.ts#L6">plugins/activeThumbnail/index.ts:6</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="scrollintoview"><code class="tsd-tag">Optional</code><span>scroll<wbr/>Into<wbr/>View</span><a href="#scrollintoview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scrollIntoView</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Scrolls the active thumbnail into view (<code>block: 'nearest'</code>) whenever it changes. Default <code>true</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/48b3e8da8c30f90146e02c13c2fb3417bc656629/src/plugins/activeThumbnail/index.ts#L8">plugins/activeThumbnail/index.ts:8</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/35d621d13c2c8458fb42fdf380694dd069c660d4/src/plugins/activeThumbnail/index.ts#L8">plugins/activeThumbnail/index.ts:8</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="highlight"><code class="tsd-tag">Optional</code><span>highlight</span><a href="#highlight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">highlight</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Opt-in: also adds a second, fixed (non-renameable) class that Shoji ships real CSS for — a <code>borderColor</code> outline around the active thumbnail — instead of leaving 100% of the visual highlight to the host. Default <code>false</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/48b3e8da8c30f90146e02c13c2fb3417bc656629/src/plugins/activeThumbnail/index.ts#L10">plugins/activeThumbnail/index.ts:10</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/35d621d13c2c8458fb42fdf380694dd069c660d4/src/plugins/activeThumbnail/index.ts#L10">plugins/activeThumbnail/index.ts:10</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="bordercolor"><code class="tsd-tag">Optional</code><span>border<wbr/>Color</span><a href="#bordercolor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">borderColor</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>Only visible when <code>highlight: true</code>. Sets <code>--shoji-active-thumbnail-border-color</code> on the active element. Default <code>'blue'</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/48b3e8da8c30f90146e02c13c2fb3417bc656629/src/plugins/activeThumbnail/index.ts#L12">plugins/activeThumbnail/index.ts:12</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/35d621d13c2c8458fb42fdf380694dd069c660d4/src/plugins/activeThumbnail/index.ts#L12">plugins/activeThumbnail/index.ts:12</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="highlightduration"><code class="tsd-tag">Optional</code><span>highlight<wbr/>Duration</span><a href="#highlightduration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">highlightDuration</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>Only meaningful when <code>highlight: true</code>. Milliseconds after <code>close()</code> (i.e. after the highlight actually becomes visible, not from when the slide became active) to fade it out. Default <code>undefined</code> — persists indefinitely, moving only when a different slide becomes active. Does not touch <code>activeClass</code>, only the built-in <code>highlight</code> styling.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/48b3e8da8c30f90146e02c13c2fb3417bc656629/src/plugins/activeThumbnail/index.ts#L14">plugins/activeThumbnail/index.ts:14</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/35d621d13c2c8458fb42fdf380694dd069c660d4/src/plugins/activeThumbnail/index.ts#L14">plugins/activeThumbnail/index.ts:14</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="highlightfadeduration"><code class="tsd-tag">Optional</code><span>highlight<wbr/>Fade<wbr/>Duration</span><a href="#highlightfadeduration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">highlightFadeDuration</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>Only meaningful when <code>highlight: true</code> and <code>highlightDuration</code> is set — otherwise nothing ever fades, so this has no visible effect. How long the fade-to-transparent transition itself takes, in milliseconds, once <code>highlightDuration</code> elapses. Default <code>800</code>. Reported directly as &quot;fades too fast&quot; against the shared <code>--shoji-duration</code> (300ms, tuned for ordinary UI transitions, not a deliberately slow fade) this used to reuse.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/48b3e8da8c30f90146e02c13c2fb3417bc656629/src/plugins/activeThumbnail/index.ts#L16">plugins/activeThumbnail/index.ts:16</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/MichaelYagi/shoji/blob/35d621d13c2c8458fb42fdf380694dd069c660d4/src/plugins/activeThumbnail/index.ts#L16">plugins/activeThumbnail/index.ts:16</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
