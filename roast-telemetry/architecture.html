@@ -117,6 +117,7 @@
       <tr><td>GET</td><td><code>/devices</code></td><td>Mock devices currently bound to active roasts</td></tr>
       <tr><td>POST</td><td><code>/devices/{id}/fault</code></td><td>Testing hook: force a device into an error state</td></tr>
       <tr><td>GET</td><td><code>/serial-ports</code></td><td>Serial ports currently visible to the OS, for the Configure Roast form's port picker</td></tr>
+      <tr><td>GET</td><td><code>/files</code></td><td>Folders and <code>.alog</code> files on the server (<code>path</code>, defaults to the home folder), for the History page's <strong>Browse&hellip;</strong> button next to the import path. Names only, never contents.</td></tr>
       <tr><td>GET</td><td><code>/roasts</code></td><td>Roast history (filter: <code>mode</code>, <code>status</code>)</td></tr>
       <tr><td>POST</td><td><code>/roasts</code></td><td><code>simulator</code>/<code>alog_playback</code>: create <strong>and start</strong> a roast. <code>modbus_live</code>/<code>ms6514_live</code>: <strong>connect only</strong> (ON) — see <code>/roasts/{id}/start</code></td></tr>
       <tr><td>POST</td><td><code>/roasts/{id}/start</code></td><td><code>modbus_live</code>/<code>ms6514_live</code> only: begin recording a connection already made via <code>POST /roasts</code> (START)</td></tr>
@@ -131,7 +132,7 @@
       <tr><td>GET</td><td><code>/roasts/{id}/csv</code></td><td>Download a CSV export — works on an in-progress roast too, unlike <code>.alog</code></td></tr>
       <tr><td>POST</td><td><code>/roasts/{id}/review</code></td><td>Kick off an AI review (Ollama) — <code>202</code>, async</td></tr>
       <tr><td>GET</td><td><code>/roasts/{id}/review</code></td><td>Poll for the review's status/result</td></tr>
-      <tr><td>POST</td><td><code>/roasts/import</code></td><td>Import an existing <code>.alog</code> file as history (<code>path</code>, optional <code>title</code>)</td></tr>
+      <tr><td>POST</td><td><code>/roasts/import</code></td><td>Import an existing <code>.alog</code> file as history (<code>path</code> on the server &mdash; pick it with <strong>Browse&hellip;</strong> on the History page &mdash; and optional <code>title</code>)</td></tr>
       <tr><td>WS</td><td><code>/roasts/{id}/stream</code></td><td>Live sample/event stream (sends a <code>snapshot</code> first)</td></tr>
       <tr><td>GET</td><td><code>/roasts/{id}/stream/sse</code></td><td>Same stream over Server-Sent Events</td></tr>
       <tr><td>GET</td><td><code>/presets</code></td><td>List saved roast configurations</td></tr>
@@ -153,10 +154,10 @@
   <h2>Assumptions worth knowing about</h2>
   <ul>
     <li>
-      <strong>.alog schema</strong>: reading real Artisan files is now
+      <strong>.alog schema</strong>: reading real <code>.alog</code> files is now
       verified, not guessed — <code>alog_playback/alog_io.py</code> was
-      checked against an actual Kaleido-exported <code>.alog</code>. Two
-      things worth knowing: (1) real Artisan writes the file as a Python
+      checked against an actual real-world <code>.alog</code>. Two
+      things worth knowing: (1) the format is a Python
       dict literal (<code>str(dict)</code>, single quotes, meant to be
       <code>eval</code>'d) rather than strict JSON — the loader tries
       <code>json</code> first and falls back to
@@ -173,8 +174,8 @@
       <code>specialeventsvalue</code>/<code>specialeventsStrings</code>
       parallel arrays. Writing still uses this project's own simpler JSON
       shape (events/notes as plain objects) — round-trips perfectly
-      within itself, but isn't byte-for-byte what Artisan's own exporter
-      would produce. Real Artisan files also don't store a per-sample RoR
+      within itself, but isn't byte-for-byte what other software's exporter
+      would produce. Real <code>.alog</code> files also don't store a per-sample RoR
       array (only phase-average RoR in <code>computed</code>) —
       <code>alog_io.py</code> reconstructs RoR from the BT/ET curve itself
       (24s trailing-window derivative) whenever the source doesn't
@@ -191,8 +192,7 @@
       is a first-order thermal model (ET chases a heater-driven setpoint;
       BT lags ET with an explicit charge-dip/turning-point phase) tuned
       to produce a ~10-11 minute roast with realistic event timing, not a
-      reproduction of Artisan's actual simulator internals (which we
-      don't have source access to).
+      reproduction of any particular machine's numbers.
     </li>
     <li>
       <strong>Persistence</strong>: SQLite indexes roast metadata for
